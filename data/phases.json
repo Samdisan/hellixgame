@@ -14,6 +14,19 @@
       "auto_advance_to": "PH_OUTBREAK",
       "on_start_quests": [],
       "on_end_quests": ["Q_START_OUTBREAK"]
+    },
+    {
+      "id": "PH_OUTBREAK",
+      "title": "Перші симптоми",
+      "label": "Перші симптоми",
+      "description": "Фаза реагування після INTRO: станція переходить у режим підвищеного контролю, з'являються перші попередження та активні протоколи.",
+      "order": 2,
+      "ui_intensity": "medium",
+      "hint_frequency": "medium",
+      "duration_sec": 14400,
+      "auto_advance_to": null,
+      "on_start_quests": ["Q_OUTBREAK_START", "Q_OUTBREAK_PEAK"],
+      "on_end_quests": []
     }
   ]
 }
