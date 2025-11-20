@@ -11,6 +11,16 @@
     "favorite": true
   },
   {
+    "id": "Q_INTRO_MEET",
+    "label": "Знайомство",
+    "phase": "PH_INTRO",
+    "description": "Система просить усіх гравців ознайомитися зі своїми Особовими справами.",
+    "actions": [
+      {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "[ЗНАЙОМСТВО] Ознайомтеся зі своїми Особовими справами у персональних кабінетах."},
+      {"type": "push_terminal", "target": "admin_terminal", "level": "info", "message": "[BRIEF] Гравцям розіслано інструкцію переглянути Особові справи."}
+    ]
+  },
+  {
     "id": "Q_INTRO_ARRIVAL",
     "label": "Підфаза 1.1: Прибуття",
     "phase": "PH_INTRO",

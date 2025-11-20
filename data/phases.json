@@ -12,7 +12,7 @@
       "hint_frequency": "low",
       "duration_sec": 900,
       "auto_advance_to": "PH_OUTBREAK",
-      "on_start_quests": [],
+      "on_start_quests": ["Q_INTRO_BOOT", "Q_INTRO_MEET"],
       "on_end_quests": ["Q_START_OUTBREAK"]
     },
     {

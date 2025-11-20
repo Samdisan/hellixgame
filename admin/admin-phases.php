@@ -124,20 +124,8 @@ include __DIR__ . '/../partials/header.php';
     <?php if (empty($activeProtocols)): ?>
         <p class="muted">Наразі немає активних протоколів.</p>
     <?php else: ?>
-        <div class="chips">
-            <?php foreach ($activeProtocols as $protocol): ?>
-                <button type="button" class="chip protocol-open"
-                        data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
-                        data-protocol-label="<?php echo htmlspecialchars($protocol['label'] ?? '', ENT_QUOTES); ?>"
-                        data-protocol-level="<?php echo (int) ($protocol['level'] ?? 0); ?>"
-                        data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'] ?? '', ENT_QUOTES); ?>"
-                        data-protocol-description="<?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?>"
-                        data-protocol-content="<?php echo htmlspecialchars($protocol['content'] ?? '', ENT_QUOTES); ?>">
-                    <?php echo htmlspecialchars($protocol['id'] . ' — ' . ($protocol['label'] ?? 'Без назви'), ENT_QUOTES); ?>
-                    <small class="muted">рівень <?php echo (int) ($protocol['level'] ?? 0); ?></small>
-                </button>
-            <?php endforeach; ?>
-        </div>
+        <p class="muted">Активних документів: <?php echo count($activeProtocols); ?>. Відкрийте повний перелік, щоб відредагувати.</p>
+        <a class="button" href="/admin/admin-protocols.php">Відкрити всі протоколи</a>
     <?php endif; ?>
 </section>
 

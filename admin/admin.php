@@ -6,13 +6,7 @@ $phase = current_phase();
 $timer = timer_status();
 $messages = array_slice(array_reverse(load_json('terminal-messages.json')), 0, 8);
 $protocols = load_json('protocols.json');
-$players = load_json('players.json');
-
 $activeProtocols = count(array_filter($protocols, fn($p) => !empty($p['active'])));
-$statusCounts = [];
-foreach ($players as $player) {
-    $statusCounts[$player['status']] = ($statusCounts[$player['status']] ?? 0) + 1;
-}
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
@@ -32,20 +26,19 @@ include __DIR__ . '/../partials/header.php';
             <div>Статус: <span data-timer-status><?php echo strtoupper($timer['state']); ?></span></div>
             <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>
             <div>Залишилось: <span data-timer-remaining><?php echo human_time((int)$timer['remaining']); ?></span></div>
+            <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
+                <input type="hidden" name="redirect" value="/admin/admin.php">
+                <button class="button" name="action" value="start" type="submit">Start</button>
+                <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
+                <button class="button secondary" name="action" value="resume" type="submit">Resume</button>
+                <button class="button secondary" name="action" value="reset" type="submit">Reset</button>
+            </form>
         </div>
-        <div class="protocol-card">
+        <a class="protocol-card link-card" href="/admin/admin-protocols.php">
             <div class="badge level">Активні протоколи</div>
-            <div style="font-size:24px; font-weight:700;"><?php echo $activeProtocols; ?></div>
-            <div class="glitch-hint">Керуйте стіною оголошень станції.</div>
-        </div>
-    </div>
-    <div class="grid cols-3" style="margin-top:16px;">
-        <?php foreach ($statusCounts as $status => $count): ?>
-            <div class="protocol-card">
-                <div class="badge"><?php echo strtoupper($status); ?></div>
-                <div><?php echo $count; ?> персонажів</div>
-            </div>
-        <?php endforeach; ?>
+            <div style="font-size:24px; font-weight:700; color: var(--accent); text-decoration: underline;">Переглянути (<?php echo $activeProtocols; ?>)</div>
+            <div class="glitch-hint">Відкрити повний перелік документів.</div>
+        </a>
     </div>
     <div class="overlay-text">bridge online</div>
 </section>
