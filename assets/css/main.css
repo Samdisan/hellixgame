@@ -262,10 +262,31 @@ h1, h2, h3, h4 {
     margin-top: auto;
 }
 
+.glitch-hint-window {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    max-width: 320px;
+    background: rgba(14, 18, 30, 0.92);
+    border: 1px solid rgba(110, 240, 197, 0.4);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    z-index: 999;
+    backdrop-filter: blur(6px);
+    animation: hint-pop 220ms ease-out;
+}
+
 .glitch-hint {
-    margin-top: 8px;
+    margin: 0;
     color: var(--muted);
     font-size: 14px;
+    line-height: 1.4;
+}
+
+@keyframes hint-pop {
+    from { transform: translateY(8px) scale(0.97); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .terminal {
@@ -288,6 +309,28 @@ h1, h2, h3, h4 {
 
 .line-critical { color: var(--critical); }
 .line-warning { color: var(--warning); }
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: rgba(110, 240, 197, 0.08);
+    border: 1px solid rgba(110, 240, 197, 0.25);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.chip small {
+    color: var(--muted);
+}
 .line-info { color: var(--text); }
 .line-protocol { color: var(--accent); }
 .line-hint { color: var(--muted); }

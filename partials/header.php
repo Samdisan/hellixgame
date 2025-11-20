@@ -19,4 +19,5 @@
         <a href="/#access">Вхід</a>
     </nav>
 </header>
+<?php echo render_glitch_hint(); ?>
 <main class="page">

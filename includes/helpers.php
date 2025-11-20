@@ -155,6 +155,7 @@ function current_phase(): array
     $phases = load_json('phases.json');
     return [
         'current' => $phases['current_phase'] ?? null,
+        'started_elapsed' => $phases['current_phase_started_elapsed'] ?? 0,
         'phases' => $phases['phases'] ?? [],
     ];
 }
@@ -162,6 +163,8 @@ function current_phase(): array
 function set_current_phase(string $phaseId): void
 {
     $phases = load_json('phases.json');
+    $timer = timer_status();
+    $phases['current_phase_started_elapsed'] = $timer['elapsed'] ?? 0;
     $phases['current_phase'] = $phaseId;
     save_json('phases.json', $phases);
 }
@@ -239,5 +242,5 @@ function render_glitch_hint(): string
         $hint = $hint['text'];
     }
 
-    return '<div class="glitch-hint" aria-live="polite">' . htmlspecialchars((string) $hint, ENT_QUOTES) . '</div>';
+    return '<div class="glitch-hint-window" role="status" aria-live="polite"><div class="glitch-hint">' . htmlspecialchars((string) $hint, ENT_QUOTES) . '</div></div>';
 }
