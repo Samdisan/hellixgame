@@ -1,0 +1,12 @@
+{
+  "state": "not_started",
+  "duration_seconds": 43200,
+  "start_time": null,
+  "elapsed_seconds": 0,
+  "time_triggers": [
+    {"at_seconds": 3600, "quest_id": "Q_OUTBREAK_01"},
+    {"at_seconds": 21600, "quest_id": "Q_QUARANTINE_02"},
+    {"at_seconds": 39600, "quest_id": "Q_FINAL_01"}
+  ],
+  "last_updated": "2025-12-10T07:00:00Z"
+}
