@@ -1,0 +1,31 @@
+[
+  {
+    "id": "Q_INTRO_01",
+    "label": "Пробудження станції",
+    "phase": "PH_INTRO",
+    "subphase": "BOOT",
+    "actions": ["enable_labs", "unlock_logs"],
+    "favorite": true
+  },
+  {
+    "id": "Q_OUTBREAK_01",
+    "label": "Ідентифікація збудника",
+    "phase": "PH_OUTBREAK",
+    "actions": ["scan_samples", "alert_security"],
+    "favorite": false
+  },
+  {
+    "id": "Q_QUARANTINE_02",
+    "label": "Контроль карантинних шлюзів",
+    "phase": "PH_QUARANTINE",
+    "actions": [],
+    "favorite": false
+  },
+  {
+    "id": "Q_FINAL_01",
+    "label": "Передача зразків на орбітальний модуль",
+    "phase": "PH_FINAL",
+    "actions": ["prep_capsule", "launch_signal"],
+    "favorite": false
+  }
+]
