@@ -23,6 +23,8 @@ include __DIR__ . '/../partials/header.php';
         <div class="protocol-card">
             <div class="badge level">Фаза</div>
             <div class="phase-badge"><?php echo htmlspecialchars($phase['current'], ENT_QUOTES); ?></div>
+            <div class="meta-line">Плин фази: <span data-phase-elapsed><?php echo human_time((int) ($phase['current_meta']['elapsed_sec'] ?? 0)); ?></span></div>
+            <div class="meta-line">До завершення: <span data-phase-remaining><?php echo isset($phase['current_meta']['remaining_sec']) ? human_time((int) $phase['current_meta']['remaining_sec']) : '—'; ?></span></div>
             <div class="glitch-hint">Перемикання фаз запускає каскади подій.</div>
         </div>
         <div class="protocol-card">

@@ -157,10 +157,32 @@ function set_timer_state(string $action): void
 function current_phase(): array
 {
     $phases = load_json('phases.json');
+    $timer = timer_status(false);
+
+    $currentId = $phases['current_phase'] ?? null;
+    $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
+    $currentConfig = null;
+
+    foreach ($phases['phases'] ?? [] as $phase) {
+        if (($phase['id'] ?? null) === $currentId) {
+            $currentConfig = $phase;
+            break;
+        }
+    }
+
+    $phaseElapsed = max(0, ($timer['elapsed'] ?? 0) - $startedElapsed);
+    $phaseDuration = $currentConfig['duration_sec'] ?? null;
+    $phaseRemaining = $phaseDuration !== null ? max(0, $phaseDuration - $phaseElapsed) : null;
+
     return [
-        'current' => $phases['current_phase'] ?? null,
-        'started_elapsed' => $phases['current_phase_started_elapsed'] ?? 0,
+        'current' => $currentId,
+        'started_elapsed' => $startedElapsed,
         'phases' => $phases['phases'] ?? [],
+        'current_meta' => [
+            'duration_sec' => $phaseDuration,
+            'elapsed_sec' => $phaseElapsed,
+            'remaining_sec' => $phaseRemaining,
+        ],
     ];
 }
 

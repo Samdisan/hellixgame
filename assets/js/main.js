@@ -132,6 +132,8 @@ function startLiveTimer() {
                 const elapsedEl = container.querySelector('[data-timer-elapsed]');
                 const remainingEl = container.querySelector('[data-timer-remaining]');
                 const statusEl = container.querySelector('[data-timer-status]');
+                const phaseElapsedEl = container.querySelector('[data-phase-elapsed]');
+                const phaseRemainingEl = container.querySelector('[data-phase-remaining]');
                 const triggersTable = container.querySelector('[data-timer-triggers] tbody');
 
                 if (elapsedEl && payload.timer) {
@@ -142,6 +144,13 @@ function startLiveTimer() {
                 }
                 if (statusEl && payload.timer) {
                     statusEl.textContent = (payload.timer.state || '').toUpperCase();
+                }
+                if (phaseElapsedEl && payload.phases && payload.phases.current_meta) {
+                    phaseElapsedEl.textContent = formatHuman(payload.phases.current_meta.elapsed_sec);
+                }
+                if (phaseRemainingEl && payload.phases && payload.phases.current_meta) {
+                    const remain = payload.phases.current_meta.remaining_sec;
+                    phaseRemainingEl.textContent = typeof remain === 'number' ? formatHuman(remain) : '—';
                 }
                 if (triggersTable && payload.timer && Array.isArray(payload.timer.time_triggers)) {
                     triggersTable.innerHTML = payload.timer.time_triggers.map((trigger) => {
