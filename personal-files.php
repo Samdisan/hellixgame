@@ -13,9 +13,8 @@ include __DIR__ . '/partials/header.php';
 <section class="panel">
     <div class="glitch-overlay"></div>
     <h1>Особові справи</h1>
-    <p class="muted">Повна картотека HELIX. Дані синхронізовані з /data/players.json та personal-files.json.</p>
 </section>
-<section class="grid cols-3 personal-grid">
+<section class="grid cols-4 personal-grid">
     <?php foreach ($players as $person): ?>
         <?php $file = $filesById[$person['id']] ?? null; ?>
         <article class="personal-card">

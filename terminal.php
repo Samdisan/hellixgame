@@ -10,17 +10,11 @@ include __DIR__ . '/partials/header.php';
     <h1>Термінал станції</h1>
     <div class="terminal-meta">
         <div class="meta-block">
-            <div class="badge">Глобальний таймер</div>
-            <div class="meta-line">Минуло: <span data-timer-elapsed><?php echo human_time((int) ($timer['elapsed'] ?? 0)); ?></span></div>
-            <div class="meta-line">Залишилось: <span data-timer-remaining><?php echo human_time((int) ($timer['remaining'] ?? 0)); ?></span></div>
-        </div>
-        <?php if (!empty($phase['current_meta']['remaining_sec'])): ?>
-            <div class="meta-block">
-                <div class="badge">Фаза</div>
-                <div class="meta-line"><?php echo htmlspecialchars($phase['current'] ?? '—', ENT_QUOTES); ?></div>
-                <div class="meta-line">Зворотній відлік фази: <span data-phase-remaining><?php echo human_time((int) $phase['current_meta']['remaining_sec']); ?></span></div>
+            <div class="badge">Зворотний відлік</div>
+            <div class="meta-line meta-line--timer" data-timer-remaining>
+                <?php echo human_time((int) ($timer['remaining'] ?? 0)); ?>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
     <div class="terminal-hero" style="margin:12px 0;">
         <div class="terminal-line line-info"><span class="muted">[STREAM]</span><span class="badge">LIVE</span><span>Повідомлення системи, аварійні сигнали, витоки даних, галюцинації станції.</span></div>

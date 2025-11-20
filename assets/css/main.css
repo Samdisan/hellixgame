@@ -27,6 +27,20 @@ body.helix-shell {
     overflow-x: hidden;
 }
 
+body.helix-shell::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(110, 240, 197, 0.08) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(240, 110, 207, 0.06) 1px, transparent 1px);
+    background-size: 18px 18px, 22px 22px;
+    mix-blend-mode: screen;
+    opacity: 0.14;
+    pointer-events: none;
+    animation: gridDrift 12s linear infinite;
+    z-index: 0;
+}
+
 body.helix-shell::after {
     content: '';
     position: fixed;
@@ -118,6 +132,16 @@ nav a:hover {
     position: relative;
 }
 
+.panel::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border: 1px solid rgba(240, 110, 207, 0.08);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: techSweep 9s linear infinite;
+}
+
 h1, h2, h3, h4 {
     color: var(--accent);
     margin-top: 0;
@@ -141,6 +165,10 @@ h4 { font-size: 14px; }
 
 .grid.cols-3 {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.grid.cols-4 {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
 .landing-hero {
@@ -309,6 +337,14 @@ h4 { font-size: 14px; }
     margin-top: 4px;
 }
 
+.terminal-meta .meta-line--timer {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(110, 240, 197, 0.5);
+}
+
 .protocol-card {
     border: 1px dashed rgba(110, 240, 197, 0.25);
     padding: 12px;
@@ -454,6 +490,31 @@ h4 { font-size: 14px; }
     max-height: 380px;
     overflow: auto;
     border: 1px solid rgba(110, 240, 197, 0.3);
+    position: relative;
+    isolation: isolate;
+}
+
+.terminal::before,
+.terminal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.terminal::before {
+    background: repeating-linear-gradient(90deg, rgba(110, 240, 197, 0.05) 0, rgba(110, 240, 197, 0.05) 3px, transparent 3px, transparent 8px);
+    mix-blend-mode: screen;
+    opacity: 0.25;
+    animation: glitchSweep 4s linear infinite;
+}
+
+.terminal::after {
+    background: radial-gradient(circle at 20% 20%, rgba(240, 110, 207, 0.08), transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(110, 240, 197, 0.08), transparent 26%);
+    mix-blend-mode: lighten;
+    opacity: 0.2;
+    animation: glitchShift 6s ease-in-out infinite;
 }
 
 .terminal-line {
@@ -597,6 +658,7 @@ form.inline {
 
 .personal-grid {
     align-items: start;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .personal-card {
@@ -745,6 +807,18 @@ form.inline {
     50% { opacity: 0.8; }
     70% { opacity: 0.35; }
     90% { opacity: 0.75; }
+}
+
+@keyframes gridDrift {
+    from { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(6px, -4px, 0); }
+    to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes techSweep {
+    from { opacity: 0.4; transform: translate3d(-6px, -4px, 0); }
+    50% { opacity: 0.15; transform: translate3d(8px, 6px, 0); }
+    to { opacity: 0.4; transform: translate3d(-6px, -4px, 0); }
 }
 
 @media (max-width: 720px) {
