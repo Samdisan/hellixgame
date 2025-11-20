@@ -9,6 +9,8 @@ $order = isset($_POST['order']) && $_POST['order'] !== '' ? (int) $_POST['order'
 $duration = isset($_POST['duration_sec']) && $_POST['duration_sec'] !== '' ? (int) $_POST['duration_sec'] : null;
 $uiIntensity = trim($_POST['ui_intensity'] ?? '');
 $rawSubphases = trim($_POST['subphases'] ?? '');
+$startQuests = array_filter(array_map('trim', explode(',', $_POST['on_start_quests'] ?? '')));
+$endQuests = array_filter(array_map('trim', explode(',', $_POST['on_end_quests'] ?? '')));
 
 if ($id === '' || $label === '' || $description === '') {
     respond_json(['error' => 'missing_fields'], 400);
@@ -57,6 +59,14 @@ if ($rawSubphases !== '') {
             'start_condition' => trim($startPart),
         ];
     }
+}
+
+if (!empty($startQuests)) {
+    $newPhase['on_start_quests'] = array_values($startQuests);
+}
+
+if (!empty($endQuests)) {
+    $newPhase['on_end_quests'] = array_values($endQuests);
 }
 
 $phasesData['phases'][] = $newPhase;

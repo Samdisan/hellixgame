@@ -15,14 +15,12 @@
         <a href="/index.php">Головна</a>
         <a href="/expeditions.php">Експедиції</a>
         <a href="/protocols.php">Протоколи</a>
-        <a href="/personal-files.php">Особисті справи</a>
         <a href="/terminal.php">Термінал</a>
     </nav>
 </header>
 <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'admin'): ?>
     <nav class="admin-nav">
         <a href="/admin/admin.php">Адмін-хаб</a>
-        <a href="/admin/admin-timer.php">Глобальний таймер</a>
         <a href="/admin/admin-phases.php">Фази & квести</a>
         <a href="/admin/admin-terminal.php">Адмін-термінал</a>
         <a href="/admin/admin-protocols.php">Протоколи</a>

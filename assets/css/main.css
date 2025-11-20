@@ -510,10 +510,11 @@ form.inline {
 
 .muted { color: var(--muted); font-size: 14px; }
 
+
 .roster-card {
-    font-size: 10px;
-    line-height: 1.25;
-    padding: 6px;
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 10px;
 }
 
 .roster-card .badge { font-size: 11px; }
@@ -568,6 +569,22 @@ form.inline {
     color: var(--text);
     margin: 6px 0 0;
     line-height: 1.4;
+}
+
+.phase-form {
+    background: rgba(11, 17, 29, 0.7);
+    border: 1px solid rgba(110, 240, 197, 0.35);
+    border-radius: 12px;
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.phase-form__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
 }
 
 .timeline {

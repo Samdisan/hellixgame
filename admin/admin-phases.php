@@ -72,11 +72,22 @@ include __DIR__ . '/../partials/header.php';
                             $status = 'future';
                         }
                         $subphases = $phase['subphases'] ?? [];
+                        $startQuests = $phase['on_start_quests'] ?? [];
+                        $endQuests = $phase['on_end_quests'] ?? [];
                     ?>
                     <tr>
                         <td><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></td>
                         <td><?php echo htmlspecialchars($phase['label'] ?? '', ENT_QUOTES); ?></td>
-                        <td><?php echo htmlspecialchars($phase['description'] ?? '', ENT_QUOTES); ?></td>
+                        <td>
+                            <?php echo htmlspecialchars($phase['description'] ?? '', ENT_QUOTES); ?>
+                            <?php if (!empty($startQuests) || !empty($endQuests)): ?>
+                                <div class="micro muted">
+                                    <?php if (!empty($startQuests)): ?>На старті: <?php echo implode(', ', array_map('htmlspecialchars', $startQuests)); ?><?php endif; ?>
+                                    <?php if (!empty($startQuests) && !empty($endQuests)): ?> · <?php endif; ?>
+                                    <?php if (!empty($endQuests)): ?>На завершенні: <?php echo implode(', ', array_map('htmlspecialchars', $endQuests)); ?><?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <?php if (empty($subphases)): ?>
                                 <span class="muted">—</span>
@@ -138,7 +149,8 @@ include __DIR__ . '/../partials/header.php';
 
 <section class="panel">
     <h2>Додати фазу</h2>
-    <form class="stack" method="post" action="/api/add-phase.php">
+    <p class="muted">Заповніть ключові поля, додайте підфази та одразу прив’яжіть квести, що спрацюють на старті або завершенні.</p>
+    <form class="phase-form" method="post" action="/api/add-phase.php">
         <div class="grid two">
             <label>Ідентифікатор
                 <input required name="id" placeholder="PH_NEW" aria-describedby="idHelp" />
@@ -172,8 +184,23 @@ include __DIR__ . '/../partials/header.php';
             <textarea name="subphases" rows="2" placeholder="OUTBREAK-1: Відновити код Origin; старт після початку фази"></textarea>
             <div class="micro muted">Формат: id: назва; умова старту. Кожна підфаза з нового рядка.</div>
         </label>
-        <input type="hidden" name="redirect" value="/admin/admin-phases.php" />
-        <button class="button" type="submit">Зберегти фазу</button>
+        <div class="grid two">
+            <label>Квести на старті фази
+                <input name="on_start_quests" placeholder="Q_INTRO, Q_START_OUTBREAK" />
+                <div class="micro muted">Через кому — ці квести запустяться одразу при активації фази.</div>
+            </label>
+            <label>Квести при завершенні
+                <input name="on_end_quests" placeholder="Q_WRAP_UP" />
+                <div class="micro muted">Через кому — ці квести спрацюють коли фаза завершується.</div>
+            </label>
+        </div>
+        <div class="phase-form__footer">
+            <div class="micro muted">Збереження одразу додає фазу до таймлайна та показує її в карті фаз/квестів.</div>
+            <div>
+                <input type="hidden" name="redirect" value="/admin/admin-phases.php" />
+                <button class="button" type="submit">Зберегти фазу</button>
+            </div>
+        </div>
     </form>
 </section>
 
@@ -227,14 +254,15 @@ include __DIR__ . '/../partials/header.php';
     <h2>Тригери часу та підфаз</h2>
     <p class="muted">Часові маяки показують, коли запустяться квести або підфази відносно глобального таймера.</p>
     <table class="table" data-timer-triggers>
-        <thead><tr><th>Спрацює через</th><th>Мітка</th><th>Тип</th></tr></thead>
+        <thead><tr><th>Спрацює через</th><th>Мітка</th><th>Тип</th><th>Фаза/підфаза</th></tr></thead>
         <tbody>
             <?php foreach ($timer['time_triggers'] as $trigger): ?>
                 <?php $left = max(0, ($trigger['at_seconds'] ?? 0) - ($timer['elapsed'] ?? 0)); ?>
                 <tr>
                     <td><?php echo human_time((int)$left); ?></td>
                     <td><?php echo htmlspecialchars($trigger['quest_id'], ENT_QUOTES); ?></td>
-                    <td>quest trigger</td>
+                    <td><span class="badge level">Quest</span></td>
+                    <td class="muted">Прив’язаний до таймера</td>
                 </tr>
             <?php endforeach; ?>
             <?php foreach ($phases as $phase): ?>
@@ -242,7 +270,8 @@ include __DIR__ . '/../partials/header.php';
                     <tr>
                         <td class="muted">динамічно</td>
                         <td><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></td>
-                        <td>subphase: <?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></td>
+                        <td><span class="badge">Subphase</span></td>
+                        <td><?php echo htmlspecialchars($phase['id'] . ' — ' . ($sub['start_condition'] ?? '—'), ENT_QUOTES); ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>
