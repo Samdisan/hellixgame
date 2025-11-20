@@ -58,14 +58,5 @@ include __DIR__ . '/../partials/header.php';
             </div>
         <?php endforeach; ?>
     </div>
-    <div class="quick-actions" style="margin-top:12px;">
-        <a class="button secondary" href="admin-timer.php">Таймер</a>
-        <a class="button secondary" href="admin-phases.php">Фази</a>
-        <a class="button secondary" href="admin-quests.php">Квести</a>
-        <a class="button secondary" href="admin-terminal.php">Термінал</a>
-        <a class="button secondary" href="admin-protocols.php">Протоколи</a>
-        <a class="button secondary" href="admin-players.php">Гравці</a>
-        <a class="button secondary" href="admin-diagnostics.php">Діагностика</a>
-    </div>
 </section>
 <?php include __DIR__ . '/../partials/footer.php'; ?>

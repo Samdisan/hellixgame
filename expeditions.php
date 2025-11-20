@@ -24,7 +24,7 @@ include __DIR__ . '/partials/header.php';
         <div class="panel">
             <h3><?php echo $label; ?></h3>
             <?php foreach ($grouped[$key] ?? [] as $person): ?>
-                <div class="protocol-card">
+                <div class="protocol-card roster-card">
                     <div><strong><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></strong> — <?php echo htmlspecialchars($person['role'], ENT_QUOTES); ?></div>
                     <div class="muted">Рівень: <?php echo (int) $person['access_level']; ?></div>
                     <?php

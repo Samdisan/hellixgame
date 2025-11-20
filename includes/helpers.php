@@ -75,7 +75,7 @@ function human_time(int $seconds): string
     return implode(' ', $parts);
 }
 
-function timer_status(): array
+function timer_status(bool $processTriggers = true): array
 {
     $timer = load_json('timer.json');
     $duration = $timer['duration_seconds'] ?? 0;
@@ -91,6 +91,10 @@ function timer_status(): array
     $remaining = max(0, $duration - $elapsed);
     if ($elapsed >= $duration && $duration > 0) {
         $state = 'finished';
+    }
+
+    if ($processTriggers) {
+        $timer = process_time_triggers($timer, $elapsed);
     }
 
     return [
@@ -163,7 +167,7 @@ function current_phase(): array
 function set_current_phase(string $phaseId): void
 {
     $phases = load_json('phases.json');
-    $timer = timer_status();
+    $timer = timer_status(false);
     $phases['current_phase_started_elapsed'] = $timer['elapsed'] ?? 0;
     $phases['current_phase'] = $phaseId;
     save_json('phases.json', $phases);
@@ -179,6 +183,111 @@ function append_terminal_message(string $target, string $type, string $message):
         'message' => $message,
     ];
     save_json('terminal-messages.json', $messages);
+}
+
+function run_quest_actions(array $quest): void
+{
+    $actions = $quest['actions'] ?? [];
+    $protocols = load_json('protocols.json');
+    $players = load_json('players.json');
+
+    foreach ($actions as $action) {
+        if (!is_array($action) || empty($action['type'])) {
+            continue;
+        }
+
+        switch ($action['type']) {
+            case 'set_phase':
+                if (!empty($action['to'])) {
+                    set_current_phase($action['to']);
+                    append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
+                }
+                break;
+            case 'activate_protocol':
+            case 'deactivate_protocol':
+            case 'unlock_protocol':
+                foreach ($protocols as &$protocol) {
+                    if ($protocol['id'] === ($action['protocol_id'] ?? '')) {
+                        $protocol['active'] = $action['type'] !== 'deactivate_protocol';
+                        if ($action['type'] === 'unlock_protocol') {
+                            $protocol['public'] = true;
+                        }
+                        append_terminal_message('admin_terminal', 'protocol', '[PROTOCOL] ' . $protocol['id'] . ' → ' . ($protocol['active'] ? 'active' : 'inactive'));
+                    }
+                }
+                unset($protocol);
+                break;
+            case 'set_access':
+            case 'set_status':
+                foreach ($players as &$player) {
+                    if ($player['id'] === ($action['player_id'] ?? '')) {
+                        if ($action['type'] === 'set_access' && isset($action['level'])) {
+                            $player['access_level'] = (int) $action['level'];
+                        }
+                        if ($action['type'] === 'set_status' && isset($action['status'])) {
+                            $player['status'] = $action['status'];
+                        }
+                        append_terminal_message('admin_terminal', 'info', '[PLAYER] ' . $player['id'] . ' оновлено');
+                    }
+                }
+                unset($player);
+                break;
+            case 'push_terminal':
+                $target = $action['target'] ?? 'public_terminal';
+                $type = $action['level'] ?? 'info';
+                $text = $action['message'] ?? ($action['message_id'] ?? '');
+                if ($text !== '') {
+                    append_terminal_message($target, $type, $text);
+                }
+                break;
+        }
+    }
+
+    save_json('protocols.json', $protocols);
+    save_json('players.json', $players);
+}
+
+function process_time_triggers(array $timer, int $elapsed): array
+{
+    if (($timer['state'] ?? 'not_started') === 'not_started' && $elapsed === 0) {
+        return $timer;
+    }
+
+    $changed = false;
+    foreach ($timer['time_triggers'] ?? [] as &$trigger) {
+        $at = (int) ($trigger['at_seconds'] ?? 0);
+        if (!empty($trigger['fired'])) {
+            continue;
+        }
+        if ($elapsed >= $at && !empty($trigger['quest_id'])) {
+            $quest = find_quest($trigger['quest_id']);
+            if ($quest) {
+                run_quest_actions($quest);
+                append_terminal_message('admin_terminal', 'info', '[TRIGGER] Спрацював тригер ' . $trigger['id']);
+            }
+            $trigger['fired'] = true;
+            $changed = true;
+        }
+    }
+    unset($trigger);
+
+    if ($changed) {
+        $timer['last_updated'] = gmdate('c');
+        save_json('timer.json', $timer);
+    }
+
+    return $timer;
+}
+
+function find_quest(string $questId): ?array
+{
+    $quests = load_json('quests.json');
+    foreach ($quests as $quest) {
+        if ($quest['id'] === $questId) {
+            return $quest;
+        }
+    }
+    return null;
 }
 
 function respond_json(array $payload, int $status = 200): void

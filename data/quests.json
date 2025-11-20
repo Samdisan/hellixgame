@@ -1,31 +1,55 @@
 [
   {
-    "id": "Q_INTRO_01",
+    "id": "Q_INTRO_BOOT",
     "label": "Пробудження станції",
     "phase": "PH_INTRO",
     "subphase": "BOOT",
-    "actions": ["enable_labs", "unlock_logs"],
+    "actions": [
+      {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "[INTRO] HELIX виходить з режиму очікування. Системи зв'язку перезавантажені."},
+      {"type": "activate_protocol", "protocol_id": "PR_LAB_ACCESS"}
+    ],
     "favorite": true
   },
   {
-    "id": "Q_OUTBREAK_01",
-    "label": "Ідентифікація збудника",
+    "id": "Q_OUTBREAK_START",
+    "label": "Запуск фази OUTBREAK",
     "phase": "PH_OUTBREAK",
-    "actions": ["scan_samples", "alert_security"],
-    "favorite": false
+    "subphase": "OUTBREAK-1",
+    "actions": [
+      {"type": "set_phase", "to": "PH_OUTBREAK"},
+      {"type": "push_terminal", "target": "public_terminal", "level": "warning", "message": "[OUTBREAK] Виявлені перші симптоми. Система переходить у режим реагування."},
+      {"type": "unlock_protocol", "protocol_id": "PR_PUBLIC_BRIEF"}
+    ],
+    "favorite": true
   },
   {
-    "id": "Q_QUARANTINE_02",
-    "label": "Контроль карантинних шлюзів",
+    "id": "Q_OUTBREAK_PEAK",
+    "label": "Битва за життя",
+    "phase": "PH_OUTBREAK",
+    "subphase": "OUTBREAK-2",
+    "actions": [
+      {"type": "push_terminal", "target": "public_terminal", "level": "critical", "message": "[OUTBREAK-PEAK] Навантаження на систему критичне. Медичні команди вимагають підтримки."},
+      {"type": "activate_protocol", "protocol_id": "PR_QUARANTINE_RULES"}
+    ]
+  },
+  {
+    "id": "Q_QUARANTINE_START",
+    "label": "Старт карантину",
     "phase": "PH_QUARANTINE",
-    "actions": [],
-    "favorite": false
+    "subphase": "QUARANTINE-EXT",
+    "actions": [
+      {"type": "set_phase", "to": "PH_QUARANTINE"},
+      {"type": "push_terminal", "target": "public_terminal", "level": "critical", "message": "[QUARANTINE] Об'єкт переходить у карантин. Усі переміщення обмежені."}
+    ]
   },
   {
-    "id": "Q_FINAL_01",
-    "label": "Передача зразків на орбітальний модуль",
+    "id": "Q_FINAL_PUSH",
+    "label": "Фінальна передача",
     "phase": "PH_FINAL",
-    "actions": ["prep_capsule", "launch_signal"],
-    "favorite": false
+    "actions": [
+      {"type": "set_phase", "to": "PH_FINAL"},
+      {"type": "push_terminal", "target": "public_terminal", "level": "protocol", "message": "[FINAL] Фінальні протоколи розіслані. Підготуйте рішення."},
+      {"type": "activate_protocol", "protocol_id": "PR_ANTIVIRAL"}
+    ]
   }
 ]

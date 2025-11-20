@@ -15,6 +15,7 @@
         <a href="/index.php">Головна</a>
         <a href="/expeditions.php">Експедиції</a>
         <a href="/protocols.php">Протоколи</a>
+        <a href="/personal-files.php">Особисті справи</a>
         <a href="/terminal.php">Термінал</a>
         <a href="/#access">Вхід</a>
     </nav>

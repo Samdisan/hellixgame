@@ -22,5 +22,6 @@ if (!$quest) {
     exit;
 }
 
-append_terminal_message('admin_terminal', 'info', 'Quest run: ' . $questId);
-respond_json(['status' => 'queued', 'quest' => $quest]);
+run_quest_actions($quest);
+append_terminal_message('admin_terminal', 'info', 'Quest executed: ' . $questId);
+respond_json(['status' => 'completed', 'quest' => $quest]);

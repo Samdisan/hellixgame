@@ -4,9 +4,11 @@
   "start_time": null,
   "elapsed_seconds": 0,
   "time_triggers": [
-    {"at_seconds": 3600, "quest_id": "Q_OUTBREAK_01"},
-    {"at_seconds": 21600, "quest_id": "Q_QUARANTINE_02"},
-    {"at_seconds": 39600, "quest_id": "Q_FINAL_01"}
+    {"id": "TT_INTRO_BOOT", "quest_id": "Q_INTRO_BOOT", "at_seconds": 0, "fired": false},
+    {"id": "TT_OUTBREAK_START", "quest_id": "Q_OUTBREAK_START", "at_seconds": 900, "fired": false},
+    {"id": "TT_OUTBREAK_PEAK", "quest_id": "Q_OUTBREAK_PEAK", "at_seconds": 3600, "fired": false},
+    {"id": "TT_QUARANTINE", "quest_id": "Q_QUARANTINE_START", "at_seconds": 21600, "fired": false},
+    {"id": "TT_FINAL", "quest_id": "Q_FINAL_PUSH", "at_seconds": 39600, "fired": false}
   ],
   "last_updated": "2025-12-10T07:00:00Z"
 }
