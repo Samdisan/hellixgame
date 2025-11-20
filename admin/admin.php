@@ -15,7 +15,7 @@ foreach ($players as $player) {
 }
 include __DIR__ . '/../partials/header.php';
 ?>
-<section class="panel">
+<section class="panel" data-live-timer>
     <div class="glitch-overlay"></div>
     <h1>Головний командний центр</h1>
     <p class="muted">Ви на містку корабля HELIX. Тут сходяться фаза, час, статуси, протоколи — все, що рухає гру.</p>
@@ -27,8 +27,9 @@ include __DIR__ . '/../partials/header.php';
         </div>
         <div class="protocol-card">
             <div class="badge level">Глобальний час</div>
-            <div>Минуло: <?php echo human_time((int)$timer['elapsed']); ?></div>
-            <div>Залишилось: <?php echo human_time((int)$timer['remaining']); ?></div>
+            <div>Статус: <span data-timer-status><?php echo strtoupper($timer['state']); ?></span></div>
+            <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>
+            <div>Залишилось: <span data-timer-remaining><?php echo human_time((int)$timer['remaining']); ?></span></div>
         </div>
         <div class="protocol-card">
             <div class="badge level">Активні протоколи</div>

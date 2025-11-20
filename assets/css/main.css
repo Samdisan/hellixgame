@@ -295,6 +295,11 @@ h4 { font-size: 14px; }
     background: rgba(255, 255, 255, 0.02);
     position: relative;
 }
+.protocol-card.locked {
+    border-style: solid;
+    border-color: rgba(255, 193, 101, 0.35);
+    background: rgba(255, 193, 101, 0.06);
+}
 
 .protocol-card.new::after {
     content: 'NEW';
@@ -447,6 +452,23 @@ h4 { font-size: 14px; }
 .chip small {
     color: var(--muted);
 }
+.chip-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+    background: rgba(12, 18, 30, 0.4);
+    border-radius: 10px;
+    border: 1px solid rgba(110, 240, 197, 0.2);
+    max-height: 220px;
+    overflow: auto;
+}
+.checkbox-chip {
+    cursor: pointer;
+}
+.checkbox-chip input {
+    accent-color: var(--accent);
+}
 .line-info { color: var(--text); }
 .line-protocol { color: var(--accent); }
 .line-hint { color: var(--muted); }
@@ -489,9 +511,9 @@ form.inline {
 .muted { color: var(--muted); font-size: 14px; }
 
 .roster-card {
-    font-size: 12px;
-    line-height: 1.35;
-    padding: 10px;
+    font-size: 10px;
+    line-height: 1.25;
+    padding: 6px;
 }
 
 .roster-card .badge { font-size: 11px; }

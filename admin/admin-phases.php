@@ -7,7 +7,7 @@ $current = $phaseData['current'];
 $phaseStarted = $phaseData['started_elapsed'] ?? 0;
 $phases = $phaseData['phases'];
 $ids = array_column($phases, 'id');
-$currentIndex = array_search($current, $ids, true);
+$currentIndex = $ids ? array_search($current, $ids, true) : -1;
 $timer = timer_status();
 $phaseRuntime = max(0, ($timer['elapsed'] ?? 0) - $phaseStarted);
 $activeProtocols = array_filter(load_json('protocols.json'), function ($protocol) {
@@ -21,70 +21,103 @@ foreach ($quests as $quest) {
 }
 include __DIR__ . '/../partials/header.php';
 ?>
-<section class="panel">
+<section class="panel" data-live-timer>
     <div class="glitch-overlay"></div>
     <h1>Керування фазами</h1>
-    <p class="muted">Фази та підфази із живим часом і квестовими модулями. Тисніть тумблери — запускаєте каскади подій.</p>
-    <table class="table">
-        <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Підфази</th><th>Статус</th><th>Час у фазі</th><th></th></tr></thead>
-        <tbody>
-            <?php foreach ($phases as $idx => $phase): ?>
-                <?php
-                    if ($idx < $currentIndex) {
-                        $status = 'past';
-                    } elseif ($idx === $currentIndex) {
-                        $status = 'current';
-                    } elseif ($idx === $currentIndex + 1) {
-                        $status = 'next';
-                    } else {
-                        $status = 'future';
-                    }
-                    $subphases = $phase['subphases'] ?? [];
-                ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></td>
-                    <td><?php echo htmlspecialchars($phase['label'], ENT_QUOTES); ?></td>
-                    <td><?php echo htmlspecialchars($phase['description'], ENT_QUOTES); ?></td>
-                    <td>
-                        <?php if (empty($subphases)): ?>
-                            <span class="muted">—</span>
-                        <?php else: ?>
-                            <ul class="subphase-list">
-                                <?php foreach ($subphases as $sub): ?>
-                                    <li>
-                                        <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
-                                        <span class="muted"><?php echo htmlspecialchars($sub['label'] ?? '', ENT_QUOTES); ?></span>
-                                        <div class="micro">Старт: <?php echo htmlspecialchars($sub['start_condition'] ?? '—', ENT_QUOTES); ?></div>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
-                    </td>
-                    <td><span class="badge level"><?php echo strtoupper($status); ?></span></td>
-                    <td>
-                        <?php if ($phase['id'] === $current): ?>
-                            <?php echo human_time((int) $phaseRuntime); ?>
-                        <?php elseif (!empty($phase['duration_sec'])): ?>
-                            заплановано: <?php echo human_time((int) $phase['duration_sec']); ?>
-                        <?php else: ?>
-                            —
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if ($phase['id'] !== $current): ?>
-                            <form method="post" action="/api/set-phase.php">
-                                <input type="hidden" name="phase" value="<?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?>">
-                                <input type="hidden" name="redirect" value="/admin/admin-phases.php">
-                                <button class="button secondary" type="submit">Зробити поточною</button>
-                            </form>
-                        <?php else: ?>
-                            Поточна
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <p class="muted">Фази, підфази, квести та глобальний таймер тепер на одній панелі. Статус оновлюється наживо.</p>
+    <div class="grid cols-3 phase-live">
+        <div class="timeline-item">
+            <div class="muted">Статус таймера</div>
+            <div class="phase-badge" data-timer-status><?php echo strtoupper($timer['state']); ?></div>
+            <div class="micro">Оновлюється щосекунди</div>
+        </div>
+        <div class="timeline-item">
+            <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>
+            <div>Залишилось: <span data-timer-remaining><?php echo human_time((int)$timer['remaining']); ?></span></div>
+        </div>
+        <div class="timeline-item">
+            <div class="muted">Поточна фаза</div>
+            <div class="phase-badge"><?php echo htmlspecialchars($current ?? '—', ENT_QUOTES); ?></div>
+            <div class="micro">Час у фазі: <?php echo human_time((int)$phaseRuntime); ?></div>
+        </div>
+    </div>
+    <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
+        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+        <button class="button" name="action" value="start" type="submit">Start</button>
+        <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
+        <button class="button secondary" name="action" value="resume" type="submit">Resume</button>
+        <button class="button secondary" name="action" value="reset" type="submit">Reset</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Фази та підфази</h2>
+    <?php if (empty($phases)): ?>
+        <p class="muted">Фаз поки немає. Додайте першу фазу нижче, щоб запустити таймлайн.</p>
+    <?php else: ?>
+        <table class="table">
+            <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Підфази</th><th>Статус</th><th>Час у фазі</th><th></th></tr></thead>
+            <tbody>
+                <?php foreach ($phases as $idx => $phase): ?>
+                    <?php
+                        if ($currentIndex === -1) {
+                            $status = 'unassigned';
+                        } elseif ($idx < $currentIndex) {
+                            $status = 'past';
+                        } elseif ($idx === $currentIndex) {
+                            $status = 'current';
+                        } elseif ($idx === $currentIndex + 1) {
+                            $status = 'next';
+                        } else {
+                            $status = 'future';
+                        }
+                        $subphases = $phase['subphases'] ?? [];
+                    ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></td>
+                        <td><?php echo htmlspecialchars($phase['label'] ?? '', ENT_QUOTES); ?></td>
+                        <td><?php echo htmlspecialchars($phase['description'] ?? '', ENT_QUOTES); ?></td>
+                        <td>
+                            <?php if (empty($subphases)): ?>
+                                <span class="muted">—</span>
+                            <?php else: ?>
+                                <ul class="subphase-list">
+                                    <?php foreach ($subphases as $sub): ?>
+                                        <li>
+                                            <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
+                                            <span class="muted"><?php echo htmlspecialchars($sub['label'] ?? '', ENT_QUOTES); ?></span>
+                                            <div class="micro">Старт: <?php echo htmlspecialchars($sub['start_condition'] ?? '—', ENT_QUOTES); ?></div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </td>
+                        <td><span class="badge level"><?php echo strtoupper($status); ?></span></td>
+                        <td>
+                            <?php if (!empty($current) && $phase['id'] === $current): ?>
+                                <?php echo human_time((int) $phaseRuntime); ?>
+                            <?php elseif (!empty($phase['duration_sec'])): ?>
+                                заплановано: <?php echo human_time((int) $phase['duration_sec']); ?>
+                            <?php else: ?>
+                                —
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if (!empty($current) && $phase['id'] === $current): ?>
+                                Поточна
+                            <?php else: ?>
+                                <form method="post" action="/api/set-phase.php">
+                                    <input type="hidden" name="phase" value="<?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?>">
+                                    <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+                                    <button class="button secondary" type="submit">Зробити поточною</button>
+                                </form>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
 </section>
 
 <section class="panel">
@@ -146,44 +179,48 @@ include __DIR__ . '/../partials/header.php';
 
 <section class="panel">
     <h2>Карта фаз та квестів</h2>
-    <div class="phase-quest-grid">
-        <?php foreach ($phases as $phase): ?>
-            <div class="protocol-card">
-                <div class="badge level"><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></div>
-                <div class="muted">Підфази: <?php echo count($phase['subphases'] ?? []); ?> · Квести: <?php echo count($questsByPhase[$phase['id']] ?? []); ?></div>
-                <div class="micro">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></div>
-                <?php if (!empty($phase['subphases'])): ?>
-                    <ul class="subphase-list compact">
-                        <?php foreach ($phase['subphases'] as $sub): ?>
-                            <li>
-                                <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
-                                <div class="micro muted"><?php echo htmlspecialchars($sub['description'] ?? '', ENT_QUOTES); ?></div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-                <?php if (!empty($questsByPhase[$phase['id']])): ?>
-                    <div class="quest-list">
-                        <?php foreach ($questsByPhase[$phase['id']] as $quest): ?>
-                            <div class="quest-chip">
-                                <div>
-                                    <strong><?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?></strong>
-                                    <div class="micro muted"><?php echo htmlspecialchars($quest['label'] ?? '', ENT_QUOTES); ?></div>
+    <?php if (empty($phases)): ?>
+        <p class="muted">Додайте хоча б одну фазу, щоб прив'язати квести та підфази.</p>
+    <?php else: ?>
+        <div class="phase-quest-grid">
+            <?php foreach ($phases as $phase): ?>
+                <div class="protocol-card">
+                    <div class="badge level"><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></div>
+                    <div class="muted">Підфази: <?php echo count($phase['subphases'] ?? []); ?> · Квести: <?php echo count($questsByPhase[$phase['id']] ?? []); ?></div>
+                    <div class="micro">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></div>
+                    <?php if (!empty($phase['subphases'])): ?>
+                        <ul class="subphase-list compact">
+                            <?php foreach ($phase['subphases'] as $sub): ?>
+                                <li>
+                                    <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
+                                    <div class="micro muted"><?php echo htmlspecialchars($sub['description'] ?? '', ENT_QUOTES); ?></div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <?php if (!empty($questsByPhase[$phase['id']])): ?>
+                        <div class="quest-list">
+                            <?php foreach ($questsByPhase[$phase['id']] as $quest): ?>
+                                <div class="quest-chip">
+                                    <div>
+                                        <strong><?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?></strong>
+                                        <div class="micro muted"><?php echo htmlspecialchars($quest['label'] ?? '', ENT_QUOTES); ?></div>
+                                    </div>
+                                    <form method="post" action="/api/run-quest.php" class="inline">
+                                        <input type="hidden" name="quest_id" value="<?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?>">
+                                        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+                                        <button class="button secondary" type="submit">Запустити</button>
+                                    </form>
                                 </div>
-                                <form method="post" action="/api/run-quest.php" class="inline">
-                                    <input type="hidden" name="quest_id" value="<?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?>">
-                                    <input type="hidden" name="redirect" value="/admin/admin-phases.php">
-                                    <button class="button secondary" type="submit">Запустити</button>
-                                </form>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="micro muted">Немає квестів, прив'язаних до цієї фази.</div>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
-    </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="micro muted">Немає квестів, прив'язаних до цієї фази.</div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </section>
 
 <section class="panel" data-live-timer>

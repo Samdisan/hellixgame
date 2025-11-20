@@ -17,7 +17,6 @@
         <a href="/protocols.php">Протоколи</a>
         <a href="/personal-files.php">Особисті справи</a>
         <a href="/terminal.php">Термінал</a>
-        <a href="/#access">Вхід</a>
     </nav>
 </header>
 <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'admin'): ?>

@@ -3,6 +3,18 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_role('admin');
 
 $protocols = load_json('protocols.json');
+$players = load_json('players.json');
+
+function parse_allowed_players($input): array {
+    if (is_array($input)) {
+        return array_values(array_filter(array_map('trim', $input)));
+    }
+    $raw = trim((string)$input);
+    if ($raw === '') {
+        return [];
+    }
+    return array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', $raw))));
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['toggle'])) {
@@ -19,8 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['save_allowed'];
         foreach ($protocols as &$protocol) {
             if ($protocol['id'] === $id) {
-                $raw = trim($_POST['allowed_players'] ?? '');
-                $protocol['allowed_players'] = $raw === '' ? [] : array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', $raw))));
+                $protocol['allowed_players'] = parse_allowed_players($_POST['allowed_players'] ?? []);
                 append_terminal_message('admin_terminal', 'info', "[PROTOCOL] призначені гравці для {$id}");
             }
         }
@@ -36,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'phase' => $_POST['phase'],
             'active' => !empty($_POST['active']),
             'publish_time' => gmdate('c'),
-            'allowed_players' => array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', trim($_POST['allowed_players'] ?? '')))))
+            'allowed_players' => parse_allowed_players($_POST['allowed_players'] ?? [])
         ];
         append_terminal_message('admin_terminal', 'protocol', 'Додано протокол ' . $_POST['id']);
     }
@@ -74,7 +85,16 @@ include __DIR__ . '/../partials/header.php';
                         <?php endif; ?>
                         <form class="stack" method="post" style="margin-top:6px;">
                             <input type="hidden" name="save_allowed" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>">
-                            <input class="form-control" name="allowed_players" placeholder="PL_xxx, PL_yyy" value="<?php echo htmlspecialchars(implode(', ', $protocol['allowed_players'] ?? []), ENT_QUOTES); ?>">
+                            <div class="chip-select">
+                                <?php foreach ($players as $player): ?>
+                                    <label class="chip checkbox-chip">
+                                        <input type="checkbox" name="allowed_players[]" value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>" <?php echo in_array($player['id'], $protocol['allowed_players'] ?? [], true) ? 'checked' : ''; ?>>
+                                        <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?>
+                                        <span class="micro muted"><?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="micro muted">Якщо не обрано жодного — протокол бачать усі, хто має потрібний рівень.</div>
                             <button class="button secondary" type="submit">Зберегти перелік</button>
                         </form>
                     </td>
@@ -118,7 +138,11 @@ include __DIR__ . '/../partials/header.php';
             <label style="margin-left:12px;"><input type="checkbox" name="active" value="1" checked> Active</label>
         </div>
         <label style="margin-top:8px; display:block;">Дозволені гравці (опційно)
-            <input class="form-control" name="allowed_players" placeholder="PL_STATION_01, PL_WHO_02">
+            <select class="form-control" name="allowed_players[]" multiple size="8">
+                <?php foreach ($players as $player): ?>
+                    <option value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($player['name'] . ' — ' . $player['id'], ENT_QUOTES); ?></option>
+                <?php endforeach; ?>
+            </select>
             <span class="micro muted">Якщо пусто — протокол доступний усім з достатнім рівнем.</span>
         </label>
         <button class="button" type="submit">Створити</button>
