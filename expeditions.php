@@ -16,8 +16,6 @@ include __DIR__ . '/partials/header.php';
 <section class="panel">
     <div class="glitch-overlay"></div>
     <h1>Список персоналу станції</h1>
-    <p class="muted">Офіційний реєстр HELIX. Фракції розділено жорстко, статуси оновлюються за даними /data/players.json.</p>
-    <div class="glitch-hint">Якщо на когось подія вплинула — статус зміниться одразу.</div>
     <div class="overlay-text">registry online</div>
 </section>
 

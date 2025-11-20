@@ -19,7 +19,7 @@ include __DIR__ . '/partials/header.php';
 <section class="grid cols-2">
     <div class="panel">
         <div class="glitch-overlay"></div>
-        <h1>Панель гравця</h1>
+        <h1>Особиста справа</h1>
         <p class="muted">Ваш канал активний. Код доступу: <?php echo htmlspecialchars($_SESSION['access_code'], ENT_QUOTES); ?>.</p>
         <div class="timeline-item">
             <strong><?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?></strong> — <?php echo htmlspecialchars($player['role'], ENT_QUOTES); ?><br>
