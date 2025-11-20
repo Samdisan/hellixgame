@@ -19,12 +19,16 @@ foreach ($quests as $quest) {
     $phaseId = $quest['phase'] ?? 'unassigned';
     $questsByPhase[$phaseId][] = $quest;
 }
+$protocolsById = [];
+foreach (load_json('protocols.json') as $protocol) {
+    $protocolsById[$protocol['id']] = $protocol;
+}
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
     <div class="glitch-overlay"></div>
     <h1>Керування фазами</h1>
-    <p class="muted">Фази, підфази, квести та глобальний таймер тепер на одній панелі. Статус оновлюється наживо.</p>
+    <p class="muted">Фази, квести та глобальний таймер тепер на одній панелі. Статус оновлюється наживо.</p>
     <div class="grid cols-3 phase-live">
         <div class="timeline-item">
             <div class="muted">Статус таймера</div>
@@ -51,12 +55,12 @@ include __DIR__ . '/../partials/header.php';
 </section>
 
 <section class="panel">
-    <h2>Фази та підфази</h2>
+    <h2>Фази</h2>
     <?php if (empty($phases)): ?>
         <p class="muted">Фаз поки немає. Додайте першу фазу нижче, щоб запустити таймлайн.</p>
     <?php else: ?>
         <table class="table">
-            <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Підфази</th><th>Статус</th><th>Час у фазі</th><th></th></tr></thead>
+            <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Статус</th><th>Час у фазі</th><th></th></tr></thead>
             <tbody>
                 <?php foreach ($phases as $idx => $phase): ?>
                     <?php
@@ -71,7 +75,6 @@ include __DIR__ . '/../partials/header.php';
                         } else {
                             $status = 'future';
                         }
-                        $subphases = $phase['subphases'] ?? [];
                         $startQuests = $phase['on_start_quests'] ?? [];
                         $endQuests = $phase['on_end_quests'] ?? [];
                     ?>
@@ -86,21 +89,6 @@ include __DIR__ . '/../partials/header.php';
                                     <?php if (!empty($startQuests) && !empty($endQuests)): ?> · <?php endif; ?>
                                     <?php if (!empty($endQuests)): ?>На завершенні: <?php echo implode(', ', array_map('htmlspecialchars', $endQuests)); ?><?php endif; ?>
                                 </div>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if (empty($subphases)): ?>
-                                <span class="muted">—</span>
-                            <?php else: ?>
-                                <ul class="subphase-list">
-                                    <?php foreach ($subphases as $sub): ?>
-                                        <li>
-                                            <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
-                                            <span class="muted"><?php echo htmlspecialchars($sub['label'] ?? '', ENT_QUOTES); ?></span>
-                                            <div class="micro">Старт: <?php echo htmlspecialchars($sub['start_condition'] ?? '—', ENT_QUOTES); ?></div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
                             <?php endif; ?>
                         </td>
                         <td><span class="badge level"><?php echo strtoupper($status); ?></span></td>
@@ -138,10 +126,16 @@ include __DIR__ . '/../partials/header.php';
     <?php else: ?>
         <div class="chips">
             <?php foreach ($activeProtocols as $protocol): ?>
-                <span class="chip">
+                <button type="button" class="chip protocol-open"
+                        data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
+                        data-protocol-label="<?php echo htmlspecialchars($protocol['label'] ?? '', ENT_QUOTES); ?>"
+                        data-protocol-level="<?php echo (int) ($protocol['level'] ?? 0); ?>"
+                        data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'] ?? '', ENT_QUOTES); ?>"
+                        data-protocol-description="<?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?>"
+                        data-protocol-content="<?php echo htmlspecialchars($protocol['content'] ?? '', ENT_QUOTES); ?>">
                     <?php echo htmlspecialchars($protocol['id'] . ' — ' . ($protocol['label'] ?? 'Без назви'), ENT_QUOTES); ?>
                     <small class="muted">рівень <?php echo (int) ($protocol['level'] ?? 0); ?></small>
-                </span>
+                </button>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
@@ -149,7 +143,7 @@ include __DIR__ . '/../partials/header.php';
 
 <section class="panel">
     <h2>Додати фазу</h2>
-    <p class="muted">Заповніть ключові поля, додайте підфази та одразу прив’яжіть квести, що спрацюють на старті або завершенні.</p>
+    <p class="muted">Заповніть ключові поля та одразу прив’яжіть квести, що спрацюють на старті або завершенні.</p>
     <form class="phase-form" method="post" action="/api/add-phase.php">
         <div class="grid two">
             <label>Ідентифікатор
@@ -180,10 +174,6 @@ include __DIR__ . '/../partials/header.php';
                 </select>
             </label>
         </div>
-        <label>Підфази (опційно)
-            <textarea name="subphases" rows="2" placeholder="OUTBREAK-1: Відновити код Origin; старт після початку фази"></textarea>
-            <div class="micro muted">Формат: id: назва; умова старту. Кожна підфаза з нового рядка.</div>
-        </label>
         <div class="grid two">
             <label>Квести на старті фази
                 <input name="on_start_quests" placeholder="Q_INTRO, Q_START_OUTBREAK" />
@@ -207,24 +197,14 @@ include __DIR__ . '/../partials/header.php';
 <section class="panel">
     <h2>Карта фаз та квестів</h2>
     <?php if (empty($phases)): ?>
-        <p class="muted">Додайте хоча б одну фазу, щоб прив'язати квести та підфази.</p>
+        <p class="muted">Додайте хоча б одну фазу, щоб прив'язати квести.</p>
     <?php else: ?>
         <div class="phase-quest-grid">
             <?php foreach ($phases as $phase): ?>
                 <div class="protocol-card">
                     <div class="badge level"><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></div>
-                    <div class="muted">Підфази: <?php echo count($phase['subphases'] ?? []); ?> · Квести: <?php echo count($questsByPhase[$phase['id']] ?? []); ?></div>
+                    <div class="muted">Квести: <?php echo count($questsByPhase[$phase['id']] ?? []); ?></div>
                     <div class="micro">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></div>
-                    <?php if (!empty($phase['subphases'])): ?>
-                        <ul class="subphase-list compact">
-                            <?php foreach ($phase['subphases'] as $sub): ?>
-                                <li>
-                                    <strong><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></strong>
-                                    <div class="micro muted"><?php echo htmlspecialchars($sub['description'] ?? '', ENT_QUOTES); ?></div>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
                     <?php if (!empty($questsByPhase[$phase['id']])): ?>
                         <div class="quest-list">
                             <?php foreach ($questsByPhase[$phase['id']] as $quest): ?>
@@ -248,34 +228,5 @@ include __DIR__ . '/../partials/header.php';
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
-</section>
-
-<section class="panel" data-live-timer>
-    <h2>Тригери часу та підфаз</h2>
-    <p class="muted">Часові маяки показують, коли запустяться квести або підфази відносно глобального таймера.</p>
-    <table class="table" data-timer-triggers>
-        <thead><tr><th>Спрацює через</th><th>Мітка</th><th>Тип</th><th>Фаза/підфаза</th></tr></thead>
-        <tbody>
-            <?php foreach ($timer['time_triggers'] as $trigger): ?>
-                <?php $left = max(0, ($trigger['at_seconds'] ?? 0) - ($timer['elapsed'] ?? 0)); ?>
-                <tr>
-                    <td><?php echo human_time((int)$left); ?></td>
-                    <td><?php echo htmlspecialchars($trigger['quest_id'], ENT_QUOTES); ?></td>
-                    <td><span class="badge level">Quest</span></td>
-                    <td class="muted">Прив’язаний до таймера</td>
-                </tr>
-            <?php endforeach; ?>
-            <?php foreach ($phases as $phase): ?>
-                <?php foreach ($phase['subphases'] ?? [] as $sub): ?>
-                    <tr>
-                        <td class="muted">динамічно</td>
-                        <td><?php echo htmlspecialchars($sub['id'], ENT_QUOTES); ?></td>
-                        <td><span class="badge">Subphase</span></td>
-                        <td><?php echo htmlspecialchars($phase['id'] . ' — ' . ($sub['start_condition'] ?? '—'), ENT_QUOTES); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
 </section>
 <?php include __DIR__ . '/../partials/footer.php'; ?>

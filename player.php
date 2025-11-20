@@ -28,6 +28,7 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div style="margin-top:12px;" class="quick-actions">
             <a class="button" href="protocols-player.php">Мої протоколи</a>
+            <a class="button" href="personal-files.php">Особові справи</a>
             <a class="button secondary" href="expeditions.php">Експедиції</a>
             <a class="button secondary" href="terminal.php">Термінал</a>
         </div>

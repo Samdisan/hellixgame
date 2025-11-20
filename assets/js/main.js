@@ -70,6 +70,56 @@ function startHintTicker() {
     showHint();
 }
 
+function setupProtocolPopups() {
+    const modal = document.querySelector('.protocol-modal');
+    if (!modal) return;
+    const overlay = modal.querySelector('.protocol-modal__overlay');
+    const title = modal.querySelector('[data-modal-title]');
+    const meta = modal.querySelector('[data-modal-meta]');
+    const body = modal.querySelector('[data-modal-body]');
+
+    const close = () => modal.classList.remove('open');
+    modal.querySelectorAll('.protocol-modal__close, .protocol-modal__overlay').forEach((btn) => {
+        btn.addEventListener('click', close);
+    });
+
+    document.addEventListener('click', async (evt) => {
+        const trigger = evt.target.closest('.protocol-open');
+        if (!trigger) return;
+        const id = trigger.dataset.protocolId || '';
+        const label = trigger.dataset.protocolLabel || 'Без назви';
+        const level = trigger.dataset.protocolLevel || '';
+        const phase = trigger.dataset.protocolPhase || '';
+        const description = trigger.dataset.protocolDescription || '';
+        const content = trigger.dataset.protocolContent || '';
+        const locked = trigger.dataset.locked === '1';
+        const markUrl = trigger.dataset.markUrl;
+
+        title.textContent = `${label} (${id})`;
+        meta.textContent = `Рівень ${level} · Фаза ${phase}${locked ? ' · лише перегляд' : ''}`;
+        body.textContent = description;
+
+        modal.querySelector('[data-modal-content]').textContent = content;
+        modal.classList.add('open');
+
+        if (markUrl && !locked) {
+            try {
+                const form = new FormData();
+                form.append('protocol', id);
+                form.append('mode', 'json');
+                await fetch(markUrl, { method: 'POST', body: form });
+                trigger.closest('.protocol-card')?.classList.remove('new');
+            } catch (e) {
+                // ignore marking errors in UI
+            }
+        }
+    });
+
+    document.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape') close();
+    });
+}
+
 function startLiveTimer() {
     const containers = document.querySelectorAll('[data-live-timer]');
     if (!containers.length) return;
@@ -126,4 +176,5 @@ window.addEventListener('DOMContentLoaded', () => {
     startRotators();
     startHintTicker();
     startLiveTimer();
+    setupProtocolPopups();
 });

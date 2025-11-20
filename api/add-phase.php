@@ -8,7 +8,6 @@ $description = trim($_POST['description'] ?? '');
 $order = isset($_POST['order']) && $_POST['order'] !== '' ? (int) $_POST['order'] : null;
 $duration = isset($_POST['duration_sec']) && $_POST['duration_sec'] !== '' ? (int) $_POST['duration_sec'] : null;
 $uiIntensity = trim($_POST['ui_intensity'] ?? '');
-$rawSubphases = trim($_POST['subphases'] ?? '');
 $startQuests = array_filter(array_map('trim', explode(',', $_POST['on_start_quests'] ?? '')));
 $endQuests = array_filter(array_map('trim', explode(',', $_POST['on_end_quests'] ?? '')));
 
@@ -44,21 +43,6 @@ if ($duration !== null && $duration > 0) {
 
 if ($uiIntensity !== '') {
     $newPhase['ui_intensity'] = $uiIntensity;
-}
-
-if ($rawSubphases !== '') {
-    $lines = preg_split('/\r?\n/', $rawSubphases);
-    $newPhase['subphases'] = [];
-    foreach ($lines as $line) {
-        if (trim($line) === '') { continue; }
-        [$idPart, $rest] = array_pad(explode(':', $line, 2), 2, '');
-        [$labelPart, $startPart] = array_pad(explode(';', $rest, 2), 2, '');
-        $newPhase['subphases'][] = [
-            'id' => trim($idPart),
-            'label' => trim($labelPart),
-            'start_condition' => trim($startPart),
-        ];
-    }
 }
 
 if (!empty($startQuests)) {

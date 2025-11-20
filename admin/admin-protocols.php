@@ -83,6 +83,15 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                 </div>
                 <p><?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?></p>
+                <button type="button" class="button secondary protocol-open"
+                    data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
+                    data-protocol-label="<?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?>"
+                    data-protocol-level="<?php echo (int)$protocol['level']; ?>"
+                    data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?>"
+                    data-protocol-description="<?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?>"
+                    data-protocol-content="<?php echo htmlspecialchars($protocol['content'] ?? '', ENT_QUOTES); ?>">
+                    Відкрити протокол
+                </button>
                 <details class="micro muted">
                     <summary>Дозволені гравці</summary>
                     <?php if (empty($protocol['allowed_players'])): ?>
@@ -137,14 +146,19 @@ include __DIR__ . '/../partials/header.php';
             <label><input type="checkbox" name="public" value="1"> Public</label>
             <label style="margin-left:12px;"><input type="checkbox" name="active" value="1" checked> Active</label>
         </div>
-        <label style="margin-top:8px; display:block;">Дозволені гравці (опційно)
-            <select class="form-control" name="allowed_players[]" multiple size="8">
+        <fieldset style="margin-top:12px;">
+            <legend class="micro muted">Дозволені гравці (опційно)</legend>
+            <div class="chip-select">
                 <?php foreach ($players as $player): ?>
-                    <option value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($player['name'] . ' — ' . $player['id'], ENT_QUOTES); ?></option>
+                    <label class="chip checkbox-chip">
+                        <input type="checkbox" name="allowed_players[]" value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>">
+                        <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?>
+                        <span class="micro muted"><?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?></span>
+                    </label>
                 <?php endforeach; ?>
-            </select>
+            </div>
             <span class="micro muted">Якщо пусто — протокол доступний усім з достатнім рівнем.</span>
-        </label>
+        </fieldset>
         <button class="button" type="submit">Створити</button>
     </form>
 </section>
