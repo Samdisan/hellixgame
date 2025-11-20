@@ -61,57 +61,57 @@ include __DIR__ . '/../partials/header.php';
 <section class="panel">
     <div class="glitch-overlay"></div>
     <h1>Протоколи системи</h1>
-    <p class="muted">Таблиця секретних документів. Створюйте, вмикайте, оголошуйте через термінал — тут ви формуєте офіційну правду станції.</p>
-    <table class="table">
-        <thead><tr><th>ID</th><th>Label</th><th>Level</th><th>Public</th><th>Active</th><th>Фаза</th><th>Гравці</th><th>Дії</th></tr></thead>
-        <tbody>
-            <?php foreach ($protocols as $protocol): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?></td>
-                    <td><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></td>
-                    <td><?php echo (int)$protocol['level']; ?></td>
-                    <td><?php echo !empty($protocol['public']) ? 'yes' : 'no'; ?></td>
-                    <td><?php echo !empty($protocol['active']) ? 'yes' : 'no'; ?></td>
-                    <td><?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></td>
-                    <td>
-                        <?php if (empty($protocol['allowed_players'])): ?>
-                            <span class="muted">Всі з рівнем доступу</span>
-                        <?php else: ?>
-                            <div class="chips">
-                                <?php foreach ($protocol['allowed_players'] as $pid): ?>
-                                    <span class="chip"><?php echo htmlspecialchars($pid, ENT_QUOTES); ?></span>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                        <form class="stack" method="post" style="margin-top:6px;">
-                            <input type="hidden" name="save_allowed" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>">
-                            <div class="chip-select">
-                                <?php foreach ($players as $player): ?>
-                                    <label class="chip checkbox-chip">
-                                        <input type="checkbox" name="allowed_players[]" value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>" <?php echo in_array($player['id'], $protocol['allowed_players'] ?? [], true) ? 'checked' : ''; ?>>
-                                        <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?>
-                                        <span class="micro muted"><?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?></span>
-                                    </label>
-                                <?php endforeach; ?>
-                            </div>
-                            <div class="micro muted">Якщо не обрано жодного — протокол бачать усі, хто має потрібний рівень.</div>
-                            <button class="button secondary" type="submit">Зберегти перелік</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form class="inline" method="post">
+    <p class="muted">Стисле представлення всіх документів станції. Керуйте видимістю, активністю та призначенням гравців без довгих таблиць.</p>
+    <div class="proto-grid">
+        <?php foreach ($protocols as $protocol): ?>
+            <article class="proto-card">
+                <div class="proto-head">
+                    <div>
+                        <span class="tag">ID <?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?></span>
+                        <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
+                        <p class="muted">Рівень <?php echo (int)$protocol['level']; ?> · Фаза <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></p>
+                    </div>
+                    <div class="toggles">
+                        <form method="post" class="inline">
                             <input type="hidden" name="field" value="public">
-                            <button class="button secondary" name="toggle" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>" type="submit">Public</button>
+                            <button class="pill <?php echo !empty($protocol['public']) ? 'on' : 'off'; ?>" name="toggle" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>" type="submit">Public</button>
                         </form>
-                        <form class="inline" method="post">
+                        <form method="post" class="inline">
                             <input type="hidden" name="field" value="active">
-                            <button class="button secondary" name="toggle" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>" type="submit">Active</button>
+                            <button class="pill <?php echo !empty($protocol['active']) ? 'on' : 'off'; ?>" name="toggle" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>" type="submit">Active</button>
                         </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                    </div>
+                </div>
+                <p><?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?></p>
+                <details class="micro muted">
+                    <summary>Дозволені гравці</summary>
+                    <?php if (empty($protocol['allowed_players'])): ?>
+                        <div class="muted">Всі з відповідним рівнем доступу.</div>
+                    <?php else: ?>
+                        <div class="chips">
+                            <?php foreach ($protocol['allowed_players'] as $pid): ?>
+                                <span class="chip"><?php echo htmlspecialchars($pid, ENT_QUOTES); ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    <form class="stack" method="post" style="margin-top:6px;">
+                        <input type="hidden" name="save_allowed" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>">
+                        <div class="chip-select">
+                            <?php foreach ($players as $player): ?>
+                                <label class="chip checkbox-chip">
+                                    <input type="checkbox" name="allowed_players[]" value="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>" <?php echo in_array($player['id'], $protocol['allowed_players'] ?? [], true) ? 'checked' : ''; ?>>
+                                    <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?>
+                                    <span class="micro muted"><?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="micro muted">Якщо не обрано жодного — протокол бачать усі, хто має потрібний рівень.</div>
+                        <button class="button secondary" type="submit">Оновити перелік</button>
+                    </form>
+                </details>
+            </article>
+        <?php endforeach; ?>
+    </div>
 </section>
 <section class="panel">
     <h2>Додати протокол</h2>

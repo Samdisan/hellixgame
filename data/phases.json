@@ -1,5 +1,18 @@
 {
-  "current_phase": null,
+  "current_phase": "PH_INTRO",
   "current_phase_started_elapsed": 0,
-  "phases": []
+  "phases": [
+    {
+      "id": "PH_INTRO",
+      "title": "Прибуття експедиції",
+      "description": "Початкова атмосферна фаза. Станція формально працює, але фіксуються дрібні порушення — біологічні глічі.",
+      "order": 1,
+      "ui_intensity": "low",
+      "hint_frequency": "low",
+      "duration_sec": 900,
+      "auto_advance_to": "PH_OUTBREAK",
+      "on_start_quests": [],
+      "on_end_quests": ["Q_START_OUTBREAK"]
+    }
+  ]
 }

@@ -40,7 +40,11 @@ include __DIR__ . '/partials/header.php';
         <?php $file = $filesById[$person['id']] ?? null; ?>
         <article class="personal-card">
             <div class="portrait portrait-<?php echo htmlspecialchars($person['faction'], ENT_QUOTES); ?>">
-                <span><?php echo mb_substr($person['name'], 0, 1, 'UTF-8'); ?></span>
+                <?php if (!empty($file['photo'])): ?>
+                    <img src="<?php echo htmlspecialchars($file['photo'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?>">
+                <?php else: ?>
+                    <span><?php echo mb_substr($person['name'], 0, 1, 'UTF-8'); ?></span>
+                <?php endif; ?>
             </div>
             <div class="personal-meta">
                 <h3><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></h3>
