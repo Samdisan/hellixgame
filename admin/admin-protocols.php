@@ -15,6 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         unset($protocol);
+    } elseif (isset($_POST['save_allowed'])) {
+        $id = $_POST['save_allowed'];
+        foreach ($protocols as &$protocol) {
+            if ($protocol['id'] === $id) {
+                $raw = trim($_POST['allowed_players'] ?? '');
+                $protocol['allowed_players'] = $raw === '' ? [] : array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', $raw))));
+                append_terminal_message('admin_terminal', 'info', "[PROTOCOL] призначені гравці для {$id}");
+            }
+        }
+        unset($protocol);
     } elseif (isset($_POST['new_protocol'])) {
         $protocols[] = [
             'id' => $_POST['id'],
@@ -25,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'public' => !empty($_POST['public']),
             'phase' => $_POST['phase'],
             'active' => !empty($_POST['active']),
-            'publish_time' => gmdate('c')
+            'publish_time' => gmdate('c'),
+            'allowed_players' => array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', trim($_POST['allowed_players'] ?? '')))))
         ];
         append_terminal_message('admin_terminal', 'protocol', 'Додано протокол ' . $_POST['id']);
     }
@@ -41,7 +52,7 @@ include __DIR__ . '/../partials/header.php';
     <h1>Протоколи системи</h1>
     <p class="muted">Таблиця секретних документів. Створюйте, вмикайте, оголошуйте через термінал — тут ви формуєте офіційну правду станції.</p>
     <table class="table">
-        <thead><tr><th>ID</th><th>Label</th><th>Level</th><th>Public</th><th>Active</th><th>Фаза</th><th>Дії</th></tr></thead>
+        <thead><tr><th>ID</th><th>Label</th><th>Level</th><th>Public</th><th>Active</th><th>Фаза</th><th>Гравці</th><th>Дії</th></tr></thead>
         <tbody>
             <?php foreach ($protocols as $protocol): ?>
                 <tr>
@@ -51,6 +62,22 @@ include __DIR__ . '/../partials/header.php';
                     <td><?php echo !empty($protocol['public']) ? 'yes' : 'no'; ?></td>
                     <td><?php echo !empty($protocol['active']) ? 'yes' : 'no'; ?></td>
                     <td><?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></td>
+                    <td>
+                        <?php if (empty($protocol['allowed_players'])): ?>
+                            <span class="muted">Всі з рівнем доступу</span>
+                        <?php else: ?>
+                            <div class="chips">
+                                <?php foreach ($protocol['allowed_players'] as $pid): ?>
+                                    <span class="chip"><?php echo htmlspecialchars($pid, ENT_QUOTES); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                        <form class="stack" method="post" style="margin-top:6px;">
+                            <input type="hidden" name="save_allowed" value="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>">
+                            <input class="form-control" name="allowed_players" placeholder="PL_xxx, PL_yyy" value="<?php echo htmlspecialchars(implode(', ', $protocol['allowed_players'] ?? []), ENT_QUOTES); ?>">
+                            <button class="button secondary" type="submit">Зберегти перелік</button>
+                        </form>
+                    </td>
                     <td>
                         <form class="inline" method="post">
                             <input type="hidden" name="field" value="public">
@@ -90,6 +117,10 @@ include __DIR__ . '/../partials/header.php';
             <label><input type="checkbox" name="public" value="1"> Public</label>
             <label style="margin-left:12px;"><input type="checkbox" name="active" value="1" checked> Active</label>
         </div>
+        <label style="margin-top:8px; display:block;">Дозволені гравці (опційно)
+            <input class="form-control" name="allowed_players" placeholder="PL_STATION_01, PL_WHO_02">
+            <span class="micro muted">Якщо пусто — протокол доступний усім з достатнім рівнем.</span>
+        </label>
         <button class="button" type="submit">Створити</button>
     </form>
 </section>

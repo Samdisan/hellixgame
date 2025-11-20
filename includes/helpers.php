@@ -236,11 +236,15 @@ function render_glitch_hint(): string
     if (empty($hints)) {
         return '';
     }
-    // Support both array-of-strings and array-of-objects with a `text` field.
-    $hint = $hints[array_rand($hints)];
-    if (is_array($hint) && isset($hint['text'])) {
-        $hint = $hint['text'];
-    }
 
-    return '<div class="glitch-hint-window" role="status" aria-live="polite"><div class="glitch-hint">' . htmlspecialchars((string) $hint, ENT_QUOTES) . '</div></div>';
+    $texts = array_map(function ($hint) {
+        if (is_array($hint) && isset($hint['text'])) {
+            return (string) $hint['text'];
+        }
+        return (string) $hint;
+    }, $hints);
+
+    $payload = htmlspecialchars(json_encode(array_values(array_filter($texts))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+    return '<div class="glitch-hint-window" role="status" aria-live="polite" data-hints="' . $payload . '"><div class="glitch-hint"></div></div>';
 }
