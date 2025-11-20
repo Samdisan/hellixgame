@@ -1,0 +1,9 @@
+{
+  "current_phase": "PH_INTRO",
+  "phases": [
+    {"id": "PH_INTRO", "label": "Вступ", "description": "Системи завантажуються, зв'язок встановлено."},
+    {"id": "PH_OUTBREAK", "label": "Спалах", "description": "Початкові зараження, протоколи реагування активні."},
+    {"id": "PH_QUARANTINE", "label": "Карантин", "description": "Станція обмежує пересування, контроль шлюзів."},
+    {"id": "PH_FINAL", "label": "Фінал", "description": "Кульмінація сценарію та евакуація."}
+  ]
+}
