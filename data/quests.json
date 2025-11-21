@@ -80,6 +80,23 @@
     ]
   },
   {
+    "id": "Q_ILARIA_GATE_ALERT",
+    "label": "ILARIA-SEC-GAMMA: шлюз R-12",
+    "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після дев’ятої хвилини гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILARIA_SEC_GAMMA"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] ILARIA-SEC-GAMMA: несанкціонований доступ біля шлюзу R-12. Начальник безпеки Іларії, замітайте сліди та відволікайте ВООЗ."
+      }
+    ]
+  },
+  {
     "id": "Q_WHO_WHITE_ZONE",
     "label": "WHO-DATA-009: біла зона в логах",
     "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 11 хвилин гри.",
