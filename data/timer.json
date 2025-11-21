@@ -26,6 +26,13 @@
       "fired": false
     },
     {
+      "id": "TT_WHO_DATA_009",
+      "quest_id": "Q_WHO_WHITE_ZONE",
+      "elapsed_ge_sec": 660,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_LIFEFAIL",
       "quest_id": "Q_START_LIFEFAIL",
       "elapsed_ge_sec": 720,
