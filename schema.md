@@ -58,7 +58,6 @@ schema.md — JSON Schema для HELIX ECHELON
 {
   "current_phase": "PH_INTRO",    // string, id активної фази
   "current_phase_started_elapsed": 0, // коли фаза реально стала активною (сек з початку гри)
-  "subphase_states": {},              // runtime-стани підфаз: { "SP_ID": {"state": "active", "elapsed": 900} }
   "phases": [
     {
       "id": "PH_INTRO",           // string, унікальний ID фази
@@ -76,20 +75,6 @@ schema.md — JSON Schema для HELIX ECHELON
       ],
       "on_end_quests": [          // array of quest_id, опц.
         "Q_START_OUTBREAK"
-      ],
-      "subphases": [              // опис підфаз із їхніми часовими вікнами
-        {
-          "id": "SP_INTRO_ARRIVAL",
-          "label": "Підфаза 1.1: Прибуття",
-          "type": "narrative",
-          "time_window": {
-            "start_elapsed_ge_sec": 300,   // не раніше 5 хв від старту
-            "end_elapsed_le_sec": 900      // бажано завершити до 15 хв
-          },
-          "on_start_quests": ["Q_INTRO_ARRIVAL"],
-          "on_success_quests": [],
-          "on_fail_quests": []
-        }
       ]
     }
   ]
@@ -140,7 +125,6 @@ Time-window поля та списки квестів потрібні для с
     "label": "Запуск фази OUTBREAK", // string, коротка назва
     "description": "Станція переходить у фазу перших симптомів.", // string, опц.
     "phase": "PH_INTRO",          // string, до якої фази належить
-    "subphase": null,             // string | null, якщо це підфаза
     "time_constraints": {         // опційно: обмеження по глобальному часу
       "min_elapsed_sec": 900,     // не раніше 15 хв від початку гри
       "max_elapsed_sec": null
@@ -149,11 +133,6 @@ Time-window поля та списки квестів потрібні для с
       {
         "type": "set_phase",      // string, тип дії
         "to": "PH_OUTBREAK"       // параметри для цього типу
-      },
-      {
-        "type": "set_subphase_state",  // керування підфазами через квести
-        "subphase_id": "SP_INTRO_ARRIVAL",
-        "state": "success"
       },
       {
         "type": "push_terminal",

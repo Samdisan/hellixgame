@@ -10,7 +10,7 @@
   },
   {
     "id": "Q_INTRO_ARRIVAL",
-    "label": "Підфаза 1.1: Прибуття",
+    "label": "Фіксація прибуття",
     "phase": "PH_INTRO",
     "description": "Станція фіксує прибуття експедицій та оголошує підготовку секторів.",
     "time_constraints": {
@@ -18,7 +18,6 @@
       "max_elapsed_sec": 900
     },
     "actions": [
-      {"type": "set_subphase_state", "subphase_id": "SP_INTRO_ARRIVAL", "state": "active"},
       {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "Прибуття експедицій."},
       {"type": "push_terminal", "target": "admin_terminal", "level": "info", "message": "[INTEL] Прибуття експедицій підтверджено."},
       {"type": "deactivate_protocol", "protocol_id": "PR_I1"},
@@ -53,58 +52,6 @@
     "description": "Ручне або сценарне завершення фази.",
     "actions": [
       {"type": "push_terminal", "target": "admin_terminal", "level": "info", "message": "PH_OUTBREAK завершено."}
-    ]
-  },
-  {
-    "id": "Q_ORIGIN_START",
-    "label": "Відновити код Origin",
-    "phase": "PH_OUTBREAK",
-    "subphase_id": "SP_ORIGIN_RECOVERY",
-    "description": "Запускає критичну підфазу Origin.",
-    "time_constraints": {
-      "min_elapsed_sec": 900,
-      "max_elapsed_sec": 14400
-    },
-    "actions": [
-      {"type": "set_subphase_state", "subphase_id": "SP_ORIGIN_RECOVERY", "state": "active"},
-      {"type": "push_terminal", "target": "both", "level": "warning", "message": "[SUBPHASE] Розпочато відновлення коду Origin."}
-    ]
-  },
-  {
-    "id": "Q_ORIGIN_SUCCESS",
-    "label": "Origin: успіх",
-    "phase": "PH_OUTBREAK",
-    "subphase_id": "SP_ORIGIN_RECOVERY",
-    "description": "Успішне відновлення коду Origin.",
-    "actions": [
-      {"type": "set_subphase_state", "subphase_id": "SP_ORIGIN_RECOVERY", "state": "success"},
-      {"type": "push_terminal", "target": "both", "level": "info", "message": "[SUBPHASE] Origin відновлено."}
-    ]
-  },
-  {
-    "id": "Q_ORIGIN_FAIL",
-    "label": "Origin: провал",
-    "phase": "PH_OUTBREAK",
-    "subphase_id": "SP_ORIGIN_RECOVERY",
-    "description": "Провал підфази Origin.",
-    "actions": [
-      {"type": "set_subphase_state", "subphase_id": "SP_ORIGIN_RECOVERY", "state": "fail"},
-      {"type": "push_terminal", "target": "both", "level": "critical", "message": "[SUBPHASE] Origin втраченo. Перехід до карантину рекомендовано."}
-    ]
-  },
-  {
-    "id": "Q_BATTLE_FOR_LIFE_START",
-    "label": "Битва за життя",
-    "phase": "PH_OUTBREAK",
-    "subphase_id": "SP_BATTLE_FOR_LIFE",
-    "description": "Фонова підфаза напруги та інтенсивних подій.",
-    "time_constraints": {
-      "min_elapsed_sec": 900,
-      "max_elapsed_sec": 9900
-    },
-    "actions": [
-      {"type": "set_subphase_state", "subphase_id": "SP_BATTLE_FOR_LIFE", "state": "active"},
-      {"type": "push_terminal", "target": "both", "level": "warning", "message": "[SUBPHASE] Битва за життя активна."}
     ]
   }
 ]

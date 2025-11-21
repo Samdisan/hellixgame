@@ -1,7 +1,6 @@
 {
   "current_phase": "PH_INTRO",
   "current_phase_started_elapsed": 0,
-  "subphase_states": {},
   "phases": [
     {
       "id": "PH_INTRO",
@@ -16,22 +15,7 @@
       "ui_intensity": "low",
       "hint_frequency": "low",
       "on_start_quests": ["Q_INTRO_START"],
-      "on_end_quests": [],
-      "subphases": [
-        {
-          "id": "SP_INTRO_ARRIVAL",
-          "label": "Підфаза 1.1: Прибуття",
-          "type": "narrative",
-          "time_window": {
-            "start_elapsed_ge_sec": 300,
-            "end_elapsed_le_sec": 900
-          },
-          "on_start_quests": ["Q_INTRO_ARRIVAL"],
-          "on_success_quests": [],
-          "on_fail_quests": [],
-          "description": "Через 5 хвилин система оголошує прибуття експедицій."
-        }
-      ]
+      "on_end_quests": []
     },
     {
       "id": "PH_OUTBREAK",
@@ -47,33 +31,7 @@
       "ui_intensity": "medium",
       "hint_frequency": "medium",
       "on_start_quests": ["Q_OUTBREAK_START"],
-      "on_end_quests": ["Q_OUTBREAK_END"],
-      "subphases": [
-        {
-          "id": "SP_ORIGIN_RECOVERY",
-          "label": "Відновити код Origin",
-          "type": "critical",
-          "time_window": {
-            "start_elapsed_ge_sec": 900,
-            "end_elapsed_le_sec": 14400
-          },
-          "on_start_quests": ["Q_ORIGIN_START"],
-          "on_success_quests": ["Q_ORIGIN_SUCCESS"],
-          "on_fail_quests": ["Q_ORIGIN_FAIL"]
-        },
-        {
-          "id": "SP_BATTLE_FOR_LIFE",
-          "label": "Битва за життя",
-          "type": "background",
-          "time_window": {
-            "start_elapsed_ge_sec": 900,
-            "end_elapsed_le_sec": 9900
-          },
-          "on_start_quests": ["Q_BATTLE_FOR_LIFE_START"],
-          "on_success_quests": [],
-          "on_fail_quests": []
-        }
-      ]
+      "on_end_quests": ["Q_OUTBREAK_END"]
     }
   ]
 }

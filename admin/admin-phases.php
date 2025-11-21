@@ -3,7 +3,6 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_role('admin');
 
 $phaseData = current_phase();
-$phaseConfig = load_json('phases.json');
 $current = $phaseData['current'];
 $phaseStarted = $phaseData['started_elapsed'] ?? 0;
 $phases = $phaseData['phases'];
@@ -11,7 +10,6 @@ $nextPhase = $phaseData['next_phase'] ?? null;
 $ids = array_column($phases, 'id');
 $currentIndex = $ids ? array_search($current, $ids, true) : -1;
 $timer = timer_status();
-$subphaseStates = $phaseConfig['subphase_states'] ?? [];
 $phaseRuntime = max(0, ($timer['elapsed'] ?? 0) - $phaseStarted);
 $activeProtocols = array_filter(load_json('protocols.json'), function ($protocol) {
     return $protocol['active'] ?? false;
@@ -30,36 +28,6 @@ $protocolsById = [];
 foreach (load_json('protocols.json') as $protocol) {
     $protocolsById[$protocol['id']] = $protocol;
 }
-$subphaseRows = [];
-$globalElapsed = $timer['elapsed'] ?? 0;
-foreach ($phases as $phaseCfg) {
-    foreach ($phaseCfg['subphases'] ?? [] as $sub) {
-        $window = $sub['time_window'] ?? [];
-        $startAt = $window['start_elapsed_ge_sec'] ?? null;
-        $endAt = $window['end_elapsed_le_sec'] ?? null;
-        $state = $subphaseStates[$sub['id'] ?? '']['state'] ?? 'pending';
-        if (in_array($state, ['active', 'success', 'fail'], true)) {
-            // Вже запущені або завершені підфази не повертаються у чергу.
-            continue;
-        }
-
-        $eta = null;
-        if ($startAt !== null && $globalElapsed < $startAt) {
-            $eta = $startAt - $globalElapsed;
-        }
-        $subphaseRows[] = [
-            'phase' => $phaseCfg,
-            'subphase' => $sub,
-            'state' => $state,
-            'eta' => $eta,
-            'startAt' => $startAt,
-            'endAt' => $endAt,
-        ];
-    }
-}
-usort($subphaseRows, function ($a, $b) {
-    return ($a['startAt'] ?? 0) <=> ($b['startAt'] ?? 0);
-});
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
@@ -173,94 +141,34 @@ include __DIR__ . '/../partials/header.php';
 </section>
 
 <section class="panel">
-    <h2>Запуск підфаз і квестів</h2>
-    <p class="muted">Показує умови, коли спрацюють підфази, які квести вони запускають, та чи наближається їхній час.</p>
-    <div class="grid two">
-        <div>
-            <h3 class="micro">Підфази за часом</h3>
-            <?php if (empty($subphaseRows)): ?>
-                <p class="muted">Усі підфази вже активовані або недоступні для повторного запуску.</p>
-            <?php else: ?>
-                <table class="table dense">
-                    <thead><tr><th>Підфаза</th><th>Умови</th><th>Що станеться</th><th>ETA/Статус</th></tr></thead>
-                    <tbody>
-                    <?php foreach ($subphaseRows as $row): ?>
-                        <?php
-                            $sub = $row['subphase'];
-                            $phaseCfg = $row['phase'];
-                            $window = $sub['time_window'] ?? [];
-                            $conds = [];
-                            if (isset($window['start_elapsed_ge_sec'])) {
-                                $conds[] = 'elapsed ≥ ' . human_time((int)$window['start_elapsed_ge_sec']);
-                            }
-                            if (isset($window['end_elapsed_le_sec'])) {
-                                $conds[] = 'elapsed ≤ ' . human_time((int)$window['end_elapsed_le_sec']);
-                            }
-                            $questsStart = array_map(fn($q) => $questLookup[$q]['label'] ?? $q, $sub['on_start_quests'] ?? []);
-                            $questDescriptions = array_filter(array_map(fn($q) => $questLookup[$q]['description'] ?? null, $sub['on_start_quests'] ?? []));
-                            $stateLabel = strtoupper($row['state'] ?? 'pending');
-                            $etaText = 'готова до запуску';
-                            if (($row['state'] ?? '') === 'fired') {
-                                $etaText = 'спрацювала';
-                            } elseif ($row['eta'] !== null) {
-                                $etaText = 'через ' . human_time((int)$row['eta']);
-                            }
-                        ?>
-                        <tr>
-                            <td>
-                                <div class="micro muted"><?php echo htmlspecialchars($phaseCfg['id'], ENT_QUOTES); ?></div>
-                                <strong><?php echo htmlspecialchars($sub['label'] ?? $sub['id'], ENT_QUOTES); ?></strong>
-                            </td>
-                            <td class="micro muted"><?php echo $conds ? htmlspecialchars(implode(' · ', $conds), ENT_QUOTES) : 'умова не задана'; ?></td>
-                            <td class="micro">
-                                <?php echo $questsStart ? htmlspecialchars(implode(', ', $questsStart), ENT_QUOTES) : '—'; ?>
-                                <?php if ($questDescriptions): ?>
-                                    <div class="micro muted"><?php echo htmlspecialchars(implode(' | ', $questDescriptions), ENT_QUOTES); ?></div>
-                                <?php elseif (!empty($sub['description'])): ?>
-                                    <div class="micro muted"><?php echo htmlspecialchars($sub['description'], ENT_QUOTES); ?></div>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="badge level"><?php echo $stateLabel; ?></span>
-                                <div class="micro muted"><?php echo htmlspecialchars($etaText, ENT_QUOTES); ?></div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-        </div>
-        <div>
-            <h3 class="micro">Часові тригери квестів</h3>
-            <?php $triggers = $timer['time_triggers'] ?? []; ?>
-            <?php if (empty($triggers)): ?>
-                <p class="muted">Немає time-тригерів.</p>
-            <?php else: ?>
-                <table class="table dense" data-timer-triggers>
-                    <thead><tr><th>Умова</th><th>Квест</th><th>Статус</th></tr></thead>
-                    <tbody>
-                        <?php foreach ($triggers as $trigger): ?>
-                            <?php
-                                $conds = [];
-                                if ($trigger['elapsed_ge_sec'] !== null && $trigger['elapsed_ge_sec'] !== '') {
-                                    $conds[] = 'elapsed ≥ ' . human_time((int)$trigger['elapsed_ge_sec']);
-                                }
-                                if ($trigger['remaining_le_sec'] !== null && $trigger['remaining_le_sec'] !== '') {
-                                    $conds[] = 'remaining ≤ ' . human_time((int)$trigger['remaining_le_sec']);
-                                }
-                                $questLabel = $questLookup[$trigger['quest_id']]['label'] ?? ($trigger['quest_id'] ?? '');
-                            ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars(implode(' & ', $conds), ENT_QUOTES); ?></td>
-                                <td><?php echo htmlspecialchars($questLabel, ENT_QUOTES); ?></td>
-                                <td><span class="badge level"><?php echo !empty($trigger['fired']) ? 'FIRED' : 'PENDING'; ?></span></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-        </div>
-    </div>
+    <h2>Часові тригери квестів</h2>
+    <?php $triggers = $timer['time_triggers'] ?? []; ?>
+    <?php if (empty($triggers)): ?>
+        <p class="muted">Немає time-тригерів.</p>
+    <?php else: ?>
+        <table class="table dense" data-timer-triggers>
+            <thead><tr><th>Умова</th><th>Квест</th><th>Статус</th></tr></thead>
+            <tbody>
+                <?php foreach ($triggers as $trigger): ?>
+                    <?php
+                        $conds = [];
+                        if ($trigger['elapsed_ge_sec'] !== null && $trigger['elapsed_ge_sec'] !== '') {
+                            $conds[] = 'elapsed ≥ ' . human_time((int)$trigger['elapsed_ge_sec']);
+                        }
+                        if ($trigger['remaining_le_sec'] !== null && $trigger['remaining_le_sec'] !== '') {
+                            $conds[] = 'remaining ≤ ' . human_time((int)$trigger['remaining_le_sec']);
+                        }
+                        $questLabel = $questLookup[$trigger['quest_id']]['label'] ?? ($trigger['quest_id'] ?? '');
+                    ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars(implode(' & ', $conds), ENT_QUOTES); ?></td>
+                        <td><?php echo htmlspecialchars($questLabel, ENT_QUOTES); ?></td>
+                        <td><span class="badge level"><?php echo !empty($trigger['fired']) ? 'FIRED' : 'PENDING'; ?></span></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
 </section>
 
 <section class="panel">
@@ -353,30 +261,6 @@ include __DIR__ . '/../partials/header.php';
                         <span class="chip">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></span>
                         <span class="chip">Hints: <?php echo htmlspecialchars($phase['hint_frequency'] ?? '—', ENT_QUOTES); ?></span>
                     </div>
-                    <?php if (!empty($phase['subphases'])): ?>
-                        <div class="micro muted" style="margin-top:8px;">Підфази</div>
-                        <ul class="micro">
-                            <?php foreach ($phase['subphases'] as $sub): ?>
-                                <?php
-                                    $state = $subphaseStates[$sub['id'] ?? '']['state'] ?? 'pending';
-                                    $window = $sub['time_window'] ?? [];
-                                    $parts = [];
-                                    if (isset($window['start_elapsed_ge_sec'])) {
-                                        $parts[] = '>= ' . human_time((int)$window['start_elapsed_ge_sec']);
-                                    }
-                                    if (isset($window['end_elapsed_le_sec'])) {
-                                        $parts[] = '<= ' . human_time((int)$window['end_elapsed_le_sec']);
-                                    }
-                                    $cond = $parts ? implode(' · ', $parts) : 'умова не задана';
-                                ?>
-                                <li>
-                                    <strong><?php echo htmlspecialchars($sub['label'] ?? $sub['id'], ENT_QUOTES); ?></strong>
-                                    — <?php echo htmlspecialchars($cond, ENT_QUOTES); ?>
-                                    <span class="badge level" style="margin-left:4px;"><?php echo strtoupper($state); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
                     <div class="quest-list">
                         <?php if (!empty($phaseQuestList)): ?>
                             <?php foreach ($phaseQuestList as $quest): ?>

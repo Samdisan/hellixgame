@@ -100,7 +100,6 @@ function timer_status(bool $processTriggers = true): array
 
     if ($processTriggers) {
         $timer = process_time_triggers($timer, $elapsed, $remaining);
-        process_phase_subphases($elapsed, $remaining);
     }
 
     return [
@@ -229,7 +228,6 @@ function set_current_phase(string $phaseId): void
 
     $phases['current_phase_started_elapsed'] = $elapsed;
     $phases['current_phase'] = $phaseId;
-    $phases['subphase_states'] = [];
     save_json('phases.json', $phases);
 
     run_phase_hooks($phaseId, 'on_start_quests');
@@ -255,7 +253,6 @@ function run_quest_actions(array $quest): void
     $timer = timer_status(false);
     $phases = load_json('phases.json');
 
-    $saveSubphaseStates = false;
     $phasesDirty = false;
 
     foreach ($actions as $action) {
@@ -270,21 +267,6 @@ function run_quest_actions(array $quest): void
                     $phases = load_json('phases.json');
                     $phasesDirty = true;
                     append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
-                }
-                break;
-            case 'set_subphase_state':
-                $subId = $action['subphase_id'] ?? null;
-                $state = $action['state'] ?? null;
-                if ($subId && $state) {
-                    $phases = load_json('phases.json');
-                    $phases['subphase_states'] = $phases['subphase_states'] ?? [];
-                    $phases['subphase_states'][$subId] = [
-                        'state' => $state,
-                        'elapsed' => $timer['elapsed'] ?? 0,
-                    ];
-                    $saveSubphaseStates = true;
-                    $phasesDirty = true;
-                    append_terminal_message('both', 'info', '[SUBPHASE] ' . $subId . ' → ' . $state);
                 }
                 break;
             case 'activate_protocol':
@@ -329,7 +311,7 @@ function run_quest_actions(array $quest): void
 
     save_json('protocols.json', $protocols);
     save_json('players.json', $players);
-    if ($saveSubphaseStates || $phasesDirty) {
+    if ($phasesDirty) {
         save_json('phases.json', $phases);
     }
 }
@@ -392,85 +374,6 @@ function quest_time_allowed(array $quest, int $elapsed, int $remaining): bool
     }
 
     return true;
-}
-
-function process_phase_subphases(int $elapsed, int $remaining): void
-{
-    $phases = load_json('phases.json');
-    $currentId = $phases['current_phase'] ?? null;
-    if (!$currentId) {
-        return;
-    }
-
-    $currentPhase = null;
-    foreach ($phases['phases'] ?? [] as $phase) {
-        if (($phase['id'] ?? '') === $currentId) {
-            $currentPhase = $phase;
-            break;
-        }
-    }
-
-    if (!$currentPhase || empty($currentPhase['subphases'])) {
-        return;
-    }
-
-    $subStates = $phases['subphase_states'] ?? [];
-    $changed = false;
-
-    foreach ($currentPhase['subphases'] as $subphase) {
-        $subId = $subphase['id'] ?? null;
-        if (!$subId) {
-            continue;
-        }
-
-        $state = $subStates[$subId]['state'] ?? 'pending';
-        if (in_array($state, ['success', 'fail'], true)) {
-            continue;
-        }
-
-        $window = $subphase['time_window'] ?? [];
-        $startThreshold = isset($window['start_elapsed_ge_sec']) ? (int) $window['start_elapsed_ge_sec'] : null;
-        $endThreshold = isset($window['end_elapsed_le_sec']) ? (int) $window['end_elapsed_le_sec'] : null;
-        $label = $subphase['label'] ?? $subId;
-
-        $shouldStart = $state === 'pending' && ($startThreshold === null || $elapsed >= $startThreshold);
-        if ($shouldStart) {
-            foreach ($subphase['on_start_quests'] ?? [] as $questId) {
-                trigger_quest($questId, $elapsed, $remaining);
-            }
-
-            // Refresh after quest actions in case they touched subphase state.
-            $phasesFresh = load_json('phases.json');
-            $subStates = $phasesFresh['subphase_states'] ?? $subStates;
-
-            if (($subStates[$subId]['state'] ?? 'pending') === 'pending') {
-                $subStates[$subId] = [
-                    'state' => 'active',
-                    'started_elapsed' => $elapsed,
-                    'label' => $label,
-                ];
-            }
-
-            append_terminal_message('both', 'info', '[SUBPHASE] ' . $label . ' активовано');
-            $changed = true;
-        }
-
-        if ($endThreshold !== null && $elapsed > $endThreshold && (($subStates[$subId]['state'] ?? 'pending') === 'active')) {
-            foreach ($subphase['on_fail_quests'] ?? [] as $questId) {
-                trigger_quest($questId, $elapsed, $remaining);
-            }
-
-            $subStates[$subId]['state'] = 'fail';
-            $subStates[$subId]['ended_elapsed'] = $elapsed;
-            append_terminal_message('both', 'warning', '[SUBPHASE] ' . $label . ' завершено за часом');
-            $changed = true;
-        }
-    }
-
-    if ($changed) {
-        $phases['subphase_states'] = $subStates;
-        save_json('phases.json', $phases);
-    }
 }
 
 function run_phase_hooks(string $phaseId, string $key): void
