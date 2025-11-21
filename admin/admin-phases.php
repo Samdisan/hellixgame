@@ -38,6 +38,11 @@ foreach ($phases as $phaseCfg) {
         $startAt = $window['start_elapsed_ge_sec'] ?? null;
         $endAt = $window['end_elapsed_le_sec'] ?? null;
         $state = $subphaseStates[$sub['id'] ?? '']['state'] ?? 'pending';
+        if (in_array($state, ['active', 'success', 'fail'], true)) {
+            // Вже запущені або завершені підфази не повертаються у чергу.
+            continue;
+        }
+
         $eta = null;
         if ($startAt !== null && $globalElapsed < $startAt) {
             $eta = $startAt - $globalElapsed;
@@ -150,6 +155,8 @@ include __DIR__ . '/../partials/header.php';
                         <td>
                             <?php if (!empty($current) && $phase['id'] === $current): ?>
                                 Поточна
+                            <?php elseif ($status === 'past'): ?>
+                                <span class="micro muted">Вже відпрацьована</span>
                             <?php else: ?>
                                 <form method="post" action="/api/set-phase.php">
                                     <input type="hidden" name="phase" value="<?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?>">
@@ -172,7 +179,7 @@ include __DIR__ . '/../partials/header.php';
         <div>
             <h3 class="micro">Підфази за часом</h3>
             <?php if (empty($subphaseRows)): ?>
-                <p class="muted">Підфаз не налаштовано.</p>
+                <p class="muted">Усі підфази вже активовані або недоступні для повторного запуску.</p>
             <?php else: ?>
                 <table class="table dense">
                     <thead><tr><th>Підфаза</th><th>Умови</th><th>Що станеться</th><th>ETA/Статус</th></tr></thead>
