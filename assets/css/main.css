@@ -115,6 +115,15 @@ nav a:hover {
     box-shadow: inset 0 -1px 0 rgba(110, 240, 197, 0.08);
 }
 
+.admin-nav::-webkit-scrollbar {
+    height: 6px;
+}
+
+.admin-nav::-webkit-scrollbar-thumb {
+    background: rgba(110, 240, 197, 0.35);
+    border-radius: 99px;
+}
+
 .admin-nav a {
     color: var(--text);
     text-decoration: none;
@@ -1077,6 +1086,84 @@ form.inline {
         grid-template-columns: 1fr;
     }
     nav a { display: inline-block; margin: 4px 8px; }
+}
+
+@media (max-width: 640px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 14px;
+    }
+
+    .top-bar nav {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    nav a {
+        margin: 0;
+        flex: 1 1 48%;
+        text-align: center;
+        padding: 8px 10px;
+    }
+
+    .page {
+        padding: 14px;
+    }
+
+    .panel {
+        padding: 14px;
+    }
+
+    .landing-hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+    }
+
+    .landing-hero .terminal {
+        max-height: 200px;
+    }
+
+    .hero-meta {
+        gap: 8px;
+    }
+
+    .meta-box {
+        min-width: 140px;
+    }
+
+    .admin-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 10px 12px;
+    }
+
+    .admin-nav a {
+        flex: 0 0 auto;
+    }
+
+    .admin-timebar {
+        grid-template-columns: 1fr;
+    }
+
+    .terminal-line {
+        font-size: 13px;
+    }
+
+    .personal-card {
+        grid-template-columns: 64px 1fr;
+    }
+
+    .grid.cols-3 {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .grid.cols-4 {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
 }
 
 .proto-grid {

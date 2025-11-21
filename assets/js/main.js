@@ -180,6 +180,9 @@ function startLiveTimer() {
     const containers = document.querySelectorAll('[data-live-timer]');
     if (!containers.length) return;
 
+    if (window.__helixTimerLoop) return;
+    window.__helixTimerLoop = true;
+
     async function refresh() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
