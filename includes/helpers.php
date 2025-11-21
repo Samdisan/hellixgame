@@ -95,6 +95,7 @@ function timer_status(bool $processTriggers = true): array
 
     if ($processTriggers) {
         $timer = process_time_triggers($timer, $elapsed);
+        process_phase_subphases($elapsed);
     }
 
     return [
@@ -202,6 +203,7 @@ function set_current_phase(string $phaseId): void
     $phases = load_json('phases.json');
     $timer = timer_status(false);
     $phases['current_phase_started_elapsed'] = $timer['elapsed'] ?? 0;
+    $phases['fired_subphases'] = [];
     $phases['current_phase'] = $phaseId;
     save_json('phases.json', $phases);
 }
@@ -310,6 +312,50 @@ function process_time_triggers(array $timer, int $elapsed): array
     }
 
     return $timer;
+}
+
+function process_phase_subphases(int $elapsed): void
+{
+    $phases = load_json('phases.json');
+    $currentId = $phases['current_phase'] ?? null;
+    if (!$currentId) {
+        return;
+    }
+
+    $startElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
+    $phaseElapsed = max(0, $elapsed - $startElapsed);
+
+    $fired = $phases['fired_subphases'] ?? [];
+    $changed = false;
+
+    foreach ($phases['phases'] ?? [] as $phase) {
+        if (($phase['id'] ?? null) !== $currentId) {
+            continue;
+        }
+        foreach ($phase['subphases'] ?? [] as $subphase) {
+            $subId = $subphase['id'] ?? null;
+            if (!$subId || !empty($fired[$subId])) {
+                continue;
+            }
+            $threshold = $subphase['phase_elapsed_ge'] ?? null;
+            if ($threshold !== null && $phaseElapsed >= (int) $threshold) {
+                if (!empty($subphase['quest_id'])) {
+                    $quest = find_quest($subphase['quest_id']);
+                    if ($quest) {
+                        run_quest_actions($quest);
+                    }
+                }
+                $fired[$subId] = true;
+                append_terminal_message('both', 'info', '[SUBPHASE] ' . ($subphase['label'] ?? $subId) . ' активовано');
+                $changed = true;
+            }
+        }
+    }
+
+    if ($changed) {
+        $phases['fired_subphases'] = $fired;
+        save_json('phases.json', $phases);
+    }
 }
 
 function find_quest(string $questId): ?array

@@ -1,6 +1,7 @@
 {
   "current_phase": "PH_INTRO",
   "current_phase_started_elapsed": 0,
+  "fired_subphases": {},
   "phases": [
     {
       "id": "PH_INTRO",
@@ -12,7 +13,16 @@
       "hint_frequency": "low",
       "duration_sec": 900,
       "on_start_quests": [],
-      "on_end_quests": []
+      "on_end_quests": [],
+      "subphases": [
+        {
+          "id": "PH_INTRO_1_ARRIVAL",
+          "label": "Підфаза 1.1: Прибуття",
+          "phase_elapsed_ge": 300,
+          "quest_id": "Q_INTRO_ARRIVAL",
+          "description": "Після 5 хвилин від старту гри система оголошує прибуття експедицій та переключає тимчасові протоколи."
+        }
+      ]
     },
     {
       "id": "PH_OUTBREAK",

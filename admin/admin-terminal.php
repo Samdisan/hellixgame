@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $command = trim($_POST['command']);
     if (stripos($command, '/msg') === 0) {
         if (preg_match('/^\/msg\s+(\w+)\s+\"?(.*?)\"?$/', $command, $m)) {
-            append_terminal_message($m[1], 'info', $m[2]);
-            $response = 'Надіслано повідомлення у ' . $m[1];
+            append_terminal_message('both', 'info', $m[2]);
+            $response = 'Надіслано повідомлення у всі термінали';
         }
     } elseif (stripos($command, '/run') === 0) {
         $id = trim(substr($command, 4));

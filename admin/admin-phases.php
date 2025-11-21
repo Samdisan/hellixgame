@@ -3,6 +3,7 @@ require_once __DIR__ . '/../includes/helpers.php';
 require_role('admin');
 
 $phaseData = current_phase();
+$phaseConfig = load_json('phases.json');
 $current = $phaseData['current'];
 $phaseStarted = $phaseData['started_elapsed'] ?? 0;
 $phases = $phaseData['phases'];
@@ -10,6 +11,7 @@ $nextPhase = $phaseData['next_phase'] ?? null;
 $ids = array_column($phases, 'id');
 $currentIndex = $ids ? array_search($current, $ids, true) : -1;
 $timer = timer_status();
+$firedSubphases = $phaseConfig['fired_subphases'] ?? [];
 $phaseRuntime = max(0, ($timer['elapsed'] ?? 0) - $phaseStarted);
 $activeProtocols = array_filter(load_json('protocols.json'), function ($protocol) {
     return $protocol['active'] ?? false;
@@ -213,6 +215,22 @@ include __DIR__ . '/../partials/header.php';
                         <span class="chip">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></span>
                         <span class="chip">Hints: <?php echo htmlspecialchars($phase['hint_frequency'] ?? '—', ENT_QUOTES); ?></span>
                     </div>
+                    <?php if (!empty($phase['subphases'])): ?>
+                        <div class="micro muted" style="margin-top:8px;">Підфази</div>
+                        <ul class="micro">
+                            <?php foreach ($phase['subphases'] as $sub): ?>
+                                <?php
+                                    $fired = !empty($firedSubphases[$sub['id'] ?? '']);
+                                    $cond = isset($sub['phase_elapsed_ge']) ? 'після ' . human_time((int)$sub['phase_elapsed_ge']) : 'умова не задана';
+                                ?>
+                                <li>
+                                    <strong><?php echo htmlspecialchars($sub['label'] ?? $sub['id'], ENT_QUOTES); ?></strong>
+                                    — <?php echo htmlspecialchars($cond, ENT_QUOTES); ?>
+                                    <span class="badge level" style="margin-left:4px;"><?php echo $fired ? 'SPENT' : 'PENDING'; ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
                     <div class="quest-list">
                         <?php if (!empty($phaseQuestList)): ?>
                             <?php foreach ($phaseQuestList as $quest): ?>
