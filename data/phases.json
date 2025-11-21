@@ -11,9 +11,8 @@
       "ui_intensity": "low",
       "hint_frequency": "low",
       "duration_sec": 900,
-      "auto_advance_to": "PH_OUTBREAK",
-      "on_start_quests": ["Q_INTRO_BOOT", "Q_INTRO_MEET"],
-      "on_end_quests": ["Q_START_OUTBREAK"]
+      "on_start_quests": [],
+      "on_end_quests": []
     },
     {
       "id": "PH_OUTBREAK",
@@ -25,8 +24,7 @@
       "ui_intensity": "medium",
       "hint_frequency": "medium",
       "duration_sec": 14400,
-      "auto_advance_to": null,
-      "on_start_quests": ["Q_OUTBREAK_START", "Q_OUTBREAK_PEAK"],
+      "on_start_quests": [],
       "on_end_quests": []
     }
   ]

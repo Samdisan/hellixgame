@@ -7,6 +7,8 @@ $timer = timer_status();
 $messages = array_slice(array_reverse(load_json('terminal-messages.json')), 0, 8);
 $protocols = load_json('protocols.json');
 $activeProtocols = count(array_filter($protocols, fn($p) => !empty($p['active'])));
+$nextPhaseLabel = $phase['next_phase']['label'] ?? ($phase['next_phase']['id'] ?? '—');
+$toNext = $phase['current_meta']['to_next_sec'] ?? null;
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
@@ -19,6 +21,7 @@ include __DIR__ . '/../partials/header.php';
             <div class="phase-badge"><?php echo htmlspecialchars($phase['current'], ENT_QUOTES); ?></div>
             <div class="meta-line">Плин фази: <span data-phase-elapsed><?php echo human_time((int) ($phase['current_meta']['elapsed_sec'] ?? 0)); ?></span></div>
             <div class="meta-line">До завершення: <span data-phase-remaining><?php echo isset($phase['current_meta']['remaining_sec']) ? human_time((int) $phase['current_meta']['remaining_sec']) : '—'; ?></span></div>
+            <div class="meta-line">До наступної: <span data-phase-next><?php echo $toNext !== null ? human_time((int)$toNext) : '—'; ?></span> → <?php echo htmlspecialchars($nextPhaseLabel, ENT_QUOTES); ?></div>
             <div class="glitch-hint">Перемикання фаз запускає каскади подій.</div>
         </div>
         <div class="protocol-card">

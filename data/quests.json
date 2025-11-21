@@ -1,78 +1,14 @@
 [
   {
-    "id": "Q_INTRO_BOOT",
-    "label": "Пробудження станції",
-    "phase": "PH_INTRO",
-    "description": "HELIX виходить з очікування, активує базові протоколи.",
-    "actions": [
-      {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "[INTRO] HELIX виходить з режиму очікування. Системи зв'язку перезавантажені."},
-      {"type": "activate_protocol", "protocol_id": "PR_LAB_ACCESS"}
-    ],
-    "favorite": true
-  },
-  {
-    "id": "Q_INTRO_MEET",
-    "label": "Знайомство",
-    "phase": "PH_INTRO",
-    "description": "Система просить усіх гравців ознайомитися зі своїми Особовими справами.",
-    "actions": [
-      {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "[ЗНАЙОМСТВО] Ознайомтеся зі своїми Особовими справами у персональних кабінетах."},
-      {"type": "push_terminal", "target": "admin_terminal", "level": "info", "message": "[BRIEF] Гравцям розіслано інструкцію переглянути Особові справи."}
-    ]
-  },
-  {
     "id": "Q_INTRO_ARRIVAL",
     "label": "Підфаза 1.1: Прибуття",
     "phase": "PH_INTRO",
-    "description": "Через 5 хвилин після старту таймера станція фіксує прибуття експедицій.",
+    "description": "Станція фіксує прибуття експедицій та оголошує підготовку секторів.",
     "actions": [
       {"type": "push_terminal", "target": "public_terminal", "level": "info", "message": "Прибуття експедицій."},
       {"type": "push_terminal", "target": "admin_terminal", "level": "info", "message": "[INTEL] Прибуття експедицій підтверджено."},
       {"type": "deactivate_protocol", "protocol_id": "PR_I1"},
       {"type": "deactivate_protocol", "protocol_id": "PR_I2"}
-    ]
-  },
-  {
-    "id": "Q_OUTBREAK_START",
-    "label": "Запуск фази OUTBREAK",
-    "phase": "PH_OUTBREAK",
-    "description": "Перехід до режиму реагування після INTRO.",
-    "actions": [
-      {"type": "set_phase", "to": "PH_OUTBREAK"},
-      {"type": "push_terminal", "target": "public_terminal", "level": "warning", "message": "[OUTBREAK] Виявлені перші симптоми. Система переходить у режим реагування."},
-      {"type": "unlock_protocol", "protocol_id": "PR_PUBLIC_BRIEF"}
-    ],
-    "favorite": true
-  },
-  {
-    "id": "Q_OUTBREAK_PEAK",
-    "label": "Битва за життя",
-    "phase": "PH_OUTBREAK",
-    "description": "Піковий тиск на системи та персонал.",
-    "actions": [
-      {"type": "push_terminal", "target": "public_terminal", "level": "critical", "message": "[OUTBREAK-PEAK] Навантаження на систему критичне. Медичні команди вимагають підтримки."},
-      {"type": "activate_protocol", "protocol_id": "PR_QUARANTINE_RULES"}
-    ]
-  },
-  {
-    "id": "Q_QUARANTINE_START",
-    "label": "Старт карантину",
-    "phase": "PH_QUARANTINE",
-    "description": "Станція переходить у карантинний режим.",
-    "actions": [
-      {"type": "set_phase", "to": "PH_QUARANTINE"},
-      {"type": "push_terminal", "target": "public_terminal", "level": "critical", "message": "[QUARANTINE] Об'єкт переходить у карантин. Усі переміщення обмежені."}
-    ]
-  },
-  {
-    "id": "Q_FINAL_PUSH",
-    "label": "Фінальна передача",
-    "phase": "PH_FINAL",
-    "description": "Розсилка фінальних протоколів та рішень.",
-    "actions": [
-      {"type": "set_phase", "to": "PH_FINAL"},
-      {"type": "push_terminal", "target": "public_terminal", "level": "protocol", "message": "[FINAL] Фінальні протоколи розіслані. Підготуйте рішення."},
-      {"type": "activate_protocol", "protocol_id": "PR_ANTIVIRAL"}
     ]
   }
 ]

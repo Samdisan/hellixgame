@@ -562,9 +562,18 @@ h4 { font-size: 14px; }
 .terminal-line {
     display: grid;
     grid-template-columns: 110px 80px 1fr;
-    gap: 8px;
+    gap: 14px;
     padding: 6px 0;
     border-bottom: 1px solid rgba(110, 240, 197, 0.05);
+}
+
+.terminal-line span {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.terminal-line span:last-child {
+    white-space: normal;
 }
 
 .line-critical { color: var(--critical); }

@@ -6,6 +6,7 @@ $phaseData = current_phase();
 $current = $phaseData['current'];
 $phaseStarted = $phaseData['started_elapsed'] ?? 0;
 $phases = $phaseData['phases'];
+$nextPhase = $phaseData['next_phase'] ?? null;
 $ids = array_column($phases, 'id');
 $currentIndex = $ids ? array_search($current, $ids, true) : -1;
 $timer = timer_status();
@@ -29,11 +30,11 @@ include __DIR__ . '/../partials/header.php';
     <div class="glitch-overlay"></div>
     <h1>Керування фазами</h1>
     <p class="muted">Фази, квести та глобальний таймер тепер на одній панелі. Статус оновлюється наживо.</p>
-    <div class="grid cols-3 phase-live">
+    <div class="grid cols-4 phase-live">
         <div class="timeline-item">
             <div class="muted">Статус таймера</div>
             <div class="phase-badge" data-timer-status><?php echo strtoupper($timer['state']); ?></div>
-            <div class="micro">Оновлюється щосекунди</div>
+            <div class="micro">Оновлюється кожні 3 секунди</div>
         </div>
         <div class="timeline-item">
             <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>
@@ -43,6 +44,11 @@ include __DIR__ . '/../partials/header.php';
             <div class="muted">Поточна фаза</div>
             <div class="phase-badge"><?php echo htmlspecialchars($current ?? '—', ENT_QUOTES); ?></div>
             <div class="micro">Час у фазі: <?php echo human_time((int)$phaseRuntime); ?></div>
+        </div>
+        <div class="timeline-item">
+            <div class="muted">До наступної</div>
+            <div><span data-phase-next><?php echo isset($phaseData['current_meta']['to_next_sec']) ? human_time((int)$phaseData['current_meta']['to_next_sec']) : '—'; ?></span></div>
+            <div class="micro">Далі: <?php echo htmlspecialchars($nextPhase['label'] ?? ($nextPhase['id'] ?? '—'), ENT_QUOTES); ?></div>
         </div>
     </div>
     <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
@@ -183,23 +189,37 @@ include __DIR__ . '/../partials/header.php';
 </section>
 
 <section class="panel">
-    <h2>Карта фаз та квестів</h2>
+    <h2>Карта фаз, умов та квестів</h2>
     <?php if (empty($phases)): ?>
         <p class="muted">Додайте хоча б одну фазу, щоб прив'язати квести.</p>
     <?php else: ?>
         <div class="phase-quest-grid">
             <?php foreach ($phases as $phase): ?>
+                <?php
+                    $phaseQuestList = $questsByPhase[$phase['id']] ?? [];
+                    $duration = isset($phase['duration_sec']) ? human_time((int)$phase['duration_sec']) : '—';
+                    $isCurrent = $phase['id'] === $current;
+                ?>
                 <div class="protocol-card">
                     <div class="badge level"><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></div>
-                    <div class="muted">Квести: <?php echo count($questsByPhase[$phase['id']] ?? []); ?></div>
-                    <div class="micro">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></div>
-                    <?php if (!empty($questsByPhase[$phase['id']])): ?>
-                        <div class="quest-list">
-                            <?php foreach ($questsByPhase[$phase['id']] as $quest): ?>
+                    <strong><?php echo htmlspecialchars($phase['label'] ?? $phase['title'] ?? '', ENT_QUOTES); ?></strong>
+                    <div class="micro muted" style="margin-top:6px;">Тривалість: <?php echo $duration; ?><?php echo $isCurrent ? ' · активна' : ''; ?></div>
+                    <div class="micro muted">Наступна: <?php echo htmlspecialchars($nextPhase['label'] ?? ($nextPhase['id'] ?? '—'), ENT_QUOTES); ?> (ручний перехід)</div>
+                    <p class="muted" style="margin:8px 0;"><?php echo htmlspecialchars($phase['description'] ?? '', ENT_QUOTES); ?></p>
+                    <?php if (!empty($phase['long_description'])): ?>
+                        <p class="micro muted"><?php echo htmlspecialchars($phase['long_description'], ENT_QUOTES); ?></p>
+                    <?php endif; ?>
+                    <div class="chips" style="margin-top:8px;">
+                        <span class="chip">UI: <?php echo htmlspecialchars($phase['ui_intensity'] ?? '—', ENT_QUOTES); ?></span>
+                        <span class="chip">Hints: <?php echo htmlspecialchars($phase['hint_frequency'] ?? '—', ENT_QUOTES); ?></span>
+                    </div>
+                    <div class="quest-list">
+                        <?php if (!empty($phaseQuestList)): ?>
+                            <?php foreach ($phaseQuestList as $quest): ?>
                                 <div class="quest-chip">
                                     <div>
-                                        <strong><?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?></strong>
-                                        <div class="micro muted"><?php echo htmlspecialchars($quest['label'] ?? '', ENT_QUOTES); ?></div>
+                                        <strong><?php echo htmlspecialchars($quest['label'] ?? $quest['id'], ENT_QUOTES); ?></strong>
+                                        <div class="micro muted"><?php echo htmlspecialchars($quest['description'] ?? '', ENT_QUOTES); ?></div>
                                     </div>
                                     <form method="post" action="/api/run-quest.php" class="inline">
                                         <input type="hidden" name="quest_id" value="<?php echo htmlspecialchars($quest['id'], ENT_QUOTES); ?>">
@@ -208,10 +228,10 @@ include __DIR__ . '/../partials/header.php';
                                     </form>
                                 </div>
                             <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="micro muted">Немає квестів, прив'язаних до цієї фази.</div>
-                    <?php endif; ?>
+                        <?php else: ?>
+                            <div class="micro muted">Немає квестів для цієї фази.</div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>

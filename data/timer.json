@@ -3,8 +3,6 @@
   "duration_seconds": 43200,
   "start_time": null,
   "elapsed_seconds": 0,
-  "time_triggers": [
-    {"id": "TT_INTRO_ARRIVAL", "quest_id": "Q_INTRO_ARRIVAL", "at_seconds": 300, "fired": false}
-  ],
+  "time_triggers": [],
   "last_updated": "2025-12-12T07:00:00Z"
 }

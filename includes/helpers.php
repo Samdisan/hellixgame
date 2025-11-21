@@ -174,6 +174,15 @@ function current_phase(): array
     $phaseDuration = $currentConfig['duration_sec'] ?? null;
     $phaseRemaining = $phaseDuration !== null ? max(0, $phaseDuration - $phaseElapsed) : null;
 
+    $nextPhase = null;
+    if ($phases['phases'] ?? false) {
+        $ids = array_column($phases['phases'], 'id');
+        $idx = array_search($currentId, $ids, true);
+        if ($idx !== false && isset($phases['phases'][$idx + 1])) {
+            $nextPhase = $phases['phases'][$idx + 1];
+        }
+    }
+
     return [
         'current' => $currentId,
         'started_elapsed' => $startedElapsed,
@@ -182,7 +191,9 @@ function current_phase(): array
             'duration_sec' => $phaseDuration,
             'elapsed_sec' => $phaseElapsed,
             'remaining_sec' => $phaseRemaining,
+            'to_next_sec' => $phaseRemaining,
         ],
+        'next_phase' => $nextPhase,
     ];
 }
 

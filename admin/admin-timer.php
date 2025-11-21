@@ -32,19 +32,4 @@ include __DIR__ . '/../partials/header.php';
     </form>
     <div class="overlay-text">time reactor</div>
 </section>
-<section class="panel" data-live-timer>
-    <h2>Майбутні time-тригери</h2>
-    <table class="table" data-timer-triggers>
-        <thead><tr><th>Спрацює через</th><th>Quest</th></tr></thead>
-        <tbody>
-            <?php foreach ($timer['time_triggers'] as $trigger): ?>
-                <?php $left = max(0, ($trigger['at_seconds'] ?? 0) - ($timer['elapsed'] ?? 0)); ?>
-                <tr>
-                    <td><?php echo human_time((int)$left); ?></td>
-                    <td><?php echo htmlspecialchars($trigger['quest_id'], ENT_QUOTES); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</section>
 <?php include __DIR__ . '/../partials/footer.php'; ?>
