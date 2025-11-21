@@ -26,7 +26,6 @@ include __DIR__ . '/partials/header.php';
             <?php foreach ($grouped[$key] ?? [] as $person): ?>
                 <div class="protocol-card roster-card">
                     <div><strong><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></strong> — <?php echo htmlspecialchars($person['role'], ENT_QUOTES); ?></div>
-                    <div class="muted">Рівень: <?php echo (int) $person['access_level']; ?></div>
                     <?php
                         $statusClass = [
                             'active' => 'status-active',

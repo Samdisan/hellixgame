@@ -2,6 +2,9 @@ function startTerminalFeed(selector, target = 'public_terminal') {
     const container = document.querySelector(selector);
     if (!container) return;
 
+    if (container.dataset.feedStarted) return;
+    container.dataset.feedStarted = '1';
+
     async function refresh() {
         try {
             const res = await fetch('/api/get-terminal-messages.php?target=' + encodeURIComponent(target) + '&ts=' + Date.now());
@@ -68,6 +71,42 @@ function startHintTicker() {
     };
 
     showHint();
+}
+
+function setupPlayerTerminalForm() {
+    const form = document.querySelector('[data-player-terminal-form]');
+    if (!form) return;
+
+    const input = form.querySelector('input[name="message"]');
+    const status = form.querySelector('[data-terminal-status]');
+
+    form.addEventListener('submit', async (evt) => {
+        evt.preventDefault();
+        if (!input || input.value.trim() === '') return;
+
+        const formData = new FormData();
+        formData.append('message', input.value.trim());
+
+        form.classList.add('is-sending');
+        status.textContent = 'Відправка...';
+
+        try {
+            const res = await fetch('/api/player-terminal-message.php', { method: 'POST', body: formData });
+            const payload = await res.json();
+            if (!res.ok || payload.error) {
+                status.textContent = 'Помилка: ' + (payload.error || res.statusText);
+            } else {
+                status.textContent = 'Надіслано у термінали станції.';
+                input.value = '';
+                startTerminalFeed('.terminal-feed');
+            }
+        } catch (e) {
+            status.textContent = 'Помилка з’єднання. Спробуйте ще раз.';
+        } finally {
+            form.classList.remove('is-sending');
+            setTimeout(() => status.textContent = '', 2500);
+        }
+    });
 }
 
 function setupAccessVotes() {
@@ -257,4 +296,5 @@ window.addEventListener('DOMContentLoaded', () => {
     startLiveTimer();
     setupProtocolPopups();
     setupAccessVotes();
+    setupPlayerTerminalForm();
 });

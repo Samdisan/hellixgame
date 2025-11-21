@@ -781,6 +781,28 @@ h4 { font-size: 14px; }
     white-space: normal;
 }
 
+.terminal-input {
+    margin-top: 16px;
+    padding: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(12, 20, 38, 0.6);
+}
+
+.terminal-input .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.terminal-input input {
+    flex: 1;
+}
+
+.terminal-input .button {
+    white-space: nowrap;
+}
+
 .line-critical { color: var(--critical); }
 .line-warning { color: var(--warning); }
 

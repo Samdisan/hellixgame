@@ -21,6 +21,16 @@ include __DIR__ . '/partials/header.php';
         <div class="terminal-line line-warning"><span class="muted">[PHASE]</span><span class="badge">REACTIVE</span><span>Стиль відображення залежить від фази: спокій, спалах, карантин, фінал.</span></div>
     </div>
     <div class="terminal terminal-feed"></div>
+    <?php if (($_SESSION['access_type'] ?? '') === 'player'): ?>
+    <form class="terminal-input" data-player-terminal-form>
+        <label for="player-terminal-message" class="muted micro">Надіслати сигнал у термінал (бачать майстри)</label>
+        <div class="input-row">
+            <input id="player-terminal-message" name="message" maxlength="240" placeholder="Ваше повідомлення..." required>
+            <button class="button" type="submit">Надіслати</button>
+        </div>
+        <div class="muted micro" data-terminal-status></div>
+    </form>
+    <?php endif; ?>
     <div class="glitch-hint">Дані можуть зникати або перемішуватися — термінал живе власним життям.</div>
     <div class="overlay-text">live core</div>
 </section>
