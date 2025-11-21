@@ -215,6 +215,17 @@ h1, h2, h3, h4 {
     margin-top: 0;
     letter-spacing: 1px;
     font-weight: 600;
+    position: relative;
+    padding-left: 14px;
+}
+
+h1::before, h2::before, h3::before, h4::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: var(--accent-2);
+    text-shadow: 0 0 6px rgba(240, 110, 207, 0.6);
 }
 
 h1 { font-size: 22px; }
@@ -927,6 +938,40 @@ form.inline {
     background: rgba(255, 255, 255, 0.04);
     border-radius: 8px;
     border-left: 3px solid var(--accent);
+}
+
+.digital-readout {
+    font-family: 'Space Grotesk', 'Roboto Mono', monospace;
+    background: linear-gradient(135deg, rgba(110, 240, 197, 0.08), rgba(15, 23, 38, 0.8));
+    border: 1px solid rgba(110, 240, 197, 0.25);
+    box-shadow: inset 0 0 0 1px rgba(127, 212, 255, 0.12), 0 12px 32px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.digital-readout::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 1px, transparent 2px, transparent 6px);
+    opacity: 0.35;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: scanSweep 9s linear infinite;
+}
+
+.digital-readout .pill-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+}
+
+.digital-readout strong {
+    color: var(--accent);
+    letter-spacing: 1px;
 }
 
 .status-dot {

@@ -42,11 +42,11 @@ include __DIR__ . '/partials/header.php';
         <div class="overlay-text">personal console online</div>
     </div>
     <div class="panel">
-        <h2>Глобальний таймер</h2>
-        <div class="timeline-item">
-            <div>Статус: <span class="badge level"><?php echo strtoupper($timer['state']); ?></span></div>
-            <div>Минуло: <?php echo human_time((int) $timer['elapsed']); ?></div>
-            <div>Залишилось: <?php echo human_time((int) $timer['remaining']); ?></div>
+        <h2>Вибуття експедицій через:</h2>
+        <div class="timeline-item digital-readout">
+            <div class="pill-line"><span class="pill-label">Статус</span> <span class="badge level"><?php echo strtoupper($timer['state']); ?></span></div>
+            <div class="pill-line">Минуло: <span><?php echo human_time((int) $timer['elapsed']); ?></span></div>
+            <div class="pill-line">Залишилось: <span><?php echo human_time((int) $timer['remaining']); ?></span></div>
         </div>
         <div class="glitch-hint">Система знімає показники щосекунди: час — спільний ресурс.</div>
     </div>
