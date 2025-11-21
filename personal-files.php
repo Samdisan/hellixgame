@@ -14,7 +14,7 @@ include __DIR__ . '/partials/header.php';
     <div class="glitch-overlay"></div>
     <h1>Особові справи</h1>
 </section>
-<section class="grid cols-4 personal-grid">
+<section class="grid personal-grid">
     <?php foreach ($players as $person): ?>
         <?php $file = $filesById[$person['id']] ?? null; ?>
         <article class="personal-card">

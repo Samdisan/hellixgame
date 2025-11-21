@@ -48,7 +48,6 @@ include __DIR__ . '/partials/header.php';
             <div>Минуло: <?php echo human_time((int) $timer['elapsed']); ?></div>
             <div>Залишилось: <?php echo human_time((int) $timer['remaining']); ?></div>
         </div>
-        <div class="muted">Тривалість: 12 годин (43200 секунд)</div>
         <div class="glitch-hint">Система знімає показники щосекунди: час — спільний ресурс.</div>
     </div>
 </section>
