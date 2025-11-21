@@ -33,6 +33,21 @@
       "on_end_quests": [],
       "active_protocols": [],
       "notes": "Фаза знайомства триває близько п’яти хвилин і запускається відразу після завершення прибуття."
+    },
+    {
+      "id": "PH_LIFEFAIL",
+      "title": "Збій систем життєзабезпечення",
+      "order": 3,
+      "time_window": {
+        "planned_start_elapsed_sec": 720,
+        "planned_end_elapsed_sec": 7920
+      },
+      "ui_intensity": "critical",
+      "hint_frequency": "high",
+      "on_start_quests": [],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Режим тривоги: система безпеки виводить станцію у критичний червоний режим, а залишок таймера обрізається до двох годин."
     }
   ]
 }

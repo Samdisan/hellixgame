@@ -14,6 +14,63 @@
     --plasma: #6f7cff;
 }
 
+body.intensity-critical {
+    --bg: #130607;
+    --panel: #1f0c10;
+    --accent: #ff6b6b;
+    --accent-2: #ff9f43;
+    --text: #ffe7e7;
+    --muted: #ffb3b3;
+    --warning: #ffb347;
+    --critical: #ff4d4d;
+}
+
+body.intensity-critical::before {
+    background:
+        linear-gradient(90deg, rgba(255, 107, 107, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255, 159, 67, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 40% 50%, rgba(255, 77, 77, 0.25), transparent 40%),
+        radial-gradient(circle at 75% 30%, rgba(255, 159, 67, 0.18), transparent 35%);
+    opacity: 0.25;
+    animation: gridDrift 8s linear infinite;
+}
+
+body.intensity-critical::after {
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255, 77, 77, 0.35), transparent 30%),
+        radial-gradient(circle at 80% 50%, rgba(255, 159, 67, 0.25), transparent 35%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0, rgba(255, 255, 255, 0.06) 1px, transparent 1px, transparent 3px);
+    opacity: 0.18;
+}
+
+body.intensity-critical .top-bar,
+body.intensity-critical .admin-nav {
+    background: linear-gradient(90deg, rgba(31, 12, 16, 0.95), rgba(31, 12, 16, 0.82));
+    border-color: rgba(255, 77, 77, 0.45);
+    box-shadow: 0 0 12px rgba(255, 77, 77, 0.2);
+}
+
+body.intensity-critical .panel,
+body.intensity-critical .terminal-shell,
+body.intensity-critical .card {
+    border-color: rgba(255, 77, 77, 0.35);
+    background: linear-gradient(160deg, rgba(31, 12, 16, 0.9), rgba(31, 12, 16, 0.78));
+    box-shadow: 0 8px 32px rgba(255, 77, 77, 0.12);
+}
+
+body.intensity-critical .btn,
+body.intensity-critical button,
+body.intensity-critical .chip {
+    border-color: rgba(255, 77, 77, 0.6);
+    color: #ffe7e7;
+}
+
+body.intensity-critical .terminal-line.line-warning,
+body.intensity-critical .terminal-line.line-critical {
+    background: rgba(255, 77, 77, 0.08);
+    border-left-color: rgba(255, 77, 77, 0.6);
+}
+
 * {
     box-sizing: border-box;
 }

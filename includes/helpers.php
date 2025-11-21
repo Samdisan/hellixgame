@@ -269,6 +269,20 @@ function run_quest_actions(array $quest): void
                     append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
                 }
                 break;
+            case 'set_timer_remaining':
+                if (isset($action['remaining_sec'])) {
+                    $newRemaining = max(0, (int) $action['remaining_sec']);
+                    $timerData = load_json('timer.json');
+                    $elapsedSeconds = $timer['elapsed'] ?? 0;
+                    $timerData['duration_seconds'] = $elapsedSeconds + $newRemaining;
+                    $timerData['elapsed_seconds'] = $elapsedSeconds;
+                    $timerData['state'] = $timerData['state'] ?? 'running';
+                    $timerData['last_updated_epoch'] = time();
+                    $timerData['last_updated'] = gmdate('c');
+                    save_json('timer.json', $timerData);
+                    append_terminal_message('admin_terminal', 'warning', '[TIMER] Новий залишок: ' . human_time($newRemaining));
+                }
+                break;
             case 'activate_protocol':
             case 'deactivate_protocol':
             case 'unlock_protocol':

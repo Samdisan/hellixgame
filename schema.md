@@ -149,6 +149,10 @@ Time-window поля та списки квестів потрібні для с
 
 {"type": "set_phase", "to": "PH_OUTBREAK"}
 
+"set_timer_remaining" — коригує глобальний таймер так, щоб лишилося N секунд.
+
+{"type": "set_timer_remaining", "remaining_sec": 7200}
+
 "activate_protocol" — робить протокол активним.
 
 {"type": "activate_protocol", "protocol_id": "P_MED_01"}

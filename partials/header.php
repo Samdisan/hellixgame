@@ -1,4 +1,25 @@
-<?php require_once __DIR__ . '/../includes/helpers.php'; ?>
+<?php
+require_once __DIR__ . '/../includes/helpers.php';
+
+$phaseData = $phaseData ?? current_phase();
+$currentPhaseId = $phaseData['current'] ?? null;
+$currentPhaseConfig = null;
+foreach ($phaseData['phases'] ?? [] as $phaseCfg) {
+    if (($phaseCfg['id'] ?? null) === $currentPhaseId) {
+        $currentPhaseConfig = $phaseCfg;
+        break;
+    }
+}
+
+$intensity = $currentPhaseConfig['ui_intensity'] ?? null;
+$bodyClasses = ['helix-shell'];
+if ($currentPhaseId) {
+    $bodyClasses[] = 'phase-' . strtolower($currentPhaseId);
+}
+if ($intensity) {
+    $bodyClasses[] = 'intensity-' . strtolower($intensity);
+}
+?>
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -8,7 +29,7 @@
     <link rel="stylesheet" href="/assets/css/main.css">
     <script defer src="/assets/js/main.js"></script>
 </head>
-<body class="helix-shell">
+<body class="<?php echo htmlspecialchars(implode(' ', $bodyClasses), ENT_QUOTES); ?>">
 <header class="top-bar">
     <div class="logo">HELIX ECHELON</div>
     <nav>
