@@ -16,6 +16,9 @@
         <a href="/expeditions.php">Експедиції</a>
         <a href="/protocols.php">Протоколи</a>
         <a href="/terminal.php">Термінал</a>
+        <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'player'): ?>
+            <a class="cabinet-link" href="/player.php">До кабінету</a>
+        <?php endif; ?>
     </nav>
 </header>
 <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'admin'): ?>
