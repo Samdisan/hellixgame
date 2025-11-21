@@ -4,6 +4,16 @@
     <div>
         <h1>HELIX ECHELON — внутрішня система станції</h1>
         <p>Після серії аномальних спалахів невідомих вірусних форм корпорація ILARIA створила автономну мережу ізоляційних станцій під назвою HELIX. Спершу це виглядало як проєкт контролю біозагроз, але з часом місія змінилася — вчені, військові та політичні радники почали діяти неузгоджено. Дані з однієї з баз зникли, а записи свідчать про порушення протоколів і «поведінкові мутації» серед персоналу. Наразі світ розділений на три фракції: Корпорація ILARIA, Експедиція ВООЗ та Внутрішні Станційні Групи. Кожна має свою правду — і власний код виживання.</p>
+        <div class="hero-meta">
+            <div class="meta-box">
+                <div class="label">Дата</div>
+                <div class="value">24 січня</div>
+            </div>
+            <div class="meta-box">
+                <div class="label">Місце</div>
+                <div class="value">засекречено</div>
+            </div>
+        </div>
         <div class="banner"><span class="scan-pulse"></span><span data-rotator="BIOLOGICAL SYSTEM… receiving external signals…|SERVER ROOM: unstable|ACCESS LEVEL: insufficient|PROXIMITY ALERT: unknown beacon detected|MEMORY FRAGMENTS: drifting"></span></div>
         <div class="quick-actions">
             <a class="button" href="/expeditions.php">Експедиції</a>

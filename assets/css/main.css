@@ -179,6 +179,48 @@ h4 { font-size: 14px; }
     min-height: calc(100vh - 160px);
 }
 
+.hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.meta-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(110, 240, 197, 0.35);
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    min-width: 160px;
+    position: relative;
+    overflow: hidden;
+}
+
+.meta-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(110, 240, 197, 0.08), transparent);
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+.meta-box .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.meta-box .value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2px;
+}
+
 .landing-hero .terminal-card {
     display: flex;
     flex-direction: column;
