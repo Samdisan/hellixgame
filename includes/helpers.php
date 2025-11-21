@@ -78,13 +78,14 @@ function human_time(int $seconds): string
 function timer_status(bool $processTriggers = true): array
 {
     $timer = load_json('timer.json');
-    $duration = $timer['duration_seconds'] ?? 0;
-    $elapsedBase = $timer['elapsed_seconds'] ?? 0;
+    $duration = (int) ($timer['duration_seconds'] ?? 0);
+    $elapsedBase = (int) ($timer['elapsed_seconds'] ?? 0);
     $state = $timer['state'] ?? 'not_started';
-    $start = isset($timer['start_time']) ? strtotime($timer['start_time']) : null;
+    $lastTick = isset($timer['last_updated_epoch']) ? (int) $timer['last_updated_epoch'] : null;
+    $now = time();
 
-    if ($state === 'running' && $start) {
-        $elapsedBase += max(0, time() - $start);
+    if ($state === 'running' && $lastTick) {
+        $elapsedBase += max(0, $now - $lastTick);
     }
 
     $elapsed = min($elapsedBase, $duration);
@@ -93,9 +94,12 @@ function timer_status(bool $processTriggers = true): array
         $state = 'finished';
     }
 
+    $timer['elapsed_seconds'] = $elapsed;
+    $timer['last_updated_epoch'] = $now;
+    $timer['state'] = $state;
+
     if ($processTriggers) {
-        $timer = process_time_triggers($timer, $elapsed);
-        process_phase_subphases($elapsed);
+        $timer = process_time_triggers($timer, $elapsed, $remaining);
     }
 
     return [
@@ -103,7 +107,7 @@ function timer_status(bool $processTriggers = true): array
         'elapsed' => $elapsed,
         'remaining' => $remaining,
         'duration' => $duration,
-        'start_time' => $timer['start_time'] ?? null,
+        'last_updated_epoch' => $timer['last_updated_epoch'] ?? null,
         'time_triggers' => $timer['time_triggers'] ?? [],
         'raw' => $timer,
     ];
@@ -113,12 +117,12 @@ function set_timer_state(string $action): void
 {
     $timer = load_json('timer.json');
     $duration = $timer['duration_seconds'] ?? 0;
-    $nowIso = gmdate('c');
+    $now = time();
 
-    $computeElapsed = function () use ($timer) {
+    $computeElapsed = function () use ($timer, $now) {
         $elapsed = $timer['elapsed_seconds'] ?? 0;
-        if (($timer['state'] ?? 'not_started') === 'running' && !empty($timer['start_time'])) {
-            $elapsed += max(0, time() - strtotime($timer['start_time']));
+        if (($timer['state'] ?? 'not_started') === 'running' && !empty($timer['last_updated_epoch'])) {
+            $elapsed += max(0, $now - (int) $timer['last_updated_epoch']);
         }
         return $elapsed;
     };
@@ -126,23 +130,23 @@ function set_timer_state(string $action): void
     switch ($action) {
         case 'start':
             $timer['state'] = 'running';
-            $timer['start_time'] = $nowIso;
+            $timer['last_updated_epoch'] = $now;
             $timer['elapsed_seconds'] = 0;
             break;
         case 'pause':
             $timer['elapsed_seconds'] = $computeElapsed();
             $timer['state'] = 'paused';
-            $timer['start_time'] = null;
+            $timer['last_updated_epoch'] = $now;
             break;
         case 'resume':
             if (($timer['state'] ?? '') === 'paused') {
                 $timer['state'] = 'running';
-                $timer['start_time'] = $nowIso;
+                $timer['last_updated_epoch'] = $now;
             }
             break;
         case 'reset':
             $timer['state'] = 'not_started';
-            $timer['start_time'] = null;
+            $timer['last_updated_epoch'] = null;
             $timer['elapsed_seconds'] = 0;
             break;
     }
@@ -151,7 +155,7 @@ function set_timer_state(string $action): void
         $timer['state'] = 'finished';
     }
 
-    $timer['last_updated'] = $nowIso;
+    $timer['last_updated'] = gmdate('c', $now);
     save_json('timer.json', $timer);
 }
 
@@ -172,8 +176,11 @@ function current_phase(): array
     }
 
     $phaseElapsed = max(0, ($timer['elapsed'] ?? 0) - $startedElapsed);
-    $phaseDuration = $currentConfig['duration_sec'] ?? null;
-    $phaseRemaining = $phaseDuration !== null ? max(0, $phaseDuration - $phaseElapsed) : null;
+    $window = $currentConfig['time_window'] ?? [];
+    $plannedStart = isset($window['planned_start_elapsed_sec']) ? (int) $window['planned_start_elapsed_sec'] : null;
+    $plannedEnd = isset($window['planned_end_elapsed_sec']) ? (int) $window['planned_end_elapsed_sec'] : null;
+    $phaseDuration = ($plannedStart !== null && $plannedEnd !== null) ? max(0, $plannedEnd - $plannedStart) : null;
+    $phaseRemaining = $plannedEnd !== null ? max(0, $plannedEnd - ($timer['elapsed'] ?? 0)) : null;
 
     $nextPhase = null;
     if ($phases['phases'] ?? false) {
@@ -193,6 +200,8 @@ function current_phase(): array
             'elapsed_sec' => $phaseElapsed,
             'remaining_sec' => $phaseRemaining,
             'to_next_sec' => $phaseRemaining,
+            'planned_start_elapsed_sec' => $plannedStart,
+            'planned_end_elapsed_sec' => $plannedEnd,
         ],
         'next_phase' => $nextPhase,
     ];
@@ -202,10 +211,19 @@ function set_current_phase(string $phaseId): void
 {
     $phases = load_json('phases.json');
     $timer = timer_status(false);
-    $phases['current_phase_started_elapsed'] = $timer['elapsed'] ?? 0;
-    $phases['fired_subphases'] = [];
+    $elapsed = $timer['elapsed'] ?? 0;
+    $previous = $phases['current_phase'] ?? null;
+
+    if ($previous && $previous !== $phaseId) {
+        run_phase_hooks($previous, 'on_end_quests');
+    }
+
+    $phases['current_phase_started_elapsed'] = $elapsed;
     $phases['current_phase'] = $phaseId;
+    $phases['subphase_states'] = [];
     save_json('phases.json', $phases);
+
+    run_phase_hooks($phaseId, 'on_start_quests');
 }
 
 function append_terminal_message(string $target, string $type, string $message): void
@@ -225,6 +243,10 @@ function run_quest_actions(array $quest): void
     $actions = $quest['actions'] ?? [];
     $protocols = load_json('protocols.json');
     $players = load_json('players.json');
+    $timer = timer_status(false);
+    $phases = load_json('phases.json');
+
+    $saveSubphaseStates = false;
 
     foreach ($actions as $action) {
         if (!is_array($action) || empty($action['type'])) {
@@ -236,6 +258,19 @@ function run_quest_actions(array $quest): void
                 if (!empty($action['to'])) {
                     set_current_phase($action['to']);
                     append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
+                }
+                break;
+            case 'set_subphase_state':
+                $subId = $action['subphase_id'] ?? null;
+                $state = $action['state'] ?? null;
+                if ($subId && $state) {
+                    $phases['subphase_states'] = $phases['subphase_states'] ?? [];
+                    $phases['subphase_states'][$subId] = [
+                        'state' => $state,
+                        'elapsed' => $timer['elapsed'] ?? 0,
+                    ];
+                    $saveSubphaseStates = true;
+                    append_terminal_message('both', 'info', '[SUBPHASE] ' . $subId . ' → ' . $state);
                 }
                 break;
             case 'activate_protocol':
@@ -280,25 +315,27 @@ function run_quest_actions(array $quest): void
 
     save_json('protocols.json', $protocols);
     save_json('players.json', $players);
+    if ($saveSubphaseStates) {
+        save_json('phases.json', $phases);
+    }
 }
 
-function process_time_triggers(array $timer, int $elapsed): array
+function process_time_triggers(array $timer, int $elapsed, int $remaining): array
 {
-    if (($timer['state'] ?? 'not_started') === 'not_started' && $elapsed === 0) {
-        return $timer;
-    }
-
     $changed = false;
     foreach ($timer['time_triggers'] ?? [] as &$trigger) {
-        $at = (int) ($trigger['at_seconds'] ?? 0);
         if (!empty($trigger['fired'])) {
             continue;
         }
-        if ($elapsed >= $at && !empty($trigger['quest_id'])) {
+
+        $elapsedOk = !isset($trigger['elapsed_ge_sec']) || $elapsed >= (int) $trigger['elapsed_ge_sec'];
+        $remainingOk = !isset($trigger['remaining_le_sec']) || $remaining <= (int) $trigger['remaining_le_sec'];
+
+        if ($elapsedOk && $remainingOk && !empty($trigger['quest_id'])) {
             $quest = find_quest($trigger['quest_id']);
-            if ($quest) {
+            if ($quest && quest_time_allowed($quest, $elapsed, $remaining)) {
                 run_quest_actions($quest);
-                append_terminal_message('admin_terminal', 'info', '[TRIGGER] Спрацював тригер ' . $trigger['id']);
+                append_terminal_message('admin_terminal', 'info', '[TRIGGER] Спрацював тригер ' . ($trigger['id'] ?? ''));
             }
             $trigger['fired'] = true;
             $changed = true;
@@ -307,55 +344,12 @@ function process_time_triggers(array $timer, int $elapsed): array
     unset($trigger);
 
     if ($changed) {
+        $timer['last_updated_epoch'] = time();
         $timer['last_updated'] = gmdate('c');
         save_json('timer.json', $timer);
     }
 
     return $timer;
-}
-
-function process_phase_subphases(int $elapsed): void
-{
-    $phases = load_json('phases.json');
-    $currentId = $phases['current_phase'] ?? null;
-    if (!$currentId) {
-        return;
-    }
-
-    $startElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
-    $phaseElapsed = max(0, $elapsed - $startElapsed);
-
-    $fired = $phases['fired_subphases'] ?? [];
-    $changed = false;
-
-    foreach ($phases['phases'] ?? [] as $phase) {
-        if (($phase['id'] ?? null) !== $currentId) {
-            continue;
-        }
-        foreach ($phase['subphases'] ?? [] as $subphase) {
-            $subId = $subphase['id'] ?? null;
-            if (!$subId || !empty($fired[$subId])) {
-                continue;
-            }
-            $threshold = $subphase['phase_elapsed_ge'] ?? null;
-            if ($threshold !== null && $phaseElapsed >= (int) $threshold) {
-                if (!empty($subphase['quest_id'])) {
-                    $quest = find_quest($subphase['quest_id']);
-                    if ($quest) {
-                        run_quest_actions($quest);
-                    }
-                }
-                $fired[$subId] = true;
-                append_terminal_message('both', 'info', '[SUBPHASE] ' . ($subphase['label'] ?? $subId) . ' активовано');
-                $changed = true;
-            }
-        }
-    }
-
-    if ($changed) {
-        $phases['fired_subphases'] = $fired;
-        save_json('phases.json', $phases);
-    }
 }
 
 function find_quest(string $questId): ?array
@@ -367,6 +361,49 @@ function find_quest(string $questId): ?array
         }
     }
     return null;
+}
+
+function quest_time_allowed(array $quest, int $elapsed, int $remaining): bool
+{
+    if (empty($quest['time_constraints'])) {
+        return true;
+    }
+
+    $constraints = $quest['time_constraints'];
+    if (isset($constraints['min_elapsed_sec']) && $elapsed < (int) $constraints['min_elapsed_sec']) {
+        return false;
+    }
+    if (isset($constraints['max_elapsed_sec']) && $elapsed > (int) $constraints['max_elapsed_sec']) {
+        return false;
+    }
+    if (isset($constraints['remaining_le_sec']) && $remaining > (int) $constraints['remaining_le_sec']) {
+        return false;
+    }
+
+    return true;
+}
+
+function run_phase_hooks(string $phaseId, string $key): void
+{
+    $phases = load_json('phases.json');
+    $phaseConfig = null;
+    foreach ($phases['phases'] ?? [] as $phase) {
+        if (($phase['id'] ?? '') === $phaseId) {
+            $phaseConfig = $phase;
+            break;
+        }
+    }
+
+    if (!$phaseConfig || empty($phaseConfig[$key]) || !is_array($phaseConfig[$key])) {
+        return;
+    }
+
+    foreach ($phaseConfig[$key] as $questId) {
+        $quest = find_quest($questId);
+        if ($quest) {
+            run_quest_actions($quest);
+        }
+    }
 }
 
 function respond_json(array $payload, int $status = 200): void

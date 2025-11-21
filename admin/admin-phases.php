@@ -11,7 +11,7 @@ $nextPhase = $phaseData['next_phase'] ?? null;
 $ids = array_column($phases, 'id');
 $currentIndex = $ids ? array_search($current, $ids, true) : -1;
 $timer = timer_status();
-$firedSubphases = $phaseConfig['fired_subphases'] ?? [];
+$subphaseStates = $phaseConfig['subphase_states'] ?? [];
 $phaseRuntime = max(0, ($timer['elapsed'] ?? 0) - $phaseStarted);
 $activeProtocols = array_filter(load_json('protocols.json'), function ($protocol) {
     return $protocol['active'] ?? false;
@@ -68,7 +68,7 @@ include __DIR__ . '/../partials/header.php';
         <p class="muted">Фаз поки немає. Додайте першу фазу нижче, щоб запустити таймлайн.</p>
     <?php else: ?>
         <table class="table">
-            <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Статус</th><th>Час у фазі</th><th></th></tr></thead>
+            <thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Статус</th><th>План часу</th><th></th></tr></thead>
             <tbody>
                 <?php foreach ($phases as $idx => $phase): ?>
                     <?php
@@ -85,6 +85,12 @@ include __DIR__ . '/../partials/header.php';
                         }
                         $startQuests = $phase['on_start_quests'] ?? [];
                         $endQuests = $phase['on_end_quests'] ?? [];
+                    ?>
+                    <?php
+                        $window = $phase['time_window'] ?? [];
+                        $plannedStart = $window['planned_start_elapsed_sec'] ?? null;
+                        $plannedEnd = $window['planned_end_elapsed_sec'] ?? null;
+                        $plannedDuration = ($plannedStart !== null && $plannedEnd !== null) ? max(0, $plannedEnd - $plannedStart) : null;
                     ?>
                     <tr>
                         <td><?php echo htmlspecialchars($phase['id'], ENT_QUOTES); ?></td>
@@ -103,8 +109,11 @@ include __DIR__ . '/../partials/header.php';
                         <td>
                             <?php if (!empty($current) && $phase['id'] === $current): ?>
                                 <?php echo human_time((int) $phaseRuntime); ?>
-                            <?php elseif (!empty($phase['duration_sec'])): ?>
-                                заплановано: <?php echo human_time((int) $phase['duration_sec']); ?>
+                                <?php if ($plannedEnd !== null): ?>
+                                    <div class="micro muted">до кінця вікна: <?php echo human_time(max(0, $plannedEnd - ($timer['elapsed'] ?? 0))); ?></div>
+                                <?php endif; ?>
+                            <?php elseif ($plannedDuration !== null): ?>
+                                заплановано: <?php echo human_time((int) $plannedDuration); ?>
                             <?php else: ?>
                                 —
                             <?php endif; ?>
@@ -157,8 +166,12 @@ include __DIR__ . '/../partials/header.php';
             <label>Порядок
                 <input name="order" type="number" min="1" step="1" placeholder="<?php echo count($phases) + 1; ?>" />
             </label>
-            <label>Тривалість (сек)
-                <input name="duration_sec" type="number" min="0" step="60" placeholder="900" />
+            <label>Плановий старт (elapsed, сек)
+                <input name="planned_start_elapsed_sec" type="number" min="0" step="60" placeholder="0" />
+            </label>
+            <label>Планове завершення (elapsed, сек)
+                <input name="planned_end_elapsed_sec" type="number" min="0" step="60" placeholder="900" />
+                <div class="micro muted">Використовується для підказки зворотного відліку до наступної фази.</div>
             </label>
             <label>Інтенсивність UI
                 <select name="ui_intensity">
@@ -199,7 +212,10 @@ include __DIR__ . '/../partials/header.php';
             <?php foreach ($phases as $phase): ?>
                 <?php
                     $phaseQuestList = $questsByPhase[$phase['id']] ?? [];
-                    $duration = isset($phase['duration_sec']) ? human_time((int)$phase['duration_sec']) : '—';
+                    $window = $phase['time_window'] ?? [];
+                    $plannedStart = $window['planned_start_elapsed_sec'] ?? null;
+                    $plannedEnd = $window['planned_end_elapsed_sec'] ?? null;
+                    $duration = ($plannedStart !== null && $plannedEnd !== null) ? human_time(max(0, (int)$plannedEnd - (int)$plannedStart)) : '—';
                     $isCurrent = $phase['id'] === $current;
                 ?>
                 <div class="protocol-card">
@@ -220,13 +236,21 @@ include __DIR__ . '/../partials/header.php';
                         <ul class="micro">
                             <?php foreach ($phase['subphases'] as $sub): ?>
                                 <?php
-                                    $fired = !empty($firedSubphases[$sub['id'] ?? '']);
-                                    $cond = isset($sub['phase_elapsed_ge']) ? 'після ' . human_time((int)$sub['phase_elapsed_ge']) : 'умова не задана';
+                                    $state = $subphaseStates[$sub['id'] ?? '']['state'] ?? 'pending';
+                                    $window = $sub['time_window'] ?? [];
+                                    $parts = [];
+                                    if (isset($window['start_elapsed_ge_sec'])) {
+                                        $parts[] = '>= ' . human_time((int)$window['start_elapsed_ge_sec']);
+                                    }
+                                    if (isset($window['end_elapsed_le_sec'])) {
+                                        $parts[] = '<= ' . human_time((int)$window['end_elapsed_le_sec']);
+                                    }
+                                    $cond = $parts ? implode(' · ', $parts) : 'умова не задана';
                                 ?>
                                 <li>
                                     <strong><?php echo htmlspecialchars($sub['label'] ?? $sub['id'], ENT_QUOTES); ?></strong>
                                     — <?php echo htmlspecialchars($cond, ENT_QUOTES); ?>
-                                    <span class="badge level" style="margin-left:4px;"><?php echo $fired ? 'SPENT' : 'PENDING'; ?></span>
+                                    <span class="badge level" style="margin-left:4px;"><?php echo strtoupper($state); ?></span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

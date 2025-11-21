@@ -159,8 +159,14 @@ function startLiveTimer() {
                 }
                 if (triggersTable && payload.timer && Array.isArray(payload.timer.time_triggers)) {
                     triggersTable.innerHTML = payload.timer.time_triggers.map((trigger) => {
-                        const left = Math.max(0, (trigger.at_seconds || 0) - (payload.timer.elapsed || 0));
-                        return `<tr><td>${formatHuman(left)}</td><td>${trigger.quest_id || ''}</td></tr>`;
+                        const conds = [];
+                        if (trigger.elapsed_ge_sec !== undefined && trigger.elapsed_ge_sec !== null) {
+                            conds.push(`elapsed >= ${formatHuman(trigger.elapsed_ge_sec)}`);
+                        }
+                        if (trigger.remaining_le_sec !== undefined && trigger.remaining_le_sec !== null) {
+                            conds.push(`remaining <= ${formatHuman(trigger.remaining_le_sec)}`);
+                        }
+                        return `<tr><td>${conds.join(' & ')}</td><td>${trigger.quest_id || ''}</td></tr>`;
                     }).join('');
                 }
             });

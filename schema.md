@@ -57,44 +57,64 @@ schema.md — JSON Schema для HELIX ECHELON
 
 {
   "current_phase": "PH_INTRO",    // string, id активної фази
+  "current_phase_started_elapsed": 0, // коли фаза реально стала активною (сек з початку гри)
+  "subphase_states": {},              // runtime-стани підфаз: { "SP_ID": {"state": "active", "elapsed": 900} }
   "phases": [
     {
       "id": "PH_INTRO",           // string, унікальний ID фази
       "title": "Прибуття експедиції", // string, назва
       "description": "Початкова фаза гри...", // string
       "order": 1,                 // integer, порядок
+      "time_window": {            // плановий відрізок глобального часу, коли фаза активна
+        "planned_start_elapsed_sec": 0,    // старт одразу з початку гри
+        "planned_end_elapsed_sec": 900     // кінець через 15 хв
+      },
       "ui_intensity": "low",      // string: "low" | "medium" | "high" | "critical"
       "hint_frequency": "low",    // string: "low" | "medium" | "high"
       "on_start_quests": [        // array of quest_id, опц.
-        "Q_INTRO_MESSAGE"
+        "Q_INTRO_START"
       ],
       "on_end_quests": [          // array of quest_id, опц.
         "Q_START_OUTBREAK"
+      ],
+      "subphases": [              // опис підфаз із їхніми часовими вікнами
+        {
+          "id": "SP_INTRO_ARRIVAL",
+          "label": "Підфаза 1.1: Прибуття",
+          "type": "narrative",
+          "time_window": {
+            "start_elapsed_ge_sec": 300,   // не раніше 5 хв від старту
+            "end_elapsed_le_sec": 900      // бажано завершити до 15 хв
+          },
+          "on_start_quests": ["Q_INTRO_ARRIVAL"],
+          "on_success_quests": [],
+          "on_fail_quests": []
+        }
       ]
     }
   ]
 }
 
 
-Обов’язкові: current_phase, phases[].id, phases[].title, phases[].order
-Решта — за бажанням, але дуже бажані.
+Обов’язкові: current_phase, phases[].id, phases[].title, phases[].order.
+Time-window поля та списки квестів потрібні для сценарної логіки, навіть якщо деякі залишаються порожніми.
 
 4. timer.json
 
 Призначення: глобальний таймер гри + тригери часу.
 
 {
-  "state": "running",         // string: "not_started" | "running" | "paused" | "finished"
-  "duration_sec": 43200,      // integer, загальна тривалість гри (12 годин)
-  "start_time": 1737650400,   // integer (UNIX timestamp), коли стартував таймер
-  "elapsed_sec": 900,         // integer, скільки секунд пройшло (може обчислюватись)
+  "state": "running",            // string: "not_started" | "running" | "paused" | "finished"
+  "duration_seconds": 43200,      // integer, загальна тривалість гри (12 годин)
+  "elapsed_seconds": 900,         // integer, скільки секунд набігло від старту гри
+  "last_updated_epoch": 1737651300, // integer | null, unix-second останнього тіку
   "time_triggers": [
     {
-      "id": "TT_INTRO_END",   // string, унікальний ID тригера
+      "id": "TT_INTRO_END",        // string, унікальний ID тригера
       "quest_id": "Q_START_OUTBREAK", // string, який квест запускати
-      "elapsed_ge_sec": 900,  // integer, умова: elapsed >= 900 сек
-      "remaining_le_sec": null, // integer | null, умова по залишку
-      "fired": false          // bool, вже виконався чи ні
+      "elapsed_ge_sec": 900,        // integer | null, умова: elapsed >= 900 сек
+      "remaining_le_sec": null,     // integer | null, умова: remaining <= X сек
+      "fired": false                // bool, вже виконався чи ні
     }
   ]
 }
@@ -102,7 +122,9 @@ schema.md — JSON Schema для HELIX ECHELON
 
 Примітки:
 
-Тригер може мати або elapsed_ge_sec, або remaining_le_sec, або обидва.
+Тригер може мати elapsed_ge_sec, remaining_le_sec або обидва; всі умови мають бути істинні.
+
+Тільки глобальний elapsed/remaining використовуються в логіці — ніяких дат/годин сервера.
 
 Якщо умова виконана і fired = false → запускаємо квест → ставимо fired = true.
 
@@ -119,10 +141,19 @@ schema.md — JSON Schema для HELIX ECHELON
     "description": "Станція переходить у фазу перших симптомів.", // string, опц.
     "phase": "PH_INTRO",          // string, до якої фази належить
     "subphase": null,             // string | null, якщо це підфаза
+    "time_constraints": {         // опційно: обмеження по глобальному часу
+      "min_elapsed_sec": 900,     // не раніше 15 хв від початку гри
+      "max_elapsed_sec": null
+    },
     "actions": [                  // масив дій
       {
         "type": "set_phase",      // string, тип дії
         "to": "PH_OUTBREAK"       // параметри для цього типу
+      },
+      {
+        "type": "set_subphase_state",  // керування підфазами через квести
+        "subphase_id": "SP_INTRO_ARRIVAL",
+        "state": "success"
       },
       {
         "type": "push_terminal",

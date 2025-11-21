@@ -6,7 +6,8 @@ $id = trim($_POST['id'] ?? '');
 $label = trim($_POST['label'] ?? '');
 $description = trim($_POST['description'] ?? '');
 $order = isset($_POST['order']) && $_POST['order'] !== '' ? (int) $_POST['order'] : null;
-$duration = isset($_POST['duration_sec']) && $_POST['duration_sec'] !== '' ? (int) $_POST['duration_sec'] : null;
+$plannedStart = isset($_POST['planned_start_elapsed_sec']) && $_POST['planned_start_elapsed_sec'] !== '' ? (int) $_POST['planned_start_elapsed_sec'] : null;
+$plannedEnd = isset($_POST['planned_end_elapsed_sec']) && $_POST['planned_end_elapsed_sec'] !== '' ? (int) $_POST['planned_end_elapsed_sec'] : null;
 $uiIntensity = trim($_POST['ui_intensity'] ?? '');
 $startQuests = array_filter(array_map('trim', explode(',', $_POST['on_start_quests'] ?? '')));
 $endQuests = array_filter(array_map('trim', explode(',', $_POST['on_end_quests'] ?? '')));
@@ -37,8 +38,11 @@ $newPhase = [
     'order' => $order,
 ];
 
-if ($duration !== null && $duration > 0) {
-    $newPhase['duration_sec'] = $duration;
+if ($plannedStart !== null || $plannedEnd !== null) {
+    $newPhase['time_window'] = [
+        'planned_start_elapsed_sec' => $plannedStart,
+        'planned_end_elapsed_sec' => $plannedEnd,
+    ];
 }
 
 if ($uiIntensity !== '') {
