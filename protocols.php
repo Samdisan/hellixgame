@@ -12,17 +12,20 @@ include __DIR__ . '/partials/header.php';
 </section>
 <section class="card-stack">
     <?php foreach ($protocols as $protocol): ?>
-        <div class="protocol-card">
+        <?php $isRedacted = !empty($protocol['flags']['redacted']); ?>
+        <div class="protocol-card <?php echo $isRedacted ? 'redacted' : ''; ?>">
             <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
             <div class="muted">Рівень: <?php echo (int)$protocol['level']; ?> · Фаза: <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></div>
             <p><?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?></p>
+            <?php if ($isRedacted): ?><div class="micro muted">Деякі блоки приховано. Відображення містить глічі.</div><?php endif; ?>
             <button type="button" class="button secondary protocol-open"
                 data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
                 data-protocol-label="<?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?>"
                 data-protocol-level="<?php echo (int)$protocol['level']; ?>"
                 data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?>"
                 data-protocol-description="<?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?>"
-                data-protocol-content="<?php echo htmlspecialchars($protocol['content'], ENT_QUOTES); ?>">
+                data-protocol-content="<?php echo htmlspecialchars($protocol['content'], ENT_QUOTES); ?>"
+                data-protocol-redacted="<?php echo $isRedacted ? '1' : '0'; ?>">
                 Читати / відкрити
             </button>
         </div>

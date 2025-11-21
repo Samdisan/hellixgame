@@ -64,7 +64,8 @@ include __DIR__ . '/../partials/header.php';
     <p class="muted">Стисле представлення всіх документів станції. Керуйте видимістю, активністю та призначенням гравців без довгих таблиць.</p>
     <div class="proto-grid">
         <?php foreach ($protocols as $protocol): ?>
-            <article class="proto-card">
+            <?php $isRedacted = !empty($protocol['flags']['redacted']); ?>
+            <article class="proto-card <?php echo $isRedacted ? 'redacted' : ''; ?>">
                 <div class="proto-head">
                     <div>
                         <span class="tag">ID <?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?></span>
@@ -83,13 +84,15 @@ include __DIR__ . '/../partials/header.php';
                     </div>
                 </div>
                 <p><?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?></p>
+                <?php if ($isRedacted): ?><div class="micro muted">Скорочена версія з прихованими блоками.</div><?php endif; ?>
                 <button type="button" class="button secondary protocol-open"
                     data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
                     data-protocol-label="<?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?>"
                     data-protocol-level="<?php echo (int)$protocol['level']; ?>"
                     data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?>"
                     data-protocol-description="<?php echo htmlspecialchars($protocol['description'] ?? '', ENT_QUOTES); ?>"
-                    data-protocol-content="<?php echo htmlspecialchars($protocol['content'] ?? '', ENT_QUOTES); ?>">
+                    data-protocol-content="<?php echo htmlspecialchars($protocol['content'] ?? '', ENT_QUOTES); ?>"
+                    data-protocol-redacted="<?php echo $isRedacted ? '1' : '0'; ?>">
                     Відкрити протокол
                 </button>
                 <details class="micro muted">

@@ -44,14 +44,17 @@ include __DIR__ . '/partials/header.php';
         <?php
             $isAccessible = protocol_accessible($protocol, $player);
             $isNew = $isAccessible && !has_opened_protocol($player['id'], $protocol['id']);
+            $isRedacted = !empty($protocol['flags']['redacted']);
             $classes = [];
             if ($isNew) { $classes[] = 'new'; }
             if (!$isAccessible && $showAll) { $classes[] = 'locked'; }
+            if ($isRedacted) { $classes[] = 'redacted'; }
         ?>
         <div class="protocol-card <?php echo implode(' ', $classes); ?>">
             <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
             <div class="muted">Рівень <?php echo (int)$protocol['level']; ?> · Фаза: <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></div>
             <p><?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?></p>
+            <?php if ($isRedacted): ?><div class="micro muted">Ця копія містить приховані блоки та глічі.</div><?php endif; ?>
             <?php if (!$isAccessible && $showAll): ?>
                 <div class="micro muted">Недостатній доступ, але доступно для ознайомлення.</div>
             <?php endif; ?>
@@ -61,6 +64,7 @@ include __DIR__ . '/partials/header.php';
                 data-protocol-phase="<?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?>"
                 data-protocol-description="<?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?>"
                 data-protocol-content="<?php echo htmlspecialchars($protocol['content'], ENT_QUOTES); ?>"
+                data-protocol-redacted="<?php echo $isRedacted ? '1' : '0'; ?>"
                 data-protocol-player="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>"
                 data-mark-url="/api/mark-protocol-opened.php"
                 <?php if (!$isAccessible): ?>data-locked="1"<?php endif; ?>

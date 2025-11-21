@@ -93,8 +93,10 @@ function setupProtocolPopups() {
         const description = trigger.dataset.protocolDescription || '';
         const content = trigger.dataset.protocolContent || '';
         const locked = trigger.dataset.locked === '1';
+        const isRedacted = trigger.dataset.protocolRedacted === '1';
         const markUrl = trigger.dataset.markUrl;
 
+        modal.classList.toggle('redacted', isRedacted);
         title.textContent = `${label} (${id})`;
         meta.textContent = `Рівень ${level} · Фаза ${phase}${locked ? ' · лише перегляд' : ''}`;
         body.textContent = description;
