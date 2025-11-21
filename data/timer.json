@@ -3,21 +3,6 @@
   "duration_seconds": 43200,
   "elapsed_seconds": 0,
   "last_updated_epoch": null,
-  "time_triggers": [
-    {
-      "id": "TT_INTRO_ARRIVAL",
-      "quest_id": "Q_INTRO_ARRIVAL",
-      "elapsed_ge_sec": 300,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_OUTBREAK_START",
-      "quest_id": "Q_START_OUTBREAK",
-      "elapsed_ge_sec": 900,
-      "remaining_le_sec": null,
-      "fired": false
-    }
-  ],
+  "time_triggers": [],
   "last_updated": "2025-12-12T07:00:00Z"
 }

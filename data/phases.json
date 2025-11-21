@@ -1,37 +1,5 @@
 {
-  "current_phase": "PH_INTRO",
+  "current_phase": null,
   "current_phase_started_elapsed": 0,
-  "phases": [
-    {
-      "id": "PH_INTRO",
-      "title": "Прибуття експедиції",
-      "label": "Прибуття експедиції",
-      "description": "Початкова атмосферна фаза. Станція формально працює, але фіксуються дрібні порушення — біологічні глічі.",
-      "order": 1,
-      "time_window": {
-        "planned_start_elapsed_sec": 0,
-        "planned_end_elapsed_sec": 900
-      },
-      "ui_intensity": "low",
-      "hint_frequency": "low",
-      "on_start_quests": ["Q_INTRO_START"],
-      "on_end_quests": []
-    },
-    {
-      "id": "PH_OUTBREAK",
-      "title": "Перші симптоми",
-      "label": "Перші симптоми",
-      "description": "Фаза реагування після INTRO: до 4 годин нестабільності, жовтий → помаранчевий режим, часті глічі та попередження.",
-      "long_description": "Після перших 15 хвилин система демонструє ознаки інфекційної аномалії: з'являються попередження, перші протоколи та небезпечні дані. Станція працює у нестабільному режимі й надсилає інтенсивні сигнали у термінал.",
-      "order": 2,
-      "time_window": {
-        "planned_start_elapsed_sec": 900,
-        "planned_end_elapsed_sec": 14400
-      },
-      "ui_intensity": "medium",
-      "hint_frequency": "medium",
-      "on_start_quests": ["Q_OUTBREAK_START"],
-      "on_end_quests": ["Q_OUTBREAK_END"]
-    }
-  ]
+  "phases": []
 }
