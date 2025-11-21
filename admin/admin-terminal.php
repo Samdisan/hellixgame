@@ -7,31 +7,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $command = trim($_POST['command']);
     if (stripos($command, '/msg') === 0) {
         if (preg_match('/^\/msg\s+(\w+)\s+\"?(.*?)\"?$/', $command, $m)) {
-            append_terminal_message('both', 'info', $m[2]);
+            $target = strtolower($m[1]) === 'admin' ? 'admin_terminal' : 'both';
+            append_terminal_message($target, 'info', $m[2]);
             $response = 'Надіслано повідомлення у всі термінали';
+        } else {
+            $response = 'Формат: /msg all "текст"';
         }
     } elseif (stripos($command, '/run') === 0) {
         $id = trim(substr($command, 4));
-        append_terminal_message('admin_terminal', 'protocol', 'Запуск квесту ' . $id);
-        $response = 'Квест ' . $id . ' позначено як запущений';
+        $quest = find_quest($id);
+        if ($quest) {
+            run_quest_actions($quest);
+            append_terminal_message('both', 'protocol', 'Запущено квест ' . $id);
+            $response = 'Квест виконано: ' . $id;
+        } else {
+            $response = 'Квест не знайдено';
+        }
     } elseif (stripos($command, '/setaccess') === 0) {
-        $parts = explode(' ', $command);
+        $parts = preg_split('/\s+/', $command);
         if (count($parts) === 3) {
             [$cmd, $playerId, $level] = $parts;
             $players = load_json('players.json');
             foreach ($players as &$player) {
                 if ($player['id'] === $playerId) {
                     $player['access_level'] = (int) $level;
+                    append_terminal_message('both', 'info', "[ACCESS] {$playerId} -> {$level}");
                 }
             }
             unset($player);
             save_json('players.json', $players);
             $response = "Рівень доступу {$playerId} встановлено на {$level}";
+        } else {
+            $response = 'Формат: /setaccess PLAYER LEVEL';
         }
     } elseif (stripos($command, '/phase') === 0) {
         $id = trim(substr($command, 6));
         set_current_phase($id);
-        append_terminal_message('admin_terminal', 'info', 'Фазу змінено на ' . $id);
+        append_terminal_message('both', 'info', 'Фазу змінено на ' . $id);
         $response = 'Фаза оновлена';
     } else {
         $response = 'Невідома команда';

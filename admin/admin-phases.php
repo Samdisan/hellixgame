@@ -65,7 +65,7 @@ include __DIR__ . '/../partials/header.php';
         <div class="timeline-item">
             <div class="muted">Статус таймера</div>
             <div class="phase-badge" data-timer-status><?php echo strtoupper($timer['state']); ?></div>
-            <div class="micro">Оновлюється кожні 3 секунди</div>
+            <div class="micro">Оновлюється щосекунди</div>
         </div>
         <div class="timeline-item">
             <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>
@@ -175,7 +175,7 @@ include __DIR__ . '/../partials/header.php';
                 <p class="muted">Підфаз не налаштовано.</p>
             <?php else: ?>
                 <table class="table dense">
-                    <thead><tr><th>Підфаза</th><th>Умови</th><th>Квести</th><th>ETA/Статус</th></tr></thead>
+                    <thead><tr><th>Підфаза</th><th>Умови</th><th>Що станеться</th><th>ETA/Статус</th></tr></thead>
                     <tbody>
                     <?php foreach ($subphaseRows as $row): ?>
                         <?php
@@ -190,6 +190,7 @@ include __DIR__ . '/../partials/header.php';
                                 $conds[] = 'elapsed ≤ ' . human_time((int)$window['end_elapsed_le_sec']);
                             }
                             $questsStart = array_map(fn($q) => $questLookup[$q]['label'] ?? $q, $sub['on_start_quests'] ?? []);
+                            $questDescriptions = array_filter(array_map(fn($q) => $questLookup[$q]['description'] ?? null, $sub['on_start_quests'] ?? []));
                             $stateLabel = strtoupper($row['state'] ?? 'pending');
                             $etaText = 'готова до запуску';
                             if (($row['state'] ?? '') === 'fired') {
@@ -206,6 +207,11 @@ include __DIR__ . '/../partials/header.php';
                             <td class="micro muted"><?php echo $conds ? htmlspecialchars(implode(' · ', $conds), ENT_QUOTES) : 'умова не задана'; ?></td>
                             <td class="micro">
                                 <?php echo $questsStart ? htmlspecialchars(implode(', ', $questsStart), ENT_QUOTES) : '—'; ?>
+                                <?php if ($questDescriptions): ?>
+                                    <div class="micro muted"><?php echo htmlspecialchars(implode(' | ', $questDescriptions), ENT_QUOTES); ?></div>
+                                <?php elseif (!empty($sub['description'])): ?>
+                                    <div class="micro muted"><?php echo htmlspecialchars($sub['description'], ENT_QUOTES); ?></div>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge level"><?php echo $stateLabel; ?></span>
@@ -252,12 +258,7 @@ include __DIR__ . '/../partials/header.php';
 
 <section class="panel">
     <h2>Активні протоколи</h2>
-    <?php if (empty($activeProtocols)): ?>
-        <p class="muted">Наразі немає активних протоколів.</p>
-    <?php else: ?>
-        <p class="muted">Активних документів: <?php echo count($activeProtocols); ?>. Відкрийте повний перелік, щоб відредагувати.</p>
-        <a class="button" href="/admin/admin-protocols.php">Відкрити всі протоколи</a>
-    <?php endif; ?>
+    <a class="button" href="/admin/admin-protocols.php">Активні протоколи</a>
 </section>
 
 <section class="panel">

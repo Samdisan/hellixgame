@@ -176,7 +176,7 @@ function startLiveTimer() {
     }
 
     refresh();
-    setInterval(refresh, 3000);
+    setInterval(refresh, 1000);
 }
 
 function formatHuman(seconds) {
