@@ -13,6 +13,12 @@ if (!in_array($actor, $approvers, true)) {
 $players = load_json('players.json');
 $votes = load_json('access-votes.json');
 
+$now = time();
+$meta = $votes['_meta'] ?? ['promotions' => []];
+$recentPromotions = array_values(array_filter($meta['promotions'], function ($ts) use ($now) {
+    return is_int($ts) && $ts >= ($now - 3600);
+}));
+
 $target = null;
 foreach ($players as &$p) {
     if (($p['id'] ?? '') === $targetId) {
@@ -35,12 +41,25 @@ $votes[$targetId]['approvals'] = array_values(array_unique(array_merge($votes[$t
 $approvalCount = count($votes[$targetId]['approvals']);
 $leveledUp = false;
 
+if ($approvalCount >= 2 && count($recentPromotions) >= 3) {
+    respond_json([
+        'error' => 'rate_limited',
+        'message' => 'Ліміт підвищень вичерпано. Спробуйте за годину.',
+    ], 429);
+}
+
 if ($approvalCount >= 2) {
     $target['access_level'] = min(3, $currentLevel + 1);
     $leveledUp = $target['access_level'] !== $currentLevel;
     $votes[$targetId]['approvals'] = [];
-    append_terminal_message('both', 'info', '[ACCESS] ' . $target['id'] . ' піднято до ' . $target['access_level']);
+    if ($leveledUp) {
+        $recentPromotions[] = $now;
+        append_terminal_message('both', 'info', '[ACCESS] ' . $target['id'] . ' піднято до ' . $target['access_level']);
+    }
 }
+
+$meta['promotions'] = $recentPromotions;
+$votes['_meta'] = $meta;
 
 save_json('access-votes.json', $votes);
 save_json('players.json', $players);

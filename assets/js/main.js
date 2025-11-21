@@ -95,7 +95,7 @@ function setupAccessVotes() {
             const res = await fetch('/api/access-vote.php', { method: 'POST', body: form });
             const payload = await res.json();
             if (!res.ok || payload.error) {
-                status.textContent = 'Помилка: ' + (payload.error || res.statusText);
+                status.textContent = 'Помилка: ' + (payload.message || payload.error || res.statusText);
                 btn.disabled = false;
                 return;
             }
