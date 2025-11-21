@@ -25,6 +25,7 @@
     <nav class="admin-nav">
         <a href="/admin/admin.php">Адмін-хаб</a>
         <a href="/admin/admin-phases.php">Фази & квести</a>
+        <a href="/admin/admin-goals.php">Цілі</a>
         <a href="/admin/admin-terminal.php">Адмін-термінал</a>
         <a href="/admin/admin-protocols.php">Протоколи</a>
         <a href="/admin/admin-players.php">Гравці</a>
