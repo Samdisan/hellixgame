@@ -8,6 +8,9 @@ if (!$player) {
     exit;
 }
 
+$accessApprovers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO'];
+$canManageAccess = in_array($player['id'], $accessApprovers, true);
+
 $timer = timer_status();
 $messages = array_filter(load_json('terminal-messages.json'), function ($row) {
     return $row['target'] === 'public_terminal';
@@ -29,7 +32,9 @@ include __DIR__ . '/partials/header.php';
         <div style="margin-top:12px;" class="quick-actions">
             <a class="button" href="protocols-player.php">Мої протоколи</a>
             <a class="button" href="goals.php">Цілі</a>
-            <a class="button" href="access-levels.php">Рівні доступу</a>
+            <?php if ($canManageAccess): ?>
+                <a class="button" href="access-levels.php">Рівні доступу</a>
+            <?php endif; ?>
             <a class="button" href="personal-files.php">Особові справи</a>
             <a class="button secondary" href="expeditions.php">Експедиції</a>
             <a class="button secondary" href="terminal.php">Термінал</a>

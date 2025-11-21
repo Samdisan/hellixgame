@@ -6,12 +6,11 @@ $response = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $command = trim($_POST['command']);
     if (stripos($command, '/msg') === 0) {
-        if (preg_match('/^\/msg\s+(\w+)\s+\"?(.*?)\"?$/', $command, $m)) {
-            $target = strtolower($m[1]) === 'admin' ? 'admin_terminal' : 'both';
-            append_terminal_message($target, 'info', $m[2]);
-            $response = 'Надіслано повідомлення у всі термінали';
+        if (preg_match('/^\/msg\s+\"?(.*?)\"?$/', $command, $m)) {
+            append_terminal_message('both', 'info', $m[1]);
+            $response = 'Надіслано у всі термінали';
         } else {
-            $response = 'Формат: /msg all "текст"';
+            $response = 'Формат: /msg "текст"';
         }
     } elseif (stripos($command, '/run') === 0) {
         $id = trim(substr($command, 4));

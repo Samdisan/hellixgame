@@ -11,9 +11,23 @@ if (!$player) {
 $players = load_json('players.json');
 $votes = load_json('access-votes.json');
 $approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO'];
+$isApprover = in_array($player['id'], $approvers, true);
 
 include __DIR__ . '/partials/header.php';
 ?>
+<?php if (!$isApprover): ?>
+<section class="panel">
+    <div class="panel__header">
+        <div>
+            <p class="micro muted">Керування рівнями доступу</p>
+            <h1>Рівні доступу</h1>
+        </div>
+        <div class="badge level">Доступ обмежено</div>
+    </div>
+    <p class="muted">Цей модуль доступний лише для: Глен Росс, Кроу (психолог), Кіра Сато. Зверніться до них або до адміна станції.</p>
+</section>
+<?php include __DIR__ . '/partials/footer.php'; return; endif; ?>
+
 <section class="panel">
     <div class="panel__header">
         <div>
