@@ -16,6 +16,23 @@
       "on_end_quests": [],
       "active_protocols": [],
       "notes": "Початкова фаза триває приблизно 7 хвилин від старту таймера."
+    },
+    {
+      "id": "PH_BRIEFING",
+      "title": "Знайомство",
+      "order": 2,
+      "time_window": {
+        "planned_start_elapsed_sec": 420,
+        "planned_end_elapsed_sec": 720
+      },
+      "ui_intensity": "low",
+      "hint_frequency": "medium",
+      "on_start_quests": [
+        "Q_BRIEFING_ALERT"
+      ],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Фаза знайомства триває близько п’яти хвилин і запускається відразу після завершення прибуття."
     }
   ]
 }
