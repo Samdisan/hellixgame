@@ -106,7 +106,7 @@
   {
     "id": "PL_WHO_PR",
     "name": "██████",
-    "role": "PR-менеджер ВООЗ",
+    "role": "Вірусолог ВООЗ",
     "faction": "who",
     "access_level": 1,
     "status": "search"
