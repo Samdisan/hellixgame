@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "Q_OPEN_RESTORE_PROTOCOL",
+    "label": "Відкрити ПРОТОКОЛ ВІДНОВЛЕННЯ ДОСТУПІВ",
+    "description": "Активує документ HELIX-ACC-RESTORE-03 після трьох хвилин фази Прибуття.",
+    "phase": "PH_INTRO",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_ACC_RESTORE_03"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PROTO] HELIX-ACC-RESTORE-03 доступний для тристороннього підтвердження доступів."
+      }
+    ]
+  }
+]

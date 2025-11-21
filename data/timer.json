@@ -3,6 +3,14 @@
   "duration_seconds": 43200,
   "elapsed_seconds": 0,
   "last_updated_epoch": null,
-  "time_triggers": [],
+  "time_triggers": [
+    {
+      "id": "TT_HELIX_RESTORE_PROTOCOL",
+      "quest_id": "Q_OPEN_RESTORE_PROTOCOL",
+      "elapsed_ge_sec": 180,
+      "remaining_le_sec": null,
+      "fired": false
+    }
+  ],
   "last_updated": "2025-12-12T07:00:00Z"
 }

@@ -63,8 +63,8 @@
     "level": 1,
     "public": false,
     "phase": "PH_INTRO",
-    "active": true,
-    "publish_time": "immediate",
+    "active": false,
+    "publish_time": "00:03:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_STATION_ROSS",
