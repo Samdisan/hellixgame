@@ -1,0 +1,126 @@
+[
+  {
+    "code": "HX-01",
+    "type": "player",
+    "player_id": "PL_STATION_FARRAGUT"
+  },
+  {
+    "code": "HX-02",
+    "type": "player",
+    "player_id": "PL_STATION_WALKER"
+  },
+  {
+    "code": "HX-03",
+    "type": "player",
+    "player_id": "PL_STATION_GREN"
+  },
+  {
+    "code": "HX-04",
+    "type": "player",
+    "player_id": "PL_STATION_CROW_ISABELLE"
+  },
+  {
+    "code": "HX-05",
+    "type": "player",
+    "player_id": "PL_STATION_ROSS"
+  },
+  {
+    "code": "HX-06",
+    "type": "player",
+    "player_id": "PL_STATION_SATO"
+  },
+  {
+    "code": "HX-07",
+    "type": "player",
+    "player_id": "PL_STATION_CROW_PSY"
+  },
+  {
+    "code": "HX-08",
+    "type": "player",
+    "player_id": "PL_STATION_ALEXI"
+  },
+  {
+    "code": "WHO-09",
+    "type": "player",
+    "player_id": "PL_WHO_COORDINATOR"
+  },
+  {
+    "code": "WHO-10",
+    "type": "player",
+    "player_id": "PL_WHO_GENETICIST"
+  },
+  {
+    "code": "WHO-11",
+    "type": "player",
+    "player_id": "PL_WHO_PSYCHOANALYST"
+  },
+  {
+    "code": "WHO-12",
+    "type": "player",
+    "player_id": "PL_WHO_SECURITY_AGENT"
+  },
+  {
+    "code": "WHO-13",
+    "type": "player",
+    "player_id": "PL_WHO_PROGRAMMER"
+  },
+  {
+    "code": "WHO-14",
+    "type": "player",
+    "player_id": "PL_WHO_PR"
+  },
+  {
+    "code": "WHO-15",
+    "type": "player",
+    "player_id": "PL_WHO_DIPLOMAT"
+  },
+  {
+    "code": "WHO-16",
+    "type": "player",
+    "player_id": "PL_WHO_GUARD"
+  },
+  {
+    "code": "IL-17",
+    "type": "player",
+    "player_id": "PL_ILARIA_COMMANDER"
+  },
+  {
+    "code": "IL-18",
+    "type": "player",
+    "player_id": "PL_ILARIA_BIOSEC"
+  },
+  {
+    "code": "IL-19",
+    "type": "player",
+    "player_id": "PL_ILARIA_RADIO"
+  },
+  {
+    "code": "IL-20",
+    "type": "player",
+    "player_id": "PL_ILARIA_SECURITY"
+  },
+  {
+    "code": "IL-21",
+    "type": "player",
+    "player_id": "PL_ILARIA_MEDIC"
+  },
+  {
+    "code": "IL-22",
+    "type": "player",
+    "player_id": "PL_ILARIA_DEMO"
+  },
+  {
+    "code": "IL-23",
+    "type": "player",
+    "player_id": "PL_ILARIA_SCOUT"
+  },
+  {
+    "code": "IL-24",
+    "type": "player",
+    "player_id": "PL_ILARIA_PRESS"
+  },
+  {
+    "code": "admin-master",
+    "type": "admin"
+  }
+]
