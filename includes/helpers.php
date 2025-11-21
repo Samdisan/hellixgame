@@ -439,6 +439,9 @@ function protocol_accessible(array $protocol, array $player): bool
     if (!($protocol['active'] ?? false)) {
         return false;
     }
+    if (!empty($protocol['flags']['general_only'])) {
+        return false;
+    }
     if (($protocol['level'] ?? 0) > ($player['access_level'] ?? 0)) {
         return false;
     }

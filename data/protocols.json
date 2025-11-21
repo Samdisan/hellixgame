@@ -157,7 +157,8 @@
     "allowed_players": [],
     "flags": {
       "glitch": true,
-      "redacted": false
+      "redacted": false,
+      "general_only": true
     }
   }
 ]
