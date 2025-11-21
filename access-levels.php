@@ -36,7 +36,6 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div class="badge level">Ви: <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?></div>
     </div>
-    <p class="muted">Підвищення можливе лише за підтвердженням двох із трьох спеціалістів: Глен Росс, Кроу (психолог), Кіра Сато. Підвищуємо тільки на +1 (1 → 2 або 2 → 3). Далі — лише через адмінів.</p>
     <div class="table-wrapper" data-access-table>
         <table>
             <thead>

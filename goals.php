@@ -46,7 +46,6 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div class="badge level">Рівень доступу: <?php echo (int) $player['access_level']; ?></div>
     </div>
-    <p class="muted">Ваші задачі відображаються з урахуванням ролі та фракції. Оновлення застосовуються миттєво після синхронізації сценарію.</p>
     <div class="goals-grid">
         <div class="goal-card">
             <div class="glitch-overlay"></div>
