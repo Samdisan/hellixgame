@@ -70,6 +70,60 @@ function startHintTicker() {
     showHint();
 }
 
+function setupAccessVotes() {
+    const table = document.querySelector('[data-access-table]');
+    if (!table) return;
+
+    const status = document.createElement('div');
+    status.className = 'muted micro';
+    status.style.margin = '8px 0';
+    table.parentElement?.insertBefore(status, table);
+
+    table.addEventListener('click', async (evt) => {
+        const btn = evt.target.closest('[data-approve]');
+        if (!btn) return;
+        const row = btn.closest('tr');
+        if (!row) return;
+
+        btn.disabled = true;
+        const target = btn.dataset.target;
+
+        const form = new FormData();
+        form.append('target', target);
+
+        try {
+            const res = await fetch('/api/access-vote.php', { method: 'POST', body: form });
+            const payload = await res.json();
+            if (!res.ok || payload.error) {
+                status.textContent = 'Помилка: ' + (payload.error || res.statusText);
+                btn.disabled = false;
+                return;
+            }
+
+            row.querySelector('[data-approvals-count]').textContent = payload.approvals;
+            row.dataset.approvals = payload.approvals;
+            row.dataset.level = payload.new_level;
+            row.querySelector('.badge.level').textContent = payload.new_level;
+
+            const stamp = document.createElement('span');
+            stamp.className = 'muted micro';
+
+            if (payload.leveled_up) {
+                status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
+                stamp.textContent = 'Підвищено';
+            } else {
+                status.textContent = `Ваш голос зафіксовано. ${payload.approvals}/3 підтверджень.`;
+                stamp.textContent = 'Ваш голос зафіксовано';
+            }
+
+            btn.replaceWith(stamp);
+        } catch (e) {
+            status.textContent = 'Помилка з’єднання. Спробуйте ще раз.';
+            btn.disabled = false;
+        }
+    });
+}
+
 function setupProtocolPopups() {
     const modal = document.querySelector('.protocol-modal');
     if (!modal) return;
@@ -199,4 +253,5 @@ window.addEventListener('DOMContentLoaded', () => {
     startHintTicker();
     startLiveTimer();
     setupProtocolPopups();
+    setupAccessVotes();
 });

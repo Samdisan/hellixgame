@@ -1072,3 +1072,66 @@ form.inline {
     object-fit: cover;
     border-radius: inherit;
 }
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 12px;
+}
+
+.goal-card {
+    position: relative;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(9, 12, 18, 0.6);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.goal-card h2 {
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.goal-card__meta {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8fbdfd;
+}
+
+.goal-card ol {
+    margin: 10px 0 0 18px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 8px;
+    text-align: left;
+}
+
+.table-wrapper th {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.table-wrapper tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
