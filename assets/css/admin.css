@@ -9,3 +9,36 @@
 .link-card:hover {
     box-shadow: 0 0 0 2px var(--accent);
 }
+
+.alert-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.alert-summary .pill {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed var(--accent-dim);
+    padding: 6px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s ease;
+}
+
+.alert-summary .pill:hover { box-shadow: 0 0 0 1px var(--accent-dim); }
+.alert-summary .pill--active { background: var(--accent); color: #0b0f1a; border-color: var(--accent); }
+
+.alert-feed { display: flex; flex-direction: column; gap: 10px; }
+.alert-row { padding: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0, 0, 0, 0.35); border-radius: 12px; position: relative; overflow: hidden; }
+.alert-row::before { content: ''; position: absolute; inset: 0; opacity: 0.12; pointer-events: none; background: linear-gradient(120deg, transparent 0, rgba(0,255,194,0.2) 30%, transparent 60%); animation: sweep 6s linear infinite; }
+.alert-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.alert-body { font-weight: 600; letter-spacing: 0.01em; }
+
+.alert-row--protocol { border-color: rgba(0, 255, 194, 0.35); }
+.alert-row--access { border-color: rgba(255, 188, 0, 0.45); }
+.alert-row--phase { border-color: rgba(255, 71, 87, 0.45); }
+.alert-row--player { border-color: rgba(111, 174, 255, 0.45); }
+.alert-row--system { border-color: rgba(255, 255, 255, 0.15); }

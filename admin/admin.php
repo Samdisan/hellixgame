@@ -64,6 +64,11 @@ include __DIR__ . '/../partials/header.php';
             <div style="font-size:24px; font-weight:700; color: var(--accent); text-decoration: underline;">Переглянути (<?php echo $activeProtocols; ?>)</div>
             <div class="glitch-hint">Відкрити повний перелік документів.</div>
         </a>
+        <a class="protocol-card link-card" href="/admin/admin-alerts.php">
+            <div class="badge level">Оповіщення</div>
+            <div style="font-size:24px; font-weight:700; color: var(--accent); text-decoration: underline;">Журнал подій</div>
+            <div class="glitch-hint">Хто що відкрив, які квести й тригери спрацювали.</div>
+        </a>
     </div>
     <div class="overlay-text">bridge online</div>
 </section>
