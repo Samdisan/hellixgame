@@ -64,9 +64,16 @@ if ($redactedIndex === null) {
 }
 
 $allPlayers = array_column($players, 'id');
+$ilariaPlayers = array_column(array_filter($players, function ($p) {
+    return ($p['faction'] ?? '') === 'ilaria';
+}), 'id');
+$nonIlaria = array_values(array_diff($allPlayers, $ilariaPlayers));
+
+$protocols[$baseIndex]['allowed_players'] = $ilariaPlayers;
+$protocols[$baseIndex]['publish_time'] = 'broadcast';
 
 $protocols[$redactedIndex]['active'] = true;
-$protocols[$redactedIndex]['allowed_players'] = $allPlayers;
+$protocols[$redactedIndex]['allowed_players'] = $nonIlaria;
 $protocols[$redactedIndex]['announce_in_terminal'] = true;
 $protocols[$redactedIndex]['publish_time'] = 'broadcast';
 
@@ -74,7 +81,7 @@ $protocols[$baseIndex]['flags']['broadcasted'] = true;
 $protocols[$baseIndex]['flags']['broadcasted_at'] = gmdate('c');
 
 save_json('protocols.json', $protocols);
-append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 розіслано: доступна ушкоджена копія для всієї станції.');
+append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 розіслано: команда Іларії бачить повний наказ; інші отримали ушкоджену копію.');
 
 respond_json([
     'status' => 'sent',
