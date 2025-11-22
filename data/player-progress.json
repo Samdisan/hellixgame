@@ -1,0 +1,7 @@
+{
+  "players": {
+    "PL_STATION_01": {"opened_protocols": ["PR_LAB_ACCESS"]},
+    "PL_WHO_01": {"opened_protocols": []},
+    "PL_ILARIA_01": {"opened_protocols": []}
+  }
+}
