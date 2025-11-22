@@ -66,7 +66,9 @@
       },
       "ui_intensity": "medium",
       "hint_frequency": "medium",
-      "on_start_quests": [],
+      "on_start_quests": [
+        "Q_ILARIA_DESTROY_SAMPLES"
+      ],
       "on_end_quests": [],
       "active_protocols": [],
       "notes": "Паралельна фаза відновлення коду Origin стартує після 15-ї хвилини і триває чотири години, може йти одночасно з іншими фазами."

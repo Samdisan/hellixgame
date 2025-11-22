@@ -55,6 +55,9 @@ if ($outcome === 'repaired') {
             $phases['current_phase_started_elapsed'] = $phases['active_phases'][0]['started_elapsed'] ?? null;
         }
     }
+
+    // When life support is repaired, continue directly with the Origin recovery effort.
+    set_current_phase('PH_ORIGIN_RECOVERY');
 }
 
 save_json('phases.json', $phases);
