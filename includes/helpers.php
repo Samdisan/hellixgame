@@ -167,6 +167,51 @@ function set_timer_state(string $action): void
     save_json('timer.json', $timer);
 }
 
+function reset_timer_and_phases(): array
+{
+    $now = time();
+    $timer = load_json('timer.json');
+    $timer['state'] = 'not_started';
+    $timer['elapsed_seconds'] = 0;
+    $timer['last_updated_epoch'] = null;
+    $timer['last_updated'] = gmdate('c', $now);
+
+    if (isset($timer['time_triggers']) && is_array($timer['time_triggers'])) {
+        foreach ($timer['time_triggers'] as &$trigger) {
+            $trigger['fired'] = false;
+        }
+        unset($trigger);
+    }
+
+    save_json('timer.json', $timer);
+
+    $phases = load_json('phases.json');
+    $phases['current_phase_started_elapsed'] = 0;
+    $phases['active_phases'] = [];
+
+    if (isset($phases['phases']) && is_array($phases['phases'])) {
+        foreach ($phases['phases'] as &$phase) {
+            if (isset($phase['outcome'])) {
+                $phase['outcome'] = null;
+            }
+        }
+        unset($phase);
+
+        $firstPhaseId = $phases['phases'][0]['id'] ?? null;
+        $phases['current_phase'] = $firstPhaseId;
+        if ($firstPhaseId) {
+            $phases['active_phases'][] = [
+                'id' => $firstPhaseId,
+                'started_elapsed' => 0,
+            ];
+        }
+    }
+
+    save_json('phases.json', $phases);
+
+    return timer_status(false);
+}
+
 function current_phase(): array
 {
     $phases = load_json('phases.json');

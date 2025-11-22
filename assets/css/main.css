@@ -1118,6 +1118,37 @@ form.inline {
     gap: 10px;
 }
 
+.notice {
+    margin: 10px 0;
+    padding: 10px 12px;
+    border: 1px solid var(--accent-faint);
+    background: rgba(0, 255, 255, 0.06);
+    color: var(--text);
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.12);
+}
+
+.notice.error {
+    border-color: #ff6688;
+    background: rgba(255, 102, 136, 0.08);
+    box-shadow: 0 0 12px rgba(255, 102, 136, 0.18);
+}
+
+.reset-guard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 220px;
+}
+
+.reset-guard input {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    border: 1px dashed var(--accent-faint);
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
 @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(110, 240, 197, 0.6); }
     70% { box-shadow: 0 0 0 10px rgba(110, 240, 197, 0); }

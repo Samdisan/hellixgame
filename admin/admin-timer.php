@@ -9,6 +9,9 @@ include __DIR__ . '/../partials/header.php';
     <div class="glitch-overlay"></div>
     <h1>Глобальний таймер</h1>
     <p class="muted">Панель керування реактором часу. Кнопки Start/Pause/Resume/Reset змінюють долю станції в реальному часі.</p>
+    <?php if (($_GET['error'] ?? '') === 'reset_code'): ?>
+        <div class="notice error">Невірний код reset. Введіть 30071992, щоб повернути таймер у початковий стан.</div>
+    <?php endif; ?>
     <div class="grid cols-3">
         <div class="timeline-item">
             <div class="muted">Статус</div>
@@ -25,6 +28,10 @@ include __DIR__ . '/../partials/header.php';
     </div>
     <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
         <input type="hidden" name="redirect" value="/admin/admin-timer.php">
+        <div class="reset-guard">
+            <label for="reset-code-timer" class="micro muted">Код reset (лише для скидання)</label>
+            <input id="reset-code-timer" name="reset_code" type="password" inputmode="numeric" autocomplete="off" placeholder="30071992">
+        </div>
         <button class="button" name="action" value="start" type="submit">Start</button>
         <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
         <button class="button secondary" name="action" value="resume" type="submit">Resume</button>

@@ -34,6 +34,9 @@ include __DIR__ . '/../partials/header.php';
     <div class="glitch-overlay"></div>
     <h1>Керування фазами</h1>
     <p class="muted">Фази, квести та глобальний таймер тепер на одній панелі. Статус оновлюється наживо.</p>
+    <?php if (($_GET['error'] ?? '') === 'reset_code'): ?>
+        <div class="notice error">Невірний код reset. Використайте 30071992, щоб скинути таймер і фази.</div>
+    <?php endif; ?>
     <div class="grid cols-4 phase-live">
         <div class="timeline-item">
             <div class="muted">Статус таймера</div>
@@ -57,6 +60,10 @@ include __DIR__ . '/../partials/header.php';
     </div>
     <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
         <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+        <div class="reset-guard">
+            <label for="reset-code-phases" class="micro muted">Код reset (лише для скидання)</label>
+            <input id="reset-code-phases" name="reset_code" type="password" inputmode="numeric" autocomplete="off" placeholder="30071992">
+        </div>
         <button class="button" name="action" value="start" type="submit">Start</button>
         <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
         <button class="button secondary" name="action" value="resume" type="submit">Resume</button>

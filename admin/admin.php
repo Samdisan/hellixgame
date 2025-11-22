@@ -32,6 +32,9 @@ include __DIR__ . '/../partials/header.php';
     <div class="glitch-overlay"></div>
     <h1>Головний командний центр</h1>
     <p class="muted">Ви на містку корабля HELIX. Тут сходяться фаза, час, статуси, протоколи — все, що рухає гру.</p>
+    <?php if (($_GET['error'] ?? '') === 'reset_code'): ?>
+        <div class="notice error">Невірний код reset. Введіть 30071992, щоб скинути таймер і стан фаз.</div>
+    <?php endif; ?>
     <div class="admin-hero">
         <div class="protocol-card">
             <div class="badge level">Фаза</div>
@@ -53,6 +56,10 @@ include __DIR__ . '/../partials/header.php';
             <div>Залишилось: <span data-timer-remaining><?php echo human_time((int)$timer['remaining']); ?></span></div>
             <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
                 <input type="hidden" name="redirect" value="/admin/admin.php">
+                <div class="reset-guard">
+                    <label for="reset-code-hub" class="micro muted">Код reset (лише для скидання)</label>
+                    <input id="reset-code-hub" name="reset_code" type="password" inputmode="numeric" autocomplete="off" placeholder="30071992">
+                </div>
                 <button class="button" name="action" value="start" type="submit">Start</button>
                 <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
                 <button class="button secondary" name="action" value="resume" type="submit">Resume</button>
@@ -99,6 +106,10 @@ include __DIR__ . '/../partials/header.php';
     </div>
     <form method="post" action="/api/update-timer.php" class="quick-actions" style="margin-top:12px;">
         <input type="hidden" name="redirect" value="/admin/admin.php">
+        <div class="reset-guard">
+            <label for="reset-code-hub-2" class="micro muted">Код reset (лише для скидання)</label>
+            <input id="reset-code-hub-2" name="reset_code" type="password" inputmode="numeric" autocomplete="off" placeholder="30071992">
+        </div>
         <button class="button" name="action" value="start" type="submit">Start</button>
         <button class="button secondary" name="action" value="pause" type="submit">Pause</button>
         <button class="button secondary" name="action" value="resume" type="submit">Resume</button>
