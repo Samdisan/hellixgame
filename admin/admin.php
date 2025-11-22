@@ -129,6 +129,11 @@ include __DIR__ . '/../partials/header.php';
                     <strong><?php echo htmlspecialchars($ph['label'] ?? ($ph['title'] ?? ''), ENT_QUOTES); ?></strong>
                     <div class="micro muted" style="margin-top:6px;">Статус: <?php echo strtoupper($status); ?> · Заплановано: <?php echo $duration; ?></div>
                     <p class="muted" style="margin:8px 0;"><?php echo htmlspecialchars($ph['description'] ?? '', ENT_QUOTES); ?></p>
+                    <?php if (!empty($ph['outcome'])): ?>
+                        <div class="badge level" style="margin-bottom:8px;">
+                            Результат: <?php echo $ph['outcome'] === 'repaired' ? 'система відремонтована' : 'система не відремонтована'; ?>
+                        </div>
+                    <?php endif; ?>
                     <?php if (!empty($phaseQuestList)): ?>
                         <div class="quest-list">
                             <?php foreach ($phaseQuestList as $quest): ?>
@@ -161,6 +166,23 @@ include __DIR__ . '/../partials/header.php';
                                 <input type="hidden" name="redirect" value="/admin/admin.php">
                                 <button class="button secondary" type="submit">Зробити поточною</button>
                             </form>
+                        <?php endif; ?>
+                        <?php if ($ph['id'] === 'PH_LIFEFAIL'): ?>
+                            <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                                <form method="post" action="/api/set-phase-outcome.php" class="inline">
+                                    <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
+                                    <input type="hidden" name="outcome" value="repaired">
+                                    <input type="hidden" name="redirect" value="/admin/admin.php">
+                                    <button class="button secondary" type="submit" <?php echo ($ph['outcome'] ?? null) === 'repaired' ? 'disabled' : ''; ?>>Система відремонтована</button>
+                                </form>
+                                <form method="post" action="/api/set-phase-outcome.php" class="inline">
+                                    <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
+                                    <input type="hidden" name="outcome" value="not_repaired">
+                                    <input type="hidden" name="redirect" value="/admin/admin.php">
+                                    <button class="button secondary" type="submit" <?php echo ($ph['outcome'] ?? null) === 'not_repaired' ? 'disabled' : ''; ?>>Система не відремонтована</button>
+                                </form>
+                            </div>
+                            <div class="micro muted">Фіксуйте фінал фази вручну: відремонтовано або ні.</div>
                         <?php endif; ?>
                     </div>
                 </div>
