@@ -196,6 +196,7 @@ function current_phase(): array
         }
 
         $window = $phase['time_window'] ?? [];
+        $outcome = $phase['outcome'] ?? null;
         $plannedStart = isset($window['planned_start_elapsed_sec']) ? (int) $window['planned_start_elapsed_sec'] : null;
         $plannedEnd = isset($window['planned_end_elapsed_sec']) ? (int) $window['planned_end_elapsed_sec'] : null;
 
@@ -205,6 +206,9 @@ function current_phase(): array
         }
 
         $isActive = $startElapsed !== null;
+        if ($isActive && $outcome === 'repaired') {
+            $isActive = false;
+        }
         if ($isActive && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
             $isActive = false;
         }

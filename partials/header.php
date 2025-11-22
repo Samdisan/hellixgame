@@ -4,19 +4,23 @@ require_once __DIR__ . '/../includes/helpers.php';
 $phaseData = $phaseData ?? current_phase();
 $currentPhaseId = $phaseData['current'] ?? null;
 $currentPhaseConfig = null;
+$currentPhaseOutcome = null;
 foreach ($phaseData['phases'] ?? [] as $phaseCfg) {
     if (($phaseCfg['id'] ?? null) === $currentPhaseId) {
         $currentPhaseConfig = $phaseCfg;
+        $currentPhaseOutcome = $phaseCfg['outcome'] ?? null;
         break;
     }
 }
 
 $intensity = $currentPhaseConfig['ui_intensity'] ?? null;
 $bodyClasses = ['helix-shell'];
-if ($currentPhaseId) {
+$isRepairedFailure = $currentPhaseId === 'PH_LIFEFAIL' && $currentPhaseOutcome === 'repaired';
+
+if ($currentPhaseId && !$isRepairedFailure) {
     $bodyClasses[] = 'phase-' . strtolower($currentPhaseId);
 }
-if ($intensity) {
+if ($intensity && !$isRepairedFailure) {
     $bodyClasses[] = 'intensity-' . strtolower($intensity);
 }
 ?>

@@ -14,6 +14,7 @@ if ($phaseId === '' || !in_array($outcome, $validOutcomes, true)) {
     exit;
 }
 
+
 $phases = load_json('phases.json');
 $found = false;
 if (!empty($phases['phases']) && is_array($phases['phases'])) {
@@ -36,6 +37,24 @@ if (!$found) {
     $_SESSION['error'] = 'Фазу не знайдено.';
     header('Location: ' . $redirect);
     exit;
+}
+
+// If the failure phase was repaired, drop it from the active list and clear it as current
+// so the UI returns to the normal design instead of the red alert skin.
+if ($outcome === 'repaired') {
+    $phases['active_phases'] = array_values(array_filter($phases['active_phases'] ?? [], function ($record) use ($phaseId) {
+        return ($record['id'] ?? '') !== $phaseId;
+    }));
+
+    if (($phases['current_phase'] ?? '') === $phaseId) {
+        $phases['current_phase'] = null;
+        $phases['current_phase_started_elapsed'] = null;
+
+        if (!empty($phases['active_phases'])) {
+            $phases['current_phase'] = $phases['active_phases'][0]['id'] ?? null;
+            $phases['current_phase_started_elapsed'] = $phases['active_phases'][0]['started_elapsed'] ?? null;
+        }
+    }
 }
 
 save_json('phases.json', $phases);
