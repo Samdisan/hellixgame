@@ -198,6 +198,12 @@ function setupProtocolPopups() {
     const title = modal.querySelector('[data-modal-title]');
     const meta = modal.querySelector('[data-modal-meta]');
     const body = modal.querySelector('[data-modal-body]');
+    const shareActions = modal.querySelector('[data-share-actions]');
+    const shareStatus = modal.querySelector('[data-share-status]');
+    const shareSend = modal.querySelector('[data-share-send]');
+    const shareCancel = modal.querySelector('[data-share-cancel]');
+    let currentShareId = null;
+    let currentShareTrigger = null;
 
     const close = () => modal.classList.remove('open');
     modal.querySelectorAll('.protocol-modal__close, .protocol-modal__overlay').forEach((btn) => {
@@ -215,6 +221,8 @@ function setupProtocolPopups() {
         const content = trigger.dataset.protocolContent || '';
         const locked = trigger.dataset.locked === '1';
         const isRedacted = trigger.dataset.protocolRedacted === '1';
+        const isShareable = trigger.dataset.protocolShareable === '1';
+        const isBroadcasted = trigger.dataset.protocolBroadcasted === '1';
         const markUrl = trigger.dataset.markUrl;
 
         modal.classList.toggle('redacted', isRedacted);
@@ -224,6 +232,15 @@ function setupProtocolPopups() {
 
         modal.querySelector('[data-modal-content]').textContent = content;
         modal.classList.add('open');
+
+        if (shareActions) {
+            shareActions.hidden = !(isShareable && !isBroadcasted);
+            if (shareStatus) shareStatus.textContent = '';
+            currentShareId = shareActions.hidden ? null : id;
+            currentShareTrigger = shareActions.hidden ? null : trigger;
+            if (shareSend) shareSend.disabled = false;
+            if (shareCancel) shareCancel.disabled = false;
+        }
 
         if (markUrl && !locked) {
             try {
@@ -240,6 +257,40 @@ function setupProtocolPopups() {
 
     document.addEventListener('keydown', (evt) => {
         if (evt.key === 'Escape') close();
+    });
+
+    shareSend?.addEventListener('click', async () => {
+        if (!currentShareId) return;
+        shareSend.disabled = true;
+        shareCancel && (shareCancel.disabled = true);
+        if (shareStatus) shareStatus.textContent = 'Надсилання…';
+        const form = new FormData();
+        form.append('protocol', currentShareId);
+        try {
+            const res = await fetch('/api/broadcast-protocol.php', { method: 'POST', body: form });
+            const payload = await res.json();
+            if (!res.ok || payload.error) {
+                if (shareStatus) shareStatus.textContent = payload.message || payload.error || 'Помилка розсилки';
+                shareSend.disabled = false;
+                shareCancel && (shareCancel.disabled = false);
+                return;
+            }
+            if (shareStatus) shareStatus.textContent = 'Розіслано. Пошкоджена копія доступна команді.';
+            shareActions.hidden = true;
+            if (currentShareTrigger) {
+                currentShareTrigger.dataset.protocolBroadcasted = '1';
+            }
+        } catch (e) {
+            if (shareStatus) shareStatus.textContent = 'Проблема зі з’єднанням. Спробуйте ще раз.';
+            shareSend.disabled = false;
+            shareCancel && (shareCancel.disabled = false);
+        }
+    });
+
+    shareCancel?.addEventListener('click', () => {
+        if (!shareActions) return;
+        if (shareStatus) shareStatus.textContent = 'Вирішено не розсилати.';
+        shareActions.hidden = true;
     });
 }
 

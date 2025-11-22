@@ -7,6 +7,14 @@
         <div class="micro muted" data-modal-meta></div>
         <p data-modal-body class="muted"></p>
         <div class="protocol-modal__content" data-modal-content></div>
+        <div class="protocol-modal__actions" data-share-actions hidden>
+            <div class="muted micro" data-share-hint>Цей документ можна розіслати команді у пошкодженому вигляді.</div>
+            <div class="button-row">
+                <button class="button warning" type="button" data-share-send>Розіслати команді</button>
+                <button class="button secondary" type="button" data-share-cancel>Не розсилати</button>
+            </div>
+            <div class="micro" data-share-status></div>
+        </div>
     </div>
 </div>
 <footer class="footer">

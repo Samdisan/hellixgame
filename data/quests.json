@@ -52,9 +52,18 @@
     "phase": "PH_ORIGIN_RECOVERY",
     "actions": [
       {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_BIOSEC_PHASE3"
+      },
+      {
         "type": "push_terminal",
         "target": "both",
         "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Секретний наказ ILR-BIOSEC-PHASE3 доступний командиру та санітару. Рішення про розсилку — лише їхнє."
       }
     ]
   },

@@ -35,6 +35,9 @@ include __DIR__ . '/partials/header.php';
             $isAccessible = protocol_accessible($protocol, $player);
             $isNew = $isAccessible && !has_opened_protocol($player['id'], $protocol['id']);
             $isRedacted = !empty($protocol['flags']['redacted']);
+            $isShareable = !empty($protocol['flags']['shareable_redacted'])
+                && empty($protocol['flags']['broadcasted'])
+                && in_array($player['id'], $protocol['flags']['share_allowed'] ?? [], true);
             $classes = [];
             if ($isNew) { $classes[] = 'new'; }
             if ($isRedacted) { $classes[] = 'redacted'; }
@@ -52,6 +55,8 @@ include __DIR__ . '/partials/header.php';
                 data-protocol-content="<?php echo htmlspecialchars($protocol['content'], ENT_QUOTES); ?>"
                 data-protocol-redacted="<?php echo $isRedacted ? '1' : '0'; ?>"
                 data-protocol-player="<?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?>"
+                data-protocol-shareable="<?php echo $isShareable ? '1' : '0'; ?>"
+                data-protocol-broadcasted="<?php echo !empty($protocol['flags']['broadcasted']) ? '1' : '0'; ?>"
                 data-mark-url="/api/mark-protocol-opened.php"
                 <?php if (!$isAccessible): ?>data-locked="1"<?php endif; ?>
             >Читати</button>

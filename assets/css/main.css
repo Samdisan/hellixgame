@@ -640,6 +640,23 @@ h4 { font-size: 14px; }
     white-space: pre-wrap;
     line-height: 1.5;
 }
+.protocol-modal__actions {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(255, 94, 94, 0.07);
+    box-shadow: inset 0 0 0 1px rgba(255, 94, 94, 0.08);
+}
+.protocol-modal__actions .button-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+}
+.protocol-modal__actions .micro {
+    color: #fddfdf;
+}
 .protocol-modal.redacted .protocol-modal__dialog {
     border-color: rgba(255, 94, 94, 0.6);
     box-shadow: 0 10px 30px rgba(255, 94, 94, 0.2);
