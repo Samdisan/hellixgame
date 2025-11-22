@@ -29,6 +29,23 @@
     ]
   },
   {
+    "id": "Q_START_ORIGIN",
+    "label": "Запустити фазу відновлення коду Origin",
+    "description": "Паралельний запуск фази відновлення коду Origin через 15 хвилин гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_ORIGIN_RECOVERY"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
+      }
+    ]
+  },
+  {
     "id": "Q_BRIEFING_ALERT",
     "label": "Оповіщення про ознайомлення",
     "description": "Нагадує всім гравцям переглянути особові справи з урахуванням доступів.",

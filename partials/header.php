@@ -57,6 +57,7 @@ if ($intensity) {
         $navPhase = $phase ?? ($phaseData ?? current_phase());
         $navPhaseMeta = $navPhase['current_meta'] ?? [];
         $navNext = $navPhase['next_phase']['id'] ?? null;
+        $activePhases = $navPhase['active'] ?? [];
     ?>
     <div class="admin-timebar" data-live-timer>
         <div class="time-pill">
@@ -77,6 +78,21 @@ if ($intensity) {
             <div class="pill-line">У фазі: <span data-phase-elapsed><?php echo human_time((int) ($navPhaseMeta['elapsed_sec'] ?? 0)); ?></span></div>
             <div class="pill-line">До кінця фази: <span data-phase-remaining><?php echo isset($navPhaseMeta['remaining_sec']) ? human_time((int)$navPhaseMeta['remaining_sec']) : '—'; ?></span></div>
             <div class="pill-line">До наступної: <span data-phase-next><?php echo isset($navPhaseMeta['to_next_sec']) ? human_time((int)$navPhaseMeta['to_next_sec']) : '—'; ?></span></div>
+        </div>
+        <div class="time-pill time-pill--stacked">
+            <div class="micro muted">Одночасні фази</div>
+            <div class="active-phase-list" data-active-phases>
+                <?php if (!empty($activePhases)): ?>
+                    <?php foreach ($activePhases as $ap): ?>
+                        <div class="phase-chip">
+                            <span><?php echo htmlspecialchars($ap['id'], ENT_QUOTES); ?></span>
+                            <span class="micro muted"><?php echo human_time((int) ($ap['remaining_sec'] ?? 0)); ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="micro muted">—</div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 <?php endif; ?>

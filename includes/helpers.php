@@ -174,12 +174,59 @@ function current_phase(): array
 
     $currentId = $phases['current_phase'] ?? null;
     $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
+    $activeStarts = [];
+    foreach ($phases['active_phases'] ?? [] as $record) {
+        if (!empty($record['id'])) {
+            $activeStarts[$record['id']] = (int) ($record['started_elapsed'] ?? $startedElapsed);
+        }
+    }
+
+    // Ensure at least the current phase exists in the active list for backward compatibility.
+    if ($currentId && !isset($activeStarts[$currentId])) {
+        $activeStarts[$currentId] = $startedElapsed;
+    }
+
+    $activePhases = [];
     $currentConfig = null;
 
     foreach ($phases['phases'] ?? [] as $phase) {
-        if (($phase['id'] ?? null) === $currentId) {
+        $id = $phase['id'] ?? null;
+        if (!$id) {
+            continue;
+        }
+
+        $window = $phase['time_window'] ?? [];
+        $plannedStart = isset($window['planned_start_elapsed_sec']) ? (int) $window['planned_start_elapsed_sec'] : null;
+        $plannedEnd = isset($window['planned_end_elapsed_sec']) ? (int) $window['planned_end_elapsed_sec'] : null;
+
+        $startElapsed = $activeStarts[$id] ?? null;
+        if ($startElapsed === null && $plannedStart !== null && ($timer['elapsed'] ?? 0) >= $plannedStart) {
+            $startElapsed = $plannedStart;
+        }
+
+        $isActive = $startElapsed !== null;
+        if ($isActive && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
+            $isActive = false;
+        }
+
+        if ($isActive) {
+            $elapsedInPhase = max(0, ($timer['elapsed'] ?? 0) - $startElapsed);
+            $remainingInPhase = $plannedEnd !== null ? max(0, $plannedEnd - ($timer['elapsed'] ?? 0)) : null;
+            $activePhases[] = [
+                'id' => $id,
+                'title' => $phase['title'] ?? $id,
+                'started_elapsed' => $startElapsed,
+                'elapsed_sec' => $elapsedInPhase,
+                'remaining_sec' => $remainingInPhase,
+                'planned_start_elapsed_sec' => $plannedStart,
+                'planned_end_elapsed_sec' => $plannedEnd,
+                'ui_intensity' => $phase['ui_intensity'] ?? null,
+            ];
+        }
+
+        if ($currentId === $id) {
             $currentConfig = $phase;
-            break;
+            $startedElapsed = $startElapsed ?? $startedElapsed;
         }
     }
 
@@ -203,6 +250,7 @@ function current_phase(): array
         'current' => $currentId,
         'started_elapsed' => $startedElapsed,
         'phases' => $phases['phases'] ?? [],
+        'active' => $activePhases,
         'current_meta' => [
             'duration_sec' => $phaseDuration,
             'elapsed_sec' => $phaseElapsed,
@@ -220,17 +268,27 @@ function set_current_phase(string $phaseId): void
     $phases = load_json('phases.json');
     $timer = timer_status(false);
     $elapsed = $timer['elapsed'] ?? 0;
-    $previous = $phases['current_phase'] ?? null;
 
-    if ($previous && $previous !== $phaseId) {
-        run_phase_hooks($previous, 'on_end_quests');
+    $phases['active_phases'] = $phases['active_phases'] ?? [];
+    $alreadyActive = false;
+    foreach ($phases['active_phases'] as $record) {
+        if (($record['id'] ?? '') === $phaseId) {
+            $alreadyActive = true;
+            break;
+        }
+    }
+
+    if (!$alreadyActive) {
+        $phases['active_phases'][] = [
+            'id' => $phaseId,
+            'started_elapsed' => $elapsed,
+        ];
+        run_phase_hooks($phaseId, 'on_start_quests');
     }
 
     $phases['current_phase_started_elapsed'] = $elapsed;
     $phases['current_phase'] = $phaseId;
     save_json('phases.json', $phases);
-
-    run_phase_hooks($phaseId, 'on_start_quests');
 }
 
 function append_terminal_message(string $target, string $type, string $message): void

@@ -39,6 +39,11 @@ include __DIR__ . '/../partials/header.php';
             <div class="meta-line">Плин фази: <span data-phase-elapsed><?php echo human_time((int) ($phase['current_meta']['elapsed_sec'] ?? 0)); ?></span></div>
             <div class="meta-line">До завершення: <span data-phase-remaining><?php echo isset($phase['current_meta']['remaining_sec']) ? human_time((int) $phase['current_meta']['remaining_sec']) : '—'; ?></span></div>
             <div class="meta-line">До наступної: <span data-phase-next><?php echo $toNext !== null ? human_time((int)$toNext) : '—'; ?></span> → <?php echo htmlspecialchars($nextPhaseLabel, ENT_QUOTES); ?></div>
+            <div class="meta-line">Одночасно: <span class="active-phase-list" data-active-phases>
+                <?php foreach (($phase['active'] ?? []) as $ap): ?>
+                    <span class="phase-chip"><?php echo htmlspecialchars($ap['id'], ENT_QUOTES); ?></span>
+                <?php endforeach; ?>
+            </span></div>
             <div class="glitch-hint">Перемикання фаз запускає каскади подій.</div>
         </div>
         <div class="protocol-card">

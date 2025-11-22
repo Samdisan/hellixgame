@@ -15,6 +15,14 @@ include __DIR__ . '/partials/header.php';
                 <?php echo human_time((int) ($timer['remaining'] ?? 0)); ?>
             </div>
         </div>
+        <div class="meta-block">
+            <div class="badge">Активні фази</div>
+            <div class="active-phase-list" data-active-phases>
+                <?php foreach (($phase['active'] ?? []) as $ap): ?>
+                    <div class="phase-chip"><?php echo htmlspecialchars($ap['id'], ENT_QUOTES); ?></div>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </div>
     <div class="terminal-hero" style="margin:12px 0;">
         <div class="terminal-line line-info"><span class="muted">[STREAM]</span><span class="badge">LIVE</span><span>Повідомлення системи, аварійні сигнали, витоки даних, галюцинації станції.</span></div>

@@ -435,6 +435,13 @@ h4 { font-size: 14px; }
     letter-spacing: 0.6px;
 }
 
+.active-phase-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 .banner {
     padding: 10px 12px;
     border-radius: 10px;

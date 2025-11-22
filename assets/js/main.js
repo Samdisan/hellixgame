@@ -233,6 +233,7 @@ function startLiveTimer() {
                 const phaseElapsedEl = container.querySelector('[data-phase-elapsed]');
                 const phaseRemainingEl = container.querySelector('[data-phase-remaining]');
                 const phaseNextEl = container.querySelector('[data-phase-next]');
+                const activePhasesEl = container.querySelector('[data-active-phases]');
                 const triggersTable = container.querySelector('[data-timer-triggers] tbody');
 
                 if (elapsedEl && payload.timer) {
@@ -254,6 +255,16 @@ function startLiveTimer() {
                 if (phaseNextEl && payload.phases && payload.phases.current_meta) {
                     const next = payload.phases.current_meta.to_next_sec;
                     phaseNextEl.textContent = typeof next === 'number' ? formatHuman(next) : '—';
+                }
+                if (activePhasesEl && payload.phases && Array.isArray(payload.phases.active)) {
+                    activePhasesEl.innerHTML = payload.phases.active.map((ap) => {
+                        const remain = ap.remaining_sec !== null && ap.remaining_sec !== undefined ? formatHuman(ap.remaining_sec) : '—';
+                        const title = ap.title || ap.id || '';
+                        return `<div class="phase-chip"><span>${escapeHtml(ap.id || '')}</span><span class="micro muted">${remain}</span><span class="micro">${escapeHtml(title)}</span></div>`;
+                    }).join('');
+                    if (!payload.phases.active.length) {
+                        activePhasesEl.innerHTML = '<div class="micro muted">—</div>';
+                    }
                 }
                 if (triggersTable && payload.timer && Array.isArray(payload.timer.time_triggers)) {
                     triggersTable.innerHTML = payload.timer.time_triggers.map((trigger) => {
@@ -287,6 +298,15 @@ function formatHuman(seconds) {
     parts.push(`${String(m).padStart(2, '0')}m`);
     parts.push(`${String(s).padStart(2, '0')}s`);
     return parts.join(' ');
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
