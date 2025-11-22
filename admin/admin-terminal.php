@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$messages = array_slice(array_reverse(load_json('terminal-messages.json')), 0, 12);
+$messages = array_slice(array_reverse(load_terminal_messages_with_ids()), 0, 20);
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel">
     <div class="glitch-overlay"></div>
     <h1>Адмінський термінал</h1>
-    <p class="muted">Чиста консоль для архітектора гри. Команди на кшталт /run, /msg, /setaccess, /phase керують станцією напряму.</p>
+    <p class="muted">Чиста консоль для архітектора гри. Команди /msg, /run, /setaccess, /phase керують станцією; усі повідомлення гравців одразу з’являються тут як чат.</p>
     <form method="post">
         <input class="form-control" name="command" placeholder="/run Q_OUTBREAK_01" required>
         <button class="button" type="submit" style="margin-top:8px;">Виконати</button>
@@ -65,12 +65,15 @@ include __DIR__ . '/../partials/header.php';
 </section>
 <section class="panel">
     <h2>Живий log</h2>
-    <div class="terminal">
+    <div class="terminal terminal-feed" data-target="all" data-can-delete="1" data-poll-ms="3000">
         <?php foreach ($messages as $msg): ?>
-            <div class="terminal-line line-<?php echo htmlspecialchars($msg['type'], ENT_QUOTES); ?>">
+            <div class="terminal-line line-<?php echo htmlspecialchars($msg['type'], ENT_QUOTES); ?>" data-message-id="<?php echo htmlspecialchars($msg['id'], ENT_QUOTES); ?>">
                 <span class="muted"><?php echo date('H:i:s', strtotime($msg['timestamp'])); ?></span>
                 <span class="badge"><?php echo strtoupper($msg['target']); ?></span>
-                <span><?php echo htmlspecialchars($msg['message'], ENT_QUOTES); ?></span>
+                <span class="terminal-line__body">
+                    <?php echo htmlspecialchars($msg['message'], ENT_QUOTES); ?>
+                    <button class="terminal-delete" type="button" data-delete-id="<?php echo htmlspecialchars($msg['id'], ENT_QUOTES); ?>" aria-label="Видалити повідомлення">✕</button>
+                </span>
             </div>
         <?php endforeach; ?>
     </div>

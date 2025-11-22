@@ -1,9 +1,13 @@
-function startTerminalFeed(selector, target = 'public_terminal') {
+function startTerminalFeed(selector, fallbackTarget = 'public_terminal') {
     const container = document.querySelector(selector);
     if (!container) return;
 
     if (container.dataset.feedStarted) return;
     container.dataset.feedStarted = '1';
+
+    const target = container.dataset.target || fallbackTarget;
+    const canDelete = container.dataset.canDelete === '1';
+    const pollMs = parseInt(container.dataset.pollMs || '6000', 10);
 
     async function refresh() {
         try {
@@ -19,18 +23,42 @@ function startTerminalFeed(selector, target = 'public_terminal') {
         }
     }
 
+    async function deleteMessage(id, btn) {
+        if (!id) return;
+        btn?.setAttribute('disabled', 'disabled');
+        const form = new FormData();
+        form.append('id', id);
+        try {
+            await fetch('/api/delete-terminal-message.php', { method: 'POST', body: form });
+            refresh();
+        } catch (e) {
+            // ignore
+        } finally {
+            btn?.removeAttribute('disabled');
+        }
+    }
+
     function renderLine(line) {
         const ts = new Date(line.timestamp).toLocaleTimeString('uk-UA', { hour12: false });
         const typeClass = 'line-' + (line.type || 'info');
-        return `<div class="terminal-line ${typeClass}">` +
+        const body = escapeHtml(line.message || '');
+        const badge = escapeHtml(line.type || '');
+        const deleteBtn = canDelete ? `<button class="terminal-delete" type="button" data-delete-id="${escapeHtml(line.id || '')}" aria-label="Видалити">✕</button>` : '';
+        return `<div class="terminal-line ${typeClass}" data-message-id="${escapeHtml(line.id || '')}">` +
             `<span class="muted">${ts}</span>` +
-            `<span class="badge">${line.type}</span>` +
-            `<span>${line.message}</span>` +
+            `<span class="badge">${badge}</span>` +
+            `<span class="terminal-line__body">${body}${deleteBtn}</span>` +
             `</div>`;
     }
 
+    container.addEventListener('click', (evt) => {
+        const btn = evt.target.closest('[data-delete-id]');
+        if (!btn) return;
+        deleteMessage(btn.dataset.deleteId, btn);
+    });
+
     refresh();
-    setInterval(refresh, 6000);
+    setInterval(refresh, isNaN(pollMs) ? 6000 : Math.max(1000, pollMs));
 }
 
 function startRotators() {

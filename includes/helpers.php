@@ -2,7 +2,7 @@
 session_start();
 
 function load_json(string $file): array
-{
+{ 
     $path = __DIR__ . '/../data/' . $file;
     if (!file_exists($path)) {
         return [];
@@ -297,14 +297,35 @@ function set_current_phase(string $phaseId): void
 
 function append_terminal_message(string $target, string $type, string $message): void
 {
-    $messages = load_json('terminal-messages.json');
+    $messages = load_terminal_messages_with_ids();
     $messages[] = [
+        'id' => uniqid('msg_', true),
         'timestamp' => gmdate('c'),
         'target' => $target,
         'type' => $type,
         'message' => $message,
     ];
     save_json('terminal-messages.json', $messages);
+}
+
+function load_terminal_messages_with_ids(): array
+{
+    $messages = load_json('terminal-messages.json');
+    $changed = false;
+
+    foreach ($messages as &$msg) {
+        if (empty($msg['id'])) {
+            $msg['id'] = uniqid('msg_', true);
+            $changed = true;
+        }
+    }
+    unset($msg);
+
+    if ($changed) {
+        save_json('terminal-messages.json', $messages);
+    }
+
+    return $messages;
 }
 
 function run_quest_actions(array $quest): void
