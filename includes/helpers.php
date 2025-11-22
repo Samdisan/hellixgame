@@ -308,6 +308,41 @@ function append_terminal_message(string $target, string $type, string $message):
     save_json('terminal-messages.json', $messages);
 }
 
+function load_message_triggers(): array
+{
+    $triggers = load_json('message-triggers.json');
+    return is_array($triggers) ? $triggers : [];
+}
+
+function save_message_triggers(array $triggers): void
+{
+    save_json('message-triggers.json', array_values($triggers));
+}
+
+function apply_player_message_triggers(string $message, string $playerId = ''): void
+{
+    $triggers = load_message_triggers();
+    if (empty($triggers)) {
+        return;
+    }
+
+    foreach ($triggers as $trigger) {
+        $pattern = $trigger['pattern'] ?? '';
+        $response = $trigger['response'] ?? '';
+        if ($pattern === '' || $response === '') {
+            continue;
+        }
+
+        if (stripos($message, $pattern) === false) {
+            continue;
+        }
+
+        $target = $trigger['target'] ?? 'both';
+        $decorated = str_replace('{player}', $playerId !== '' ? $playerId : 'unknown', $response);
+        append_terminal_message($target, 'info', '[TRIGGER] ' . $decorated);
+    }
+}
+
 function load_terminal_messages_with_ids(): array
 {
     $messages = load_json('terminal-messages.json');
