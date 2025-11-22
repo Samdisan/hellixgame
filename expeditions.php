@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/helpers.php';
 $players = load_json('players.json');
+$dossiers = load_json('personal-files.json');
 $factions = [
     'station' => 'Персонал станції',
     'who' => 'Експедиція ВООЗ',
@@ -10,6 +11,10 @@ $factions = [
 $grouped = [];
 foreach ($players as $player) {
     $grouped[$player['faction']][] = $player;
+}
+$dossierMap = [];
+foreach ($dossiers as $dossier) {
+    $dossierMap[$dossier['id']] = $dossier;
 }
 include __DIR__ . '/partials/header.php';
 ?>
@@ -26,6 +31,9 @@ include __DIR__ . '/partials/header.php';
             <?php foreach ($grouped[$key] ?? [] as $person): ?>
                 <div class="protocol-card roster-card">
                     <div><strong><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></strong> — <?php echo htmlspecialchars($person['role'], ENT_QUOTES); ?></div>
+                    <?php if (isset($dossierMap[$person['id']]['summary'])): ?>
+                        <div class="dossier-summary"><?php echo htmlspecialchars($dossierMap[$person['id']]['summary'], ENT_QUOTES); ?></div>
+                    <?php endif; ?>
                     <?php
                         $statusClass = [
                             'active' => 'status-active',
