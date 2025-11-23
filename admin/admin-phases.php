@@ -71,6 +71,54 @@ include __DIR__ . '/../partials/header.php';
     </form>
 </section>
 
+<?php
+$lifeFailPhase = null;
+foreach ($phases as $ph) {
+    if (($ph['id'] ?? '') === 'PH_LIFEFAIL') {
+        $lifeFailPhase = $ph;
+        break;
+    }
+}
+?>
+
+<?php if ($lifeFailPhase): ?>
+    <section class="panel">
+        <div class="flex between align-center" style="gap: 12px; flex-wrap: wrap;">
+            <div>
+                <h2 style="margin-bottom:4px;">PH_LIFEFAIL — контроль стану</h2>
+                <p class="micro muted">Звідси можна негайно зафіксувати результат збою життєзабезпечення, навіть якщо фаза ще не активна.</p>
+            </div>
+            <div class="flex" style="gap:8px;">
+                <span class="badge level" title="Планове вікно">
+                    <?php
+                        $lfWindow = $lifeFailPhase['time_window'] ?? [];
+                        $lfStart = $lfWindow['planned_start_elapsed_sec'] ?? null;
+                        $lfEnd = $lfWindow['planned_end_elapsed_sec'] ?? null;
+                        $lfDur = ($lfStart !== null && $lfEnd !== null) ? max(0, $lfEnd - $lfStart) : null;
+                        echo $lfStart !== null ? 'Старт: ' . human_time((int)$lfStart) : 'Без старту';
+                        if ($lfDur !== null) {
+                            echo ' · Вікно: ' . human_time((int)$lfDur);
+                        }
+                    ?>
+                </span>
+                <?php $lfOutcome = $lifeFailPhase['outcome'] ?? null; ?>
+                <?php if ($lfOutcome): ?>
+                    <span class="badge level <?php echo $lfOutcome === 'repaired' ? 'success' : 'warning'; ?>">
+                        <?php echo $lfOutcome === 'repaired' ? 'ВІДРЕМОНТОВАНО' : 'НЕ ВІДРЕМОНТОВАНО'; ?>
+                    </span>
+                <?php else: ?>
+                    <form method="post" action="/api/set-phase-outcome.php" class="inline-form" style="gap:6px;">
+                        <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
+                        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+                        <button class="button" type="submit" name="outcome" value="repaired">Відремонтовано</button>
+                        <button class="button secondary" type="submit" name="outcome" value="not_repaired">Не відремонтована</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
+
 <section class="panel">
     <h2>Фази</h2>
     <?php if (empty($phases)): ?>
