@@ -26,6 +26,13 @@
       "fired": false
     },
     {
+      "id": "TT_ILARIA_DESTROY_SAMPLES",
+      "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
+      "elapsed_ge_sec": 960,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_WHO_SEC_004Y",
       "quest_id": "Q_WHO_CORRIDOR_ALERT",
       "elapsed_ge_sec": 600,
