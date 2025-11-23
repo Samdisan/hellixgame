@@ -102,6 +102,8 @@ function timer_status(bool $processTriggers = true): array
         $timer = process_time_triggers($timer, $elapsed, $remaining);
     }
 
+    process_delayed_protocol_broadcasts($elapsed);
+
     return [
         'state' => $state,
         'elapsed' => $elapsed,
@@ -111,6 +113,74 @@ function timer_status(bool $processTriggers = true): array
         'time_triggers' => $timer['time_triggers'] ?? [],
         'raw' => $timer,
     ];
+}
+
+/**
+ * Auto-broadcasts shareable redacted protocols if owners did not send them within 15 minutes of unlock.
+ */
+function process_delayed_protocol_broadcasts(int $elapsed): void
+{
+    $protocols = load_json('protocols.json');
+    $players = load_json('players.json');
+    $changed = false;
+
+    $allPlayers = array_column($players, 'id');
+    $ilariaPlayers = array_column(array_filter($players, function ($p) {
+        return ($p['faction'] ?? '') === 'ilaria';
+    }), 'id');
+
+    foreach ($protocols as $idx => &$protocol) {
+        $flags = $protocol['flags'] ?? [];
+        if (empty($flags['shareable_redacted']) || !empty($flags['broadcasted'])) {
+            continue;
+        }
+
+        if (empty($flags['unlocked_elapsed']) && !empty($protocol['active'])) {
+            $protocol['flags']['unlocked_elapsed'] = $elapsed;
+            $flags = $protocol['flags'];
+            $changed = true;
+        }
+
+        $unlockElapsed = isset($flags['unlocked_elapsed']) ? (int) $flags['unlocked_elapsed'] : null;
+        if ($unlockElapsed === null || $elapsed - $unlockElapsed < 900) {
+            continue;
+        }
+
+        $redactedId = $flags['redacted_variant'] ?? '';
+        if ($redactedId === '') {
+            continue;
+        }
+
+        $redactedIndex = null;
+        foreach ($protocols as $rIdx => $p) {
+            if (($p['id'] ?? '') === $redactedId) {
+                $redactedIndex = $rIdx;
+                break;
+            }
+        }
+        if ($redactedIndex === null) {
+            continue;
+        }
+
+        // Full order stays with the ILARIA team; everyone else gets the broken copy automatically.
+        $protocol['allowed_players'] = !empty($ilariaPlayers) ? $ilariaPlayers : ($protocol['allowed_players'] ?? []);
+        $protocol['publish_time'] = 'broadcast';
+        $protocol['flags']['broadcasted'] = true;
+        $protocol['flags']['broadcasted_at'] = gmdate('c');
+
+        $protocols[$redactedIndex]['active'] = true;
+        $protocols[$redactedIndex]['allowed_players'] = array_values(array_diff($allPlayers, $ilariaPlayers));
+        $protocols[$redactedIndex]['announce_in_terminal'] = true;
+        $protocols[$redactedIndex]['publish_time'] = 'broadcast';
+
+        append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 авто-розіслано: команда Іларії має повний наказ, інші отримали пошкоджену копію.');
+        $changed = true;
+    }
+    unset($protocol);
+
+    if ($changed) {
+        save_json('protocols.json', $protocols);
+    }
 }
 
 function trigger_quest(string $questId, int $elapsed, int $remaining): void
@@ -468,6 +538,9 @@ function run_quest_actions(array $quest): void
                         }
                         if ($action['type'] === 'unlock_protocol') {
                             $protocol['public'] = true;
+                        }
+                        if (!empty(($protocol['flags']['shareable_redacted'] ?? false)) && empty($protocol['flags']['unlocked_elapsed'])) {
+                            $protocol['flags']['unlocked_elapsed'] = $timer['elapsed'] ?? 0;
                         }
                         append_terminal_message('admin_terminal', 'protocol', '[PROTOCOL] ' . $protocol['id'] . ' → ' . ($protocol['active'] ? 'active' : 'inactive'));
                     }
