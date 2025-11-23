@@ -10,11 +10,11 @@ if (!is_array($rawMessages)) {
 // Normalise and sort newest first
 $normalized = [];
 foreach ($rawMessages as $entry) {
-    $tsRaw = $entry['timestamp'] ?? '';
+    $tsRaw = (string) ($entry['timestamp'] ?? '');
     $ts = $tsRaw ? date('Y-m-d H:i:s', strtotime($tsRaw)) : '—';
-    $text = trim($entry['message'] ?? '');
-    $type = strtolower($entry['type'] ?? '');
-    $target = $entry['target'] ?? '';
+    $text = trim((string) ($entry['message'] ?? ''));
+    $type = strtolower((string) ($entry['type'] ?? ''));
+    $target = (string) ($entry['target'] ?? '');
 
     // Bucketing rules keep only one scope per entry for filtering
     $bucket = 'system';

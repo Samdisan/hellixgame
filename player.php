@@ -35,6 +35,7 @@ include __DIR__ . '/partials/header.php';
             <?php if ($canManageAccess): ?>
                 <a class="button" href="access-levels.php">Рівні доступу</a>
             <?php endif; ?>
+            <a class="button" href="life-support.php">Показники</a>
             <a class="button" href="personal-files.php">Особові справи</a>
             <a class="button secondary" href="expeditions.php">Експедиції</a>
             <a class="button secondary" href="terminal.php">Термінал</a>

@@ -52,6 +52,7 @@ if ($intensity && !$isRepairedFailure) {
         <a href="/admin/admin.php">Адмін-хаб</a>
         <a href="/admin/admin-phases.php">Фази & квести</a>
         <a href="/admin/admin-goals.php">Цілі</a>
+        <a href="/admin/admin-life-support.php">Показники</a>
         <a href="/admin/admin-message-triggers.php">Тригери</a>
         <a href="/admin/admin-alerts.php">Оповіщення</a>
         <a href="/admin/admin-terminal.php">Адмін-термінал</a>
