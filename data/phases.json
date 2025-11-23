@@ -45,8 +45,8 @@
       "title": "Збій систем життєзабезпечення",
       "order": 3,
       "time_window": {
-        "planned_start_elapsed_sec": 720,
-        "planned_end_elapsed_sec": 7920
+        "planned_start_elapsed_sec": 780,
+        "planned_end_elapsed_sec": 7980
       },
       "ui_intensity": "critical",
       "hint_frequency": "high",
@@ -54,7 +54,7 @@
       "on_end_quests": [],
       "active_protocols": [],
       "outcome": null,
-      "notes": "Режим тривоги: система безпеки виводить станцію у критичний червоний режим, а залишок таймера обрізається до двох годин."
+      "notes": "Режим тривоги стартує після 13-ї хвилини: система безпеки виводить станцію у критичний червоний режим, а залишок таймера обрізається до двох годин."
     },
     {
       "id": "PH_ORIGIN_RECOVERY",

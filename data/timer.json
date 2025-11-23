@@ -56,7 +56,7 @@
     {
       "id": "TT_PHASE_LIFEFAIL",
       "quest_id": "Q_START_LIFEFAIL",
-      "elapsed_ge_sec": 720,
+      "elapsed_ge_sec": 780,
       "remaining_le_sec": null,
       "fired": false
     }

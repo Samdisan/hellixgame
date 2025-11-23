@@ -94,10 +94,6 @@
     "actions": [
       {
         "type": "set_phase",
-        "to": "PH_ORIGIN_RECOVERY"
-      },
-      {
-        "type": "set_phase",
         "to": "PH_LIFEFAIL"
       },
       {
