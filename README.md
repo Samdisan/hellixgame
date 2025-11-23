@@ -9,15 +9,16 @@
 - **Контроль доступів:** трирівневе (1–3) підвищення через голосування трьох спеціалістів із лімітом 3 апґрейди/год; адміни можуть обходити обмеження й бачать історію.
 - **Досьє та цілі:** персональні файли й портрети з `personal-files.json` у кабінеті; «Цілі» беруться з `goals.json` і редагуються адмінами (логування у термінал).
 - **Адмін-хаб:** об’єднаний контроль таймера/фаз/квестів з оновленням 1 с, компактні протоколи з таргетингом, список гравців, голосування доступів, цілі (admin-goals), журнал оповіщень, діагностика, консоль і менеджер автотрігерів для гравецьких повідомлень.
+- **Системи життєзабезпечення:** окрема сторінка з графіками кисню/напруги/тиску, що плавно падають у фазі PH_LIFEFAIL; підключено до фазового таймера й відтворює тривожний режим у реальному часі.
 - **Атмосфера:** гліч-попапи з атмосферними/квестовими фразами, голографічні панелі, фазові кольори (зелений/жовтий/червоний/критичний) та паралельні таймерні чипи.
 
 ## Архітектура даних і API
-- **Файли JSON:** `players.json`, `protocols.json`, `phases.json`, `quests.json`, `timer.json`, `terminal-messages.json`, `hints.json`, `personal-files.json`, `goals.json`, `access-codes.json`, `player-progress.json`, `access-votes.json`, `message-triggers.json`.
+- **Файли JSON:** `players.json`, `protocols.json`, `phases.json`, `quests.json`, `timer.json`, `terminal-messages.json`, `hints.json`, `personal-files.json`, `goals.json`, `life-support.json`, `access-codes.json`, `player-progress.json`, `access-votes.json`, `message-triggers.json`.
 - **API-ендпоїнти:** логін (`/api/login.php`), таймер (`update-timer`, `get-state`), фази (`add-phase`, `set-phase`, `set-phase-outcome`), квести (`run-quest`), протоколи (`update-protocol`, `broadcast-protocol`, `mark-protocol-opened`), доступи (`update-player`, `access-vote`), термінал (`player-terminal-message`, `push-terminal-message`, `delete-terminal-message`, `admin-command`), діагностика (`diagnostics`), тригери автоповідомлень (`admin-message-triggers`).
 - **Утиліти:** `includes/helpers.php` зчитує/пише JSON, перевіряє ролі/доступи, обробляє таймер, квести, тригери та повтори (через `executed_quests` + прапор `prevent_repeat`).
 
 ## Сторінки
-**Публічні/гравецькі:** `index.php`, `login.php`, `player.php`, `protocols.php`, `protocols-player.php`, `expeditions.php`, `terminal.php`, `personal-files.php`, `goals.php`, `access-levels.php`.
+**Публічні/гравецькі:** `index.php`, `login.php`, `player.php`, `protocols.php`, `protocols-player.php`, `expeditions.php`, `terminal.php`, `personal-files.php`, `goals.php`, `access-levels.php`, `life-support.php`.
 
 **Адмінські:** `admin/admin.php` (хаб таймера/фаз/квестів), `admin-timer.php`, `admin-phases.php`, `admin-quests.php`, `admin-protocols.php`, `admin-players.php`, `admin-terminal.php`, `admin-alerts.php`, `admin-diagnostics.php`, `admin-goals.php`, `admin-message-triggers.php`.
 

@@ -40,6 +40,7 @@ if ($intensity && !$isRepairedFailure) {
         <a href="/index.php">Головна</a>
         <a href="/expeditions.php">Експедиції</a>
         <a href="/protocols.php">Протоколи</a>
+        <a href="/life-support.php">Системи</a>
         <a href="/terminal.php">Термінал</a>
         <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'player'): ?>
             <a class="cabinet-link" href="/player.php">До кабінету</a>

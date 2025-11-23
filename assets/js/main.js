@@ -367,6 +367,77 @@ function startLiveTimer() {
     setInterval(refresh, 1000);
 }
 
+function startLifeSupportBoard() {
+    const board = document.querySelector('[data-life-support]');
+    if (!board) return;
+
+    const metrics = (() => {
+        try {
+            return JSON.parse(board.dataset.metrics || '[]');
+        } catch (e) {
+            return [];
+        }
+    })();
+
+    if (!metrics.length) return;
+
+    let lifeFail = board.dataset.lifefail === '1';
+    const liveValues = {};
+
+    function setStateBadge() {
+        const badge = board.querySelector('[data-life-support-state]');
+        if (!badge) return;
+        badge.textContent = lifeFail ? 'Критичний режим' : 'Стабільно';
+        board.dataset.lifefail = lifeFail ? '1' : '0';
+    }
+
+    function applyValues() {
+        metrics.forEach((metric) => {
+            const id = metric.id;
+            const target = lifeFail ? Number(metric.fail) : Number(metric.normal);
+            const max = Number(metric.max) || target || 1;
+            if (!liveValues[id]) {
+                liveValues[id] = target;
+            } else {
+                const current = liveValues[id];
+                liveValues[id] = current + (target - current) * 0.15;
+            }
+
+            const card = board.querySelector(`[data-metric-id="${id}"]`);
+            if (!card) return;
+            const valueEl = card.querySelector('[data-metric-value]');
+            const barEl = card.querySelector('[data-metric-bar]');
+            if (valueEl) {
+                valueEl.textContent = Math.round(liveValues[id]);
+            }
+            if (barEl) {
+                const percent = Math.max(0, Math.min(100, (liveValues[id] / max) * 100));
+                barEl.style.width = `${percent}%`;
+            }
+        });
+    }
+
+    async function pollState() {
+        try {
+            const res = await fetch('/api/get-state.php?ts=' + Date.now());
+            const payload = await res.json();
+            const active = (payload.phases && Array.isArray(payload.phases.active)) ? payload.phases.active : [];
+            const failNow = active.some((p) => (p.id || '') === 'PH_LIFEFAIL');
+            if (failNow !== lifeFail) {
+                lifeFail = failNow;
+                setStateBadge();
+            }
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    setStateBadge();
+    applyValues();
+    setInterval(applyValues, 350);
+    setInterval(pollState, 1000);
+}
+
 function formatHuman(seconds) {
     const sec = Math.max(0, Math.floor(seconds || 0));
     const h = Math.floor(sec / 3600);
@@ -393,6 +464,7 @@ window.addEventListener('DOMContentLoaded', () => {
     startRotators();
     startHintTicker();
     startLiveTimer();
+    startLifeSupportBoard();
     setupProtocolPopups();
     setupAccessVotes();
     setupPlayerTerminalForm();
