@@ -21,7 +21,7 @@
     {
       "id": "TT_PHASE_ORIGIN",
       "quest_id": "Q_START_ORIGIN",
-      "elapsed_ge_sec": 900,
+      "elapsed_ge_sec": 720,
       "remaining_le_sec": null,
       "fired": false
     },

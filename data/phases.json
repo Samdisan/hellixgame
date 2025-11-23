@@ -61,8 +61,8 @@
       "title": "Відновити код віруса Origin",
       "order": 4,
       "time_window": {
-        "planned_start_elapsed_sec": 900,
-        "planned_end_elapsed_sec": 15300
+        "planned_start_elapsed_sec": 720,
+        "planned_end_elapsed_sec": 15120
       },
       "ui_intensity": "medium",
       "hint_frequency": "medium",
@@ -71,7 +71,7 @@
       ],
       "on_end_quests": [],
       "active_protocols": [],
-      "notes": "Паралельна фаза відновлення коду Origin стартує після 15-ї хвилини і триває чотири години, може йти одночасно з іншими фазами."
+      "notes": "Паралельна фаза відновлення коду Origin стартує разом із критичним збоєм (12-та хвилина) і триває близько чотирьох годин, може йти одночасно з іншими фазами."
     }
   ],
   "executed_quests": []

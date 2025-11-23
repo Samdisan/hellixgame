@@ -96,6 +96,10 @@
         "remaining_sec": 7200
       },
       {
+        "type": "set_phase",
+        "to": "PH_ORIGIN_RECOVERY"
+      },
+      {
         "type": "push_terminal",
         "target": "both",
         "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
