@@ -137,11 +137,6 @@
       {
         "type": "activate_protocol",
         "protocol_id": "ILARIA_SEC_GAMMA"
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "message": "[ILARIA] ILARIA-SEC-GAMMA: несанкціонований доступ біля шлюзу R-12. Начальник безпеки Іларії, замітайте сліди та відволікайте ВООЗ."
       }
     ]
   },
