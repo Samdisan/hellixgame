@@ -1,0 +1,161 @@
+[
+  {
+    "id": "Q_OPEN_RESTORE_PROTOCOL",
+    "label": "Відкрити ПРОТОКОЛ ВІДНОВЛЕННЯ ДОСТУПІВ",
+    "description": "Активує документ HELIX-ACC-RESTORE-03 після трьох хвилин фази Прибуття.",
+    "phase": "PH_INTRO",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_ACC_RESTORE_03"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PROTO] HELIX-ACC-RESTORE-03 доступний для тристороннього підтвердження доступів."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_BRIEFING",
+    "label": "Запустити фазу Знайомство",
+    "description": "Перемикає сценарій у фазу знайомства після завершення прибуття.",
+    "phase": "PH_INTRO",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_BRIEFING"
+      }
+    ]
+  },
+  {
+    "id": "Q_START_ORIGIN",
+    "label": "Запустити фазу відновлення коду Origin",
+    "description": "Паралельний запуск фази відновлення коду Origin через 15 хвилин гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_ORIGIN_RECOVERY"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
+      }
+    ]
+  },
+  {
+    "id": "Q_ILARIA_DESTROY_SAMPLES",
+    "label": "Іларія: знищити всі аномальні зразки",
+    "description": "Директива Іларії на зачистку зразків, що запускається разом із відновленням коду Origin.",
+    "phase": "PH_ORIGIN_RECOVERY",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_BIOSEC_PHASE3"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Секретний наказ ILR-BIOSEC-PHASE3 доступний командиру та санітару. Рішення про розсилку — лише їхнє."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_BRIEFING_ALERT",
+    "label": "Оповіщення про ознайомлення",
+    "description": "Нагадує всім гравцям переглянути особові справи з урахуванням доступів.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ALERT] Ознайомтесь з особовими справами: доступна інформація залежить від вашого рівня доступу."
+      }
+    ]
+  },
+  {
+    "id": "Q_START_LIFEFAIL",
+    "label": "Запустити фазу збою життєзабезпечення",
+    "description": "Перемикає станцію у критичний режим та скорочує таймер до двох годин залишку.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_ORIGIN_RECOVERY"
+      },
+      {
+        "type": "set_phase",
+        "to": "PH_LIFEFAIL"
+      },
+      {
+        "type": "set_timer_remaining",
+        "remaining_sec": 7200
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
+      }
+    ]
+  },
+  {
+    "id": "Q_WHO_CORRIDOR_ALERT",
+    "label": "WHO-SEC-004.Y: невідомий персонал",
+    "description": "Активує службовий протокол для агента безпеки ВООЗ щодо заборонених коридорів.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_SEC_004Y"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[WHO] WHO-SEC-004.Y: невідомий персонал у заборонених коридорах. Агент безпеки ВООЗ, перевірте M-3, R-12 та обхід Зони B."
+      }
+    ]
+  },
+  {
+    "id": "Q_ILARIA_GATE_ALERT",
+    "label": "ILARIA-SEC-GAMMA: шлюз R-12",
+    "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після дев’ятої хвилини гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILARIA_SEC_GAMMA"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] ILARIA-SEC-GAMMA: несанкціонований доступ біля шлюзу R-12. Начальник безпеки Іларії, замітайте сліди та відволікайте ВООЗ."
+      }
+    ]
+  },
+  {
+    "id": "Q_WHO_WHITE_ZONE",
+    "label": "WHO-DATA-009: біла зона в логах",
+    "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 11 хвилин гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_DATA_009"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[WHO] WHO-DATA-009: Білий провал у логах. Програміст ВООЗ, відновіть 3 секунди втраченої активності і перевірте фантомного користувача."
+      }
+    ]
+  }
+]
