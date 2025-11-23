@@ -30,6 +30,25 @@
     ]
   },
   {
+    "id": "Q_OUTBREAK_ALERT",
+    "label": "Запустити фазу Перші симптоми",
+    "description": "Перехід у фазу перших симптомів із попередженням для всіх фракцій.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_OUTBREAK"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PHASE] Перші симптоми: системи фіксують аномалії, розпочато OUTBREAK."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_START_ORIGIN",
     "label": "Запустити фазу відновлення коду Origin",
     "description": "Паралельний запуск фази відновлення коду Origin через 13 хвилин гри.",

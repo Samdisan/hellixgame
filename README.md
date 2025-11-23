@@ -20,7 +20,7 @@
 ## Сторінки
 **Публічні/гравецькі:** `index.php`, `login.php`, `player.php`, `protocols.php`, `protocols-player.php`, `expeditions.php`, `terminal.php`, `personal-files.php`, `goals.php`, `access-levels.php`, `life-support.php`.
 
-**Адмінські:** `admin-phases.php` (хаб таймера/фаз/квестів), `admin-timer.php`, `admin-quests.php`, `admin-protocols.php`, `admin-players.php`, `admin-terminal.php`, `admin-alerts.php`, `admin-diagnostics.php`, `admin-goals.php`, `admin-message-triggers.php`, `admin-life-support.php` (редактор показників).
+**Адмінські:** `admin-phases.php` (хаб таймера/фаз/квестів), `admin-schedule.php` (розклад фаз/квестів за таймером), `admin-timer.php`, `admin-quests.php`, `admin-protocols.php`, `admin-players.php`, `admin-terminal.php`, `admin-alerts.php`, `admin-diagnostics.php`, `admin-goals.php`, `admin-message-triggers.php`, `admin-life-support.php` (редактор показників).
 
 ## Функціональні модулі
 - **Протокольні попапи:** рівні доступу, allowed_players, засекречені версії, історія відкриттів (`player-progress.json`).
@@ -35,6 +35,7 @@
 ## Етапи гри (поточна конфігурація)
 - **PH_INTRO «Прибуття» (0–7 хв, планове закінчення на 420-й секунді).** Стартова зелена фаза. Обидві версії протоколу «ПРИБУТТЯ» доступні одразу. На 180-й секунді тригер `TT_HELIX_RESTORE_PROTOCOL` запускає квест `Q_OPEN_RESTORE_PROTOCOL`, який відкриває HELIX-ACC-RESTORE-03 і шле оголошення в термінали.
 - **PH_BRIEFING «Знайомство» (7–12 хв, планове закінчення на 720-й секунді).** Запускається квестом `Q_START_BRIEFING` на 420-й секунді. Стартовий квест `Q_BRIEFING_ALERT` нагадує всім про перегляд особових справ. Додаткові спрацьовування: `TT_ILARIA_SEC_GAMMA` на 540-й секунді (ILARIA-SEC-GAMMA), `TT_WHO_SEC_004Y` на 600-й секунді (WHO-SEC-004.Y), `TT_WHO_DATA_009` на 660-й секунді (WHO-DATA-009).
+ - **PH_OUTBREAK «Перші симптоми» (старт ~15-ї хв, вікно до 18900 секунди).** Тригер `TT_PHASE_OUTBREAK` на 900-й секунді запускає квест `Q_OUTBREAK_ALERT`, який активує фазу й шле попередження в обидва термінали. Фаза може йти паралельно з іншими та тримає середню інтенсивність UI.
 - **PH_LIFEFAIL «Збій систем життєзабезпечення» (старт ~13-ї хв).** Тригер `TT_PHASE_LIFEFAIL` на 780-й секунді запускає квест `Q_START_LIFEFAIL`, який перемикає сайт у червоний режим, обрізає глобальний таймер до 2 годин залишку й шле попередження на обидва термінали. Майстер фіксує результат (відремонтовано/не відремонтовано); у разі ремонту фаза припиняє фарбувати інтерфейс.
 - **PH_ORIGIN_RECOVERY «Відновити код віруса Origin» (паралельно зі збоєм, старт ~13-ї хв, тривалість ~4 години).** Фаза стартує квестом `Q_START_ORIGIN` через тригер `TT_PHASE_ORIGIN` на 780-й секунді й живе паралельно з PH_LIFEFAIL. Має власний 4-годинний відлік і показується окремим чипом у таймерах. Директива Іларії знищити зразки (`Q_ILARIA_DESTROY_SAMPLES`) спрацьовує тригером `TT_ILARIA_DESTROY_SAMPLES` на 960-й секунді (16-та хв) і активує протокол ILR-BIOSEC-PHASE3 із опцією розсилки.
 

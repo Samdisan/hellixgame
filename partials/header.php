@@ -63,6 +63,7 @@ if ($intensity && !$lifeFailActive && !$isRepairedFailure) {
     <?php if (!empty($_SESSION['access_type']) && $_SESSION['access_type'] === 'admin'): ?>
     <nav class="admin-nav">
         <a href="/admin/admin-phases.php">Фази & квести</a>
+        <a href="/admin/admin-schedule.php">Розклад</a>
         <a href="/admin/admin-goals.php">Цілі</a>
         <a href="/admin/admin-life-support.php">Показники</a>
         <a href="/admin/admin-message-triggers.php">Тригери</a>

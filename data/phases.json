@@ -24,9 +24,24 @@
       "notes": "Початкова фаза триває приблизно 7 хвилин від старту таймера."
     },
     {
+      "id": "PH_OUTBREAK",
+      "title": "Перші симптоми",
+      "order": 2,
+      "time_window": {
+        "planned_start_elapsed_sec": 900,
+        "planned_end_elapsed_sec": 18900
+      },
+      "ui_intensity": "medium",
+      "hint_frequency": "medium",
+      "on_start_quests": [],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Фаза перших симптомів стартує приблизно на 15-й хвилині і триває до чотирьох годин, може йти паралельно з іншими процесами."
+    },
+    {
       "id": "PH_BRIEFING",
       "title": "Знайомство",
-      "order": 2,
+      "order": 3,
       "time_window": {
         "planned_start_elapsed_sec": 420,
         "planned_end_elapsed_sec": 720
@@ -43,7 +58,7 @@
     {
       "id": "PH_LIFEFAIL",
       "title": "Збій систем життєзабезпечення",
-      "order": 3,
+      "order": 4,
       "time_window": {
         "planned_start_elapsed_sec": 780,
         "planned_end_elapsed_sec": 7980
@@ -59,7 +74,7 @@
     {
       "id": "PH_ORIGIN_RECOVERY",
       "title": "Відновити код віруса Origin",
-      "order": 4,
+      "order": 5,
       "time_window": {
         "planned_start_elapsed_sec": 780,
         "planned_end_elapsed_sec": 15180
