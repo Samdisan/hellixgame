@@ -4,8 +4,9 @@ require_role_api('player');
 
 $protocolId = $_GET['protocol'] ?? $_POST['protocol'] ?? '';
 $redirect = $_GET['redirect'] ?? '/protocols-player.php';
-$glue = str_contains($redirect, '?') ? '&' : '?';
-$wantsJson = ($_POST['mode'] ?? '') === 'json' || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+$glue = (strpos($redirect, '?') !== false) ? '&' : '?';
+$acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
+$wantsJson = ($_POST['mode'] ?? '') === 'json' || (strpos($acceptHeader, 'application/json') !== false);
 if ($protocolId === '') {
     if ($wantsJson) {
         respond_json(['error' => 'missing'], 400);

@@ -23,16 +23,20 @@ function classify_bucket(array $entry): string
     $type = strtolower((string)($entry['type'] ?? ''));
     $message = mb_strtolower((string)($entry['message'] ?? ($entry['text'] ?? '')));
 
-    if ($type === 'protocol' || str_contains($message, '[protocol]') || str_contains($message, 'протокол')) {
+    $contains = function (string $haystack, string $needle): bool {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    };
+
+    if ($type === 'protocol' || $contains($message, '[protocol]') || $contains($message, 'протокол')) {
         return 'protocol';
     }
-    if (str_contains($message, '[phase]') || str_contains($message, '[trigger]') || str_contains($message, 'фаза')) {
+    if ($contains($message, '[phase]') || $contains($message, '[trigger]') || $contains($message, 'фаза')) {
         return 'phase';
     }
-    if ($type === 'access' || str_contains($message, 'доступ')) {
+    if ($type === 'access' || $contains($message, 'доступ')) {
         return 'access';
     }
-    if (str_contains($message, 'player') || str_contains($message, 'гравець') || str_contains($message, '[player]')) {
+    if ($contains($message, 'player') || $contains($message, 'гравець') || $contains($message, '[player]')) {
         return 'player';
     }
     return 'system';
