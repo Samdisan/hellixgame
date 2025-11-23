@@ -24,7 +24,9 @@ include __DIR__ . '/partials/header.php';
     <p class="muted">Це канал секретних даних. Непрочитані протоколи пульсують — станція вимагає реакції.</p>
     <div class="flex between" style="gap:12px; align-items:center; flex-wrap:wrap;">
         <?php if ($newCount > 0): ?>
-            <div class="banner"><span class="scan-pulse"></span>Новий протокол доставлено · <?php echo $newCount; ?> ще не відкрито.</div>
+            <div class="banner" id="new-protocol-banner" data-new-count="<?php echo $newCount; ?>">
+                <span class="scan-pulse"></span>Новий протокол доставлено · <span data-new-count-value><?php echo $newCount; ?></span> ще не відкрито.
+            </div>
         <?php endif; ?>
     </div>
     <div class="overlay-text">secured feed</div>

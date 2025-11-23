@@ -206,6 +206,20 @@ function setupProtocolPopups() {
     let currentShareTrigger = null;
 
     const close = () => modal.classList.remove('open');
+    const banner = document.querySelector('#new-protocol-banner');
+
+    function decrementNewBanner() {
+        if (!banner) return;
+        const valueEl = banner.querySelector('[data-new-count-value]');
+        const current = parseInt(banner.dataset.newCount || '0', 10);
+        if (Number.isNaN(current) || current <= 0) return;
+        const next = Math.max(0, current - 1);
+        banner.dataset.newCount = String(next);
+        if (valueEl) valueEl.textContent = next;
+        if (next === 0) {
+            banner.classList.add('hidden');
+        }
+    }
     modal.querySelectorAll('.protocol-modal__close, .protocol-modal__overlay').forEach((btn) => {
         btn.addEventListener('click', close);
     });
@@ -244,11 +258,17 @@ function setupProtocolPopups() {
 
         if (markUrl && !locked) {
             try {
-                const form = new FormData();
-                form.append('protocol', id);
-                form.append('mode', 'json');
-                await fetch(markUrl, { method: 'POST', body: form });
-                trigger.closest('.protocol-card')?.classList.remove('new');
+                const card = trigger.closest('.protocol-card');
+                const isNew = card?.classList.contains('new');
+                if (isNew && trigger.dataset.marked !== '1') {
+                    const form = new FormData();
+                    form.append('protocol', id);
+                    form.append('mode', 'json');
+                    await fetch(markUrl, { method: 'POST', body: form });
+                    card.classList.remove('new');
+                    trigger.dataset.marked = '1';
+                    decrementNewBanner();
+                }
             } catch (e) {
                 // ignore marking errors in UI
             }
