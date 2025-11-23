@@ -188,6 +188,7 @@ function reset_timer_and_phases(): array
     $phases = load_json('phases.json');
     $phases['current_phase_started_elapsed'] = 0;
     $phases['active_phases'] = [];
+    $phases['executed_quests'] = [];
 
     if (isset($phases['phases']) && is_array($phases['phases'])) {
         foreach ($phases['phases'] as &$phase) {
@@ -416,6 +417,11 @@ function run_quest_actions(array $quest): void
     $timer = timer_status(false);
     $phases = load_json('phases.json');
 
+    $executed = $phases['executed_quests'] ?? [];
+    if (!empty($quest['prevent_repeat']) && in_array($quest['id'], $executed, true)) {
+        return;
+    }
+
     $phasesDirty = false;
 
     foreach ($actions as $action) {
@@ -488,6 +494,11 @@ function run_quest_actions(array $quest): void
 
     save_json('protocols.json', $protocols);
     save_json('players.json', $players);
+    if (!empty($quest['prevent_repeat'])) {
+        $executed[] = $quest['id'];
+        $phases['executed_quests'] = array_values(array_unique($executed));
+        $phasesDirty = true;
+    }
     if ($phasesDirty) {
         save_json('phases.json', $phases);
     }

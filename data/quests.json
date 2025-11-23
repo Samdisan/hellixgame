@@ -14,7 +14,8 @@
         "target": "both",
         "message": "[PROTO] HELIX-ACC-RESTORE-03 доступний для тристороннього підтвердження доступів."
       }
-    ]
+    ],
+    "prevent_repeat": true
   },
   {
     "id": "Q_START_BRIEFING",

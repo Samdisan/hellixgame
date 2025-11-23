@@ -77,12 +77,15 @@ schema.md — JSON Schema для HELIX ECHELON
         "Q_START_OUTBREAK"
       ]
     }
-  ]
+  ],
+  "executed_quests": []           // масив quest_id, квести з prevent_repeat
+                                    // додаються сюди після виконання
 }
 
 
 Обов’язкові: current_phase, phases[].id, phases[].title, phases[].order.
 Time-window поля та списки квестів потрібні для сценарної логіки, навіть якщо деякі залишаються порожніми.
+Опційно: executed_quests — історія одноразових квестів (prevent_repeat).
 
 4. timer.json
 
