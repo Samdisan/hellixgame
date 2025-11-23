@@ -1,0 +1,76 @@
+{
+  "current_phase": "PH_INTRO",
+  "current_phase_started_elapsed": 0,
+  "active_phases": [
+    {
+      "id": "PH_INTRO",
+      "started_elapsed": 0
+    }
+  ],
+  "phases": [
+    {
+      "id": "PH_INTRO",
+      "title": "Прибуття",
+      "order": 1,
+      "time_window": {
+        "planned_start_elapsed_sec": 0,
+        "planned_end_elapsed_sec": 420
+      },
+      "ui_intensity": "low",
+      "hint_frequency": "low",
+      "on_start_quests": [],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Початкова фаза триває приблизно 7 хвилин від старту таймера."
+    },
+    {
+      "id": "PH_BRIEFING",
+      "title": "Знайомство",
+      "order": 2,
+      "time_window": {
+        "planned_start_elapsed_sec": 420,
+        "planned_end_elapsed_sec": 720
+      },
+      "ui_intensity": "low",
+      "hint_frequency": "medium",
+      "on_start_quests": [
+        "Q_BRIEFING_ALERT"
+      ],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Фаза знайомства триває близько п’яти хвилин і запускається відразу після завершення прибуття."
+    },
+    {
+      "id": "PH_LIFEFAIL",
+      "title": "Збій систем життєзабезпечення",
+      "order": 3,
+      "time_window": {
+        "planned_start_elapsed_sec": 720,
+        "planned_end_elapsed_sec": 7920
+      },
+      "ui_intensity": "critical",
+      "hint_frequency": "high",
+      "on_start_quests": [],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "outcome": null,
+      "notes": "Режим тривоги: система безпеки виводить станцію у критичний червоний режим, а залишок таймера обрізається до двох годин."
+    },
+    {
+      "id": "PH_ORIGIN_RECOVERY",
+      "title": "Відновити код віруса Origin",
+      "order": 4,
+      "time_window": {
+        "planned_start_elapsed_sec": 780,
+        "planned_end_elapsed_sec": 15180
+      },
+      "ui_intensity": "medium",
+      "hint_frequency": "medium",
+      "on_start_quests": [],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Паралельна фаза відновлення коду Origin стартує після 13-ї хвилини і триває близько чотирьох годин, може йти одночасно з іншими фазами."
+    }
+  ],
+  "executed_quests": []
+}
