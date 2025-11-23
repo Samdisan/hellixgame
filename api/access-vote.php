@@ -8,6 +8,7 @@ $targetId = $_POST['target'] ?? '';
 
 if (!in_array($actor, $approvers, true)) {
     respond_json(['error' => 'not_authorized'], 403);
+    exit;
 }
 
 $players = load_json('players.json');
@@ -30,11 +31,13 @@ unset($p);
 
 if (!$target) {
     respond_json(['error' => 'not_found'], 404);
+    exit;
 }
 
 $currentLevel = (int) ($target['access_level'] ?? 1);
 if ($currentLevel >= 3) {
     respond_json(['error' => 'max_level', 'level' => $currentLevel]);
+    exit;
 }
 
 $votes[$targetId]['approvals'] = array_values(array_unique(array_merge($votes[$targetId]['approvals'] ?? [], [$actor])));
@@ -46,6 +49,7 @@ if ($approvalCount >= 2 && count($recentPromotions) >= 3) {
         'error' => 'rate_limited',
         'message' => 'Ліміт підвищень вичерпано. Спробуйте за годину.',
     ], 429);
+    exit;
 }
 
 if ($approvalCount >= 2) {
