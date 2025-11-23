@@ -2,91 +2,134 @@
 require_once __DIR__ . '/../includes/helpers.php';
 require_role('admin');
 
-// Load and normalise messages so the feed tolerates legacy fields.
+// Helpers -------------------------------------------------------------
+function game_time_seconds(?string $time): int
+{
+    if (!$time) {
+        return 0;
+    }
+    $parts = explode(':', $time);
+    if (count($parts) === 3) {
+        return ((int)$parts[0] * 3600) + ((int)$parts[1] * 60) + (int)$parts[2];
+    }
+    if (count($parts) === 2) {
+        return ((int)$parts[0] * 60) + (int)$parts[1];
+    }
+    return (int) $time;
+}
+
+function classify_bucket(array $entry): string
+{
+    $type = strtolower((string)($entry['type'] ?? ''));
+    $message = mb_strtolower((string)($entry['message'] ?? ($entry['text'] ?? '')));
+
+    if ($type === 'protocol' || str_contains($message, '[protocol]') || str_contains($message, 'протокол')) {
+        return 'protocol';
+    }
+    if (str_contains($message, '[phase]') || str_contains($message, '[trigger]') || str_contains($message, 'фаза')) {
+        return 'phase';
+    }
+    if ($type === 'access' || str_contains($message, 'доступ')) {
+        return 'access';
+    }
+    if (str_contains($message, 'player') || str_contains($message, 'гравець') || str_contains($message, '[player]')) {
+        return 'player';
+    }
+    return 'system';
+}
+
+// Normalise messages --------------------------------------------------
 $rawMessages = load_json('terminal-messages.json');
 if (!is_array($rawMessages)) {
     $rawMessages = [];
 }
 
-// Normalise and sort newest first
-$normalized = [];
-foreach ($rawMessages as $entry) {
-    $tsRaw = (string) ($entry['timestamp'] ?? ($entry['time_game'] ?? ''));
-    $ts = $tsRaw ? date('Y-m-d H:i:s', strtotime($tsRaw)) : '—';
-    $text = trim((string) ($entry['message'] ?? ($entry['text'] ?? '')));
-    if ($text === '') {
+$events = [];
+$index = 0;
+foreach ($rawMessages as $row) {
+    $index++;
+    $message = trim((string)($row['message'] ?? ($row['text'] ?? '')));
+    if ($message === '') {
         continue;
     }
-    $type = strtolower((string) ($entry['type'] ?? ''));
-    $target = (string) ($entry['target'] ?? '');
 
-    // Bucketing rules keep only one scope per entry for filtering
-    $bucket = 'system';
-    $needle = mb_strtolower($text);
+    $timestampRaw = (string)($row['timestamp'] ?? '');
+    $timeGame = (string)($row['time_game'] ?? '');
+    $sortKey = 0;
+    $displayTime = '—';
 
-    if ($type === 'protocol' || str_contains($needle, '[protocol]') || str_contains($needle, 'протокол')) {
-        $bucket = 'protocol';
-    } elseif (str_contains($needle, '[phase]') || str_contains($needle, '[trigger]') || str_contains($needle, 'фаза')) {
-        $bucket = 'phase';
-    } elseif ($type === 'access' || str_contains($needle, '[access]') || str_contains($needle, 'доступ')) {
-        $bucket = 'access';
-    } elseif (str_contains($needle, '[player]') || str_contains($needle, 'гравець') || str_contains($needle, 'player ')) {
-        $bucket = 'player';
+    if ($timestampRaw !== '') {
+        $sortKey = strtotime($timestampRaw) ?: 0;
+        $displayTime = date('Y-m-d H:i:s', $sortKey ?: time());
+    } elseif ($timeGame !== '') {
+        $sortKey = game_time_seconds($timeGame);
+        $displayTime = 'T+' . $timeGame;
+    } else {
+        $sortKey = -$index; // fallback preserves insertion order
     }
 
-    $normalized[] = [
-        'timestamp_raw' => $tsRaw,
-        'timestamp' => $ts,
-        'target' => $target,
-        'type' => $type ?: '—',
-        'message' => $text,
-        'bucket' => $bucket,
+    $events[] = [
+        'bucket' => classify_bucket($row),
+        'target' => $row['target'] ?? '—',
+        'type' => $row['type'] ?? '—',
+        'message' => $message,
+        'timestamp_label' => $displayTime,
+        'sort_key' => $sortKey,
     ];
 }
 
-usort($normalized, function ($a, $b) {
-    $ta = strtotime($a['timestamp_raw'] ?? '') ?: 0;
-    $tb = strtotime($b['timestamp_raw'] ?? '') ?: 0;
-    return $tb <=> $ta; // newest first
+usort($events, function ($a, $b) {
+    return ($b['sort_key'] ?? 0) <=> ($a['sort_key'] ?? 0);
 });
 
-$scopes = [
+$buckets = [
     'all' => 'Усі події',
     'protocol' => 'Протоколи',
-    'phase' => 'Фази / тригери',
+    'phase' => 'Фази/тригери',
     'access' => 'Доступи',
     'player' => 'Дії гравців',
-    'system' => 'Системні',
+    'system' => 'Система',
 ];
-$currentScope = $_GET['scope'] ?? 'all';
-if (!isset($scopes[$currentScope])) {
-    $currentScope = 'all';
+
+$targets = array_values(array_unique(array_map(fn($e) => $e['target'] ?? '—', $events)));
+sort($targets);
+
+$scope = $_GET['scope'] ?? 'all';
+if (!isset($buckets[$scope])) {
+    $scope = 'all';
 }
 
-$filtered = array_filter($normalized, function ($msg) use ($currentScope) {
-    if ($currentScope === 'all') {
-        return true;
+$targetFilter = $_GET['target'] ?? 'all';
+
+$filtered = array_filter($events, function ($event) use ($scope, $targetFilter) {
+    if ($scope !== 'all' && ($event['bucket'] ?? '') !== $scope) {
+        return false;
     }
-    return ($msg['bucket'] ?? '') === $currentScope;
+    if ($targetFilter !== 'all' && ($event['target'] ?? '') !== $targetFilter) {
+        return false;
+    }
+    return true;
 });
 
-$totals = array_fill_keys(array_keys($scopes), 0);
-foreach ($normalized as $msg) {
-    $bucket = $msg['bucket'] ?? 'system';
-    if (isset($totals[$bucket])) {
-        $totals[$bucket] += 1;
+$totals = array_fill_keys(array_keys($buckets), 0);
+foreach ($events as $event) {
+    $bucket = $event['bucket'] ?? 'system';
+    if (!isset($totals[$bucket])) {
+        $bucket = 'system';
     }
-    $totals['all'] += 1;
+    $totals[$bucket]++;
+    $totals['all']++;
 }
 
 include __DIR__ . '/../partials/header.php';
 ?>
+
 <section class="panel panel--alerts">
     <div class="panel__header panel__header--stacked">
         <div>
             <p class="eyebrow">Моніторинг подій</p>
             <h1>Адмінські оповіщення</h1>
-            <p class="muted">Єдине місце, де видно все: протоколи, фазові тригери, доступи та активність гравців.</p>
+            <p class="muted">Єдиний центр логів: протоколи, фазові тригери, доступи та активність гравців.</p>
         </div>
         <div class="alert-legend">
             <span class="dot dot--protocol"></span>Протоколи
@@ -98,8 +141,11 @@ include __DIR__ . '/../partials/header.php';
     </div>
 
     <div class="alert-pills">
-        <?php foreach ($scopes as $key => $label): ?>
-            <a class="pill<?php echo $currentScope === $key ? ' pill--active' : ''; ?>" href="?scope=<?php echo urlencode($key); ?>"><?php echo htmlspecialchars($label, ENT_QUOTES); ?></a>
+        <?php foreach ($buckets as $key => $label): ?>
+            <a class="pill<?php echo $scope === $key ? ' pill--active' : ''; ?>" href="?scope=<?php echo urlencode($key); ?>">
+                <?php echo htmlspecialchars($label, ENT_QUOTES); ?>
+                <span class="pill__count"><?php echo $totals[$key]; ?></span>
+            </a>
         <?php endforeach; ?>
     </div>
 
@@ -107,17 +153,17 @@ include __DIR__ . '/../partials/header.php';
         <div class="alert-card">
             <div class="alert-card__label">Усього записів</div>
             <div class="alert-card__value"><?php echo $totals['all']; ?></div>
-            <div class="alert-card__hint">Оновлено: <?php echo date('H:i:s'); ?></div>
+            <div class="alert-card__hint">Фільтр: <?php echo htmlspecialchars($buckets[$scope], ENT_QUOTES); ?></div>
+        </div>
+        <div class="alert-card alert-card--phase">
+            <div class="alert-card__label">Фазові події</div>
+            <div class="alert-card__value"><?php echo $totals['phase']; ?></div>
+            <div class="alert-card__hint">Перемикання, тригери</div>
         </div>
         <div class="alert-card alert-card--protocol">
             <div class="alert-card__label">Протоколи</div>
             <div class="alert-card__value"><?php echo $totals['protocol']; ?></div>
             <div class="alert-card__hint">Оголошення, активації</div>
-        </div>
-        <div class="alert-card alert-card--phase">
-            <div class="alert-card__label">Фази / тригери</div>
-            <div class="alert-card__value"><?php echo $totals['phase']; ?></div>
-            <div class="alert-card__hint">Перемикання, розсилки</div>
         </div>
         <div class="alert-card alert-card--access">
             <div class="alert-card__label">Доступи</div>
@@ -129,39 +175,43 @@ include __DIR__ . '/../partials/header.php';
             <div class="alert-card__value"><?php echo $totals['player']; ?></div>
             <div class="alert-card__hint">Повідомлення, відкриття</div>
         </div>
-        <div class="alert-card alert-card--system">
-            <div class="alert-card__label">Система</div>
-            <div class="alert-card__value"><?php echo $totals['system']; ?></div>
-            <div class="alert-card__hint">Технічні події</div>
-        </div>
+    </div>
+
+    <div class="alert-filters">
+        <label>Цільові стрічки
+            <select onchange="location.href='?scope=<?php echo urlencode($scope); ?>&target=' + encodeURIComponent(this.value);">
+                <option value="all" <?php echo $targetFilter === 'all' ? 'selected' : ''; ?>>Усі</option>
+                <?php foreach ($targets as $t): ?>
+                    <option value="<?php echo htmlspecialchars($t, ENT_QUOTES); ?>" <?php echo $targetFilter === $t ? 'selected' : ''; ?>><?php echo htmlspecialchars($t, ENT_QUOTES); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
     </div>
 
     <div class="alert-feed">
         <?php if (empty($filtered)): ?>
             <div class="empty-state">
                 <div class="empty-state__title">Немає подій</div>
-                <div class="muted">За обраним фільтром поки що немає логів. Спробуйте іншу категорію або дочекайтесь нових подій.</div>
+                <div class="muted">Спробуйте іншу категорію або зачекайте нових логів.</div>
             </div>
         <?php else: ?>
             <div class="alert-timeline">
                 <?php foreach ($filtered as $entry): ?>
-                    <?php
-                        $bucket = $entry['bucket'] ?? 'system';
-                        $ts = $entry['timestamp'] ?? '—';
-                        $target = $entry['target'] ?? '';
-                        $type = $entry['type'] ?? '—';
-                        $msg = $entry['message'] ?? '';
-                    ?>
+                    <?php $bucket = $entry['bucket'] ?? 'system'; ?>
                     <div class="timeline-item timeline-item--<?php echo htmlspecialchars($bucket, ENT_QUOTES); ?>">
                         <div class="timeline-dot"></div>
                         <div class="timeline-card">
                             <div class="timeline-meta">
                                 <span class="badge level"><?php echo strtoupper($bucket); ?></span>
-                                <span class="micro muted"><?php echo htmlspecialchars($ts, ENT_QUOTES); ?></span>
-                                <?php if ($target): ?><span class="micro">Ціль: <?php echo htmlspecialchars($target, ENT_QUOTES); ?></span><?php endif; ?>
-                                <?php if ($type && $type !== '—'): ?><span class="micro">Тип: <?php echo htmlspecialchars($type, ENT_QUOTES); ?></span><?php endif; ?>
+                                <span class="micro muted"><?php echo htmlspecialchars($entry['timestamp_label'], ENT_QUOTES); ?></span>
+                                <?php if (!empty($entry['target'])): ?>
+                                    <span class="micro">Ціль: <?php echo htmlspecialchars($entry['target'], ENT_QUOTES); ?></span>
+                                <?php endif; ?>
+                                <?php if (!empty($entry['type']) && $entry['type'] !== '—'): ?>
+                                    <span class="micro">Тип: <?php echo htmlspecialchars($entry['type'], ENT_QUOTES); ?></span>
+                                <?php endif; ?>
                             </div>
-                            <div class="timeline-body"><?php echo nl2br(htmlspecialchars($msg, ENT_QUOTES)); ?></div>
+                            <div class="timeline-body"><?php echo nl2br(htmlspecialchars($entry['message'], ENT_QUOTES)); ?></div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -169,4 +219,5 @@ include __DIR__ . '/../partials/header.php';
         <?php endif; ?>
     </div>
 </section>
+
 <?php include __DIR__ . '/../partials/footer.php'; ?>

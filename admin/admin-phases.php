@@ -154,7 +154,7 @@ include __DIR__ . '/../partials/header.php';
         <p class="muted">Немає time-тригерів.</p>
     <?php else: ?>
         <table class="table dense" data-timer-triggers>
-            <thead><tr><th>Умова</th><th>Квест</th><th>Статус</th></tr></thead>
+            <thead><tr><th>Умова</th><th>Квест</th><th>Статус</th><th>Остання дія</th></tr></thead>
             <tbody>
                 <?php foreach ($triggers as $trigger): ?>
                     <?php
@@ -166,11 +166,14 @@ include __DIR__ . '/../partials/header.php';
                             $conds[] = 'remaining ≤ ' . human_time((int)$trigger['remaining_le_sec']);
                         }
                         $questLabel = $questLookup[$trigger['quest_id']]['label'] ?? ($trigger['quest_id'] ?? '');
+                        $fired = !empty($trigger['fired']);
+                        $firedAt = $trigger['fired_at'] ?? null;
                     ?>
                     <tr>
                         <td><?php echo htmlspecialchars(implode(' & ', $conds), ENT_QUOTES); ?></td>
                         <td><?php echo htmlspecialchars($questLabel, ENT_QUOTES); ?></td>
-                        <td><span class="badge level"><?php echo !empty($trigger['fired']) ? 'FIRED' : 'PENDING'; ?></span></td>
+                        <td><span class="badge level"><?php echo $fired ? 'FIRED' : 'PENDING'; ?></span></td>
+                        <td class="micro muted"><?php echo $firedAt ? htmlspecialchars($firedAt, ENT_QUOTES) : '—'; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

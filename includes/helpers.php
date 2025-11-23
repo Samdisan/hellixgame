@@ -527,6 +527,7 @@ function process_time_triggers(array $timer, int $elapsed, int $remaining): arra
             trigger_quest($trigger['quest_id'], $elapsed, $remaining);
             append_terminal_message('admin_terminal', 'info', '[TRIGGER] Спрацював тригер ' . ($trigger['id'] ?? ''));
             $trigger['fired'] = true;
+            $trigger['fired_at'] = gmdate('c');
             $changed = true;
         }
     }
