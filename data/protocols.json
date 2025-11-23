@@ -123,7 +123,7 @@
     "flags": {
       "glitch": true,
       "shareable_redacted": true,
-      "redacted_variant": "ILR_BIOSEC_PHASE3_REDACT",
+      "redacted_variant": "ILR_BIOSEC_PHASE3_REDACT_BROADCAST",
       "share_allowed": [
         "PL_ILARIA_COMMANDER",
         "PL_ILARIA_MEDIC"
@@ -132,7 +132,7 @@
     }
   },
   {
-    "id": "ILR_BIOSEC_PHASE3_REDACT",
+    "id": "ILR_BIOSEC_PHASE3_REDACT_BROADCAST",
     "label": "ILARIA — польовий наказ (ушкоджена копія)",
     "description": "ILR-BIOSEC-PHASE3 — пошкоджена, зашумлена версія наказу Іларії про ліквідацію зразків для всієї команди та сторонніх фракцій.",
     "content": "🟥 ILARIA CORPORATION — [повреждено]\\STATIC\\\nКод: ILR-BIOSEC-PHASE3 (копія)\nРівень: [BLACK]/розшумлено\nТема: [LIQ] аномальні зразки — знищити\\GLITCH\\\n\nФрагменти: нестабільні зразки, “C-17”, “α-ghost”, “nest”, [дані стерто].\nЗагроза: витік Origin / розкриття програми / юридичний колапс.\n\nЗони (уривчасто): C1 — біобанк / термокамери / “лінія 14”; B — лаби / холод. блок №5 / “V-Shelf”; сервіси — М-3, R-12, стара стерилізація; Зона I [REDACTED].\n\nПорядок (урізано): фото ≤2 кадри → контейнер “Burn-Δ” → стерилізація/реагент “Black Acid 3.2” → логи стерти → списати на “технічний збій”.\n\nТриґери CRIMSON (уривок): рух поза контейнерами / пульсація тепла / зламаний архів / фантом у темряві.\n\nФінал: “Нестабільні зразки не повинні залишитися.” Решта тексту втрачена.\\▒▒▒\n[Синхронізація частково: 38%].",
