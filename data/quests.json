@@ -65,24 +65,24 @@
       }
     ]
   },
-    {
-      "id": "Q_ILARIA_DESTROY_SAMPLES",
-      "label": "Іларія: знищити всі аномальні зразки",
-      "description": "Директива Іларії на зачистку зразків, що запускається разом із відновленням коду Origin.",
-      "phase": "PH_ORIGIN_RECOVERY",
-      "actions": [
-        {
-          "type": "activate_protocol",
-          "protocol_id": "ILR_BIOSEC_PHASE3",
-          "allowed_players": [
-            "PL_ILARIA_COMMANDER",
-            "PL_ILARIA_MEDIC"
-          ]
-        },
-        {
-          "type": "push_terminal",
-          "target": "both",
-          "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
+  {
+    "id": "Q_ILARIA_DESTROY_SAMPLES",
+    "label": "Іларія: знищити всі аномальні зразки",
+    "description": "Директива Іларії на зачистку зразків, що запускається разом із відновленням коду Origin.",
+    "phase": "PH_ORIGIN_RECOVERY",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_BIOSEC_PHASE3",
+        "allowed_players": [
+          "PL_ILARIA_COMMANDER",
+          "PL_ILARIA_MEDIC"
+        ]
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
       },
       {
         "type": "push_terminal",
@@ -171,5 +171,41 @@
         "message": "[WHO] WHO-DATA-009: Білий провал у логах. Програміст ВООЗ, відновіть 3 секунди втраченої активності і перевірте фантомного користувача."
       }
     ]
+  },
+  {
+    "id": "Q_ILARIA_FAKE_STERIL",
+    "label": "Іларія: хибні протоколи стерилізації",
+    "description": "Запускає технічну перевірку фальшивих протоколів стерилізації для членів Іларії з доступом 2+ у фазі OUTBREAK.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILARIA_FAKE_STERIL"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Хибні протоколи стерилізації виявлені. Оператори ILARIA (2+) очищують канали."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_STATION_PURGE_FAKE_STERIL",
+    "label": "Станція: знищити хибні протоколи стерилізації",
+    "description": "Завдання для станційного персоналу рівня 1 на очищення підроблених стерилізаційних наказів у фазі OUTBREAK.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "STATION_PURGE_FAKE_STERIL"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[HELIX] Фальшиві протоколи стерилізації виявлено. Персонал станції, очистьте записи негайно."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]

@@ -33,7 +33,10 @@
       },
       "ui_intensity": "medium",
       "hint_frequency": "medium",
-      "on_start_quests": [],
+      "on_start_quests": [
+        "Q_ILARIA_FAKE_STERIL",
+        "Q_STATION_PURGE_FAKE_STERIL"
+      ],
       "on_end_quests": [],
       "active_protocols": [],
       "notes": "Фаза перших симптомів стартує приблизно на 20-й хвилині і триває до чотирьох годин, може йти паралельно з іншими процесами."
