@@ -21,7 +21,7 @@
     {
       "id": "TT_PHASE_OUTBREAK",
       "quest_id": "Q_OUTBREAK_ALERT",
-      "elapsed_ge_sec": 900,
+      "elapsed_ge_sec": 1200,
       "remaining_le_sec": null,
       "fired": false
     },

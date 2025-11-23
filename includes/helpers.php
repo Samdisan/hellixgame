@@ -98,9 +98,14 @@ function timer_status(bool $processTriggers = true): array
     $timer['last_updated_epoch'] = $now;
     $timer['state'] = $state;
 
+    // Always persist the new tick so elapsed/remaining progress survives between requests,
+    // even when no triggers fire.
+    $timer['last_updated'] = gmdate('c', $now);
     if ($processTriggers) {
         $timer = process_time_triggers($timer, $elapsed, $remaining);
     }
+
+    save_json('timer.json', $timer);
 
     process_delayed_protocol_broadcasts($elapsed);
 

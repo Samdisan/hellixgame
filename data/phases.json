@@ -28,15 +28,15 @@
       "title": "Перші симптоми",
       "order": 2,
       "time_window": {
-        "planned_start_elapsed_sec": 900,
-        "planned_end_elapsed_sec": 18900
+        "planned_start_elapsed_sec": 1200,
+        "planned_end_elapsed_sec": 15600
       },
       "ui_intensity": "medium",
       "hint_frequency": "medium",
       "on_start_quests": [],
       "on_end_quests": [],
       "active_protocols": [],
-      "notes": "Фаза перших симптомів стартує приблизно на 15-й хвилині і триває до чотирьох годин, може йти паралельно з іншими процесами."
+      "notes": "Фаза перших симптомів стартує приблизно на 20-й хвилині і триває до чотирьох годин, може йти паралельно з іншими процесами."
     },
     {
       "id": "PH_BRIEFING",
