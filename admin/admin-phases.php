@@ -128,6 +128,7 @@ include __DIR__ . '/../partials/header.php';
                             <?php endif; ?>
                         </td>
                         <td>
+                            <?php $isLifeFail = ($phase['id'] ?? '') === 'PH_LIFEFAIL'; $outcome = $phase['outcome'] ?? null; ?>
                             <?php if (!empty($current) && $phase['id'] === $current): ?>
                                 Поточна
                             <?php elseif ($status === 'past'): ?>
@@ -138,6 +139,20 @@ include __DIR__ . '/../partials/header.php';
                                     <input type="hidden" name="redirect" value="/admin/admin-phases.php">
                                     <button class="button secondary" type="submit">Зробити поточною</button>
                                 </form>
+                            <?php endif; ?>
+
+                            <?php if ($isLifeFail): ?>
+                                <div class="micro muted" style="margin-top:6px;">Результат збою:</div>
+                                <?php if ($outcome): ?>
+                                    <span class="badge level"><?php echo $outcome === 'repaired' ? 'ВІДРЕМОНТОВАНО' : 'НЕ ВІДРЕМОНТОВАНО'; ?></span>
+                                <?php else: ?>
+                                    <form method="post" action="/api/set-phase-outcome.php" class="inline-form">
+                                        <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
+                                        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+                                        <button class="button" type="submit" name="outcome" value="repaired">Відремонтовано</button>
+                                        <button class="button secondary" type="submit" name="outcome" value="not_repaired">Не відремонтована</button>
+                                    </form>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>

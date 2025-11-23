@@ -325,6 +325,7 @@ function startLiveTimer() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
             const payload = await res.json();
+            const lifeFail = (payload.phases?.active || []).find((ap) => (ap.id || '') === 'PH_LIFEFAIL');
             containers.forEach((container) => {
                 const elapsedEl = container.querySelector('[data-timer-elapsed]');
                 const remainingEl = container.querySelector('[data-timer-remaining]');
@@ -334,6 +335,10 @@ function startLiveTimer() {
                 const phaseNextEl = container.querySelector('[data-phase-next]');
                 const activePhasesEl = container.querySelector('[data-active-phases]');
                 const triggersTable = container.querySelector('[data-timer-triggers] tbody');
+                const lifefailBlock = container.querySelector('[data-lifefail-block]');
+                const lifefailElapsedEl = container.querySelector('[data-lifefail-elapsed]');
+                const lifefailRemainingEl = container.querySelector('[data-lifefail-remaining]');
+                const lifefailStatusEl = container.querySelector('[data-lifefail-status]');
 
                 if (elapsedEl && payload.timer) {
                     elapsedEl.textContent = formatHuman(payload.timer.elapsed);
@@ -376,6 +381,20 @@ function startLiveTimer() {
                         }
                         return `<tr><td>${conds.join(' & ')}</td><td>${trigger.quest_id || ''}</td></tr>`;
                     }).join('');
+                }
+
+                if (lifefailBlock) {
+                    const active = Boolean(lifeFail);
+                    lifefailBlock.hidden = !active;
+                    if (lifefailStatusEl) lifefailStatusEl.textContent = active ? 'АКТИВНО' : '—';
+                    if (lifefailElapsedEl) lifefailElapsedEl.textContent = active ? formatHuman(lifeFail.elapsed_sec || 0) : '—';
+                    if (lifefailRemainingEl) {
+                        if (active && lifeFail.remaining_sec !== null && lifeFail.remaining_sec !== undefined) {
+                            lifefailRemainingEl.textContent = formatHuman(lifeFail.remaining_sec);
+                        } else {
+                            lifefailRemainingEl.textContent = '—';
+                        }
+                    }
                 }
             });
         } catch (e) {
