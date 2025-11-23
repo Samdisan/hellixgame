@@ -14,6 +14,7 @@
 
 ## Архітектура даних і API
 - **Файли JSON:** `players.json`, `protocols.json`, `phases.json`, `quests.json`, `timer.json`, `terminal-messages.json`, `hints.json`, `personal-files.json`, `goals.json`, `life-support.json`, `access-codes.json`, `player-progress.json`, `access-votes.json`, `message-triggers.json`.
+- **Повний перелік протоколів:** див. `PROTOCOLS_FULL.md` для послідовного списку всіх документів із метаданими та текстами з `data/protocols.json`.
 - **API-ендпоїнти:** логін (`/api/login.php`), таймер (`update-timer`, `get-state`), фази (`add-phase`, `set-phase`, `set-phase-outcome`), квести (`run-quest`), протоколи (`update-protocol`, `broadcast-protocol`, `mark-protocol-opened`), доступи (`update-player`, `access-vote`), термінал (`player-terminal-message`, `push-terminal-message`, `delete-terminal-message`, `admin-command`), діагностика (`diagnostics`), тригери автоповідомлень (`admin-message-triggers`).
 - **Утиліти:** `includes/helpers.php` зчитує/пише JSON, перевіряє ролі/доступи, обробляє таймер, квести, тригери та повтори (через `executed_quests` + прапор `prevent_repeat`).
 
