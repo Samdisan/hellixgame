@@ -1,0 +1,122 @@
+[
+  {
+    "id": "PL_STATION_FARRAGUT",
+    "summary": "Головний вірусолог станції. Фіксує перші глічі та збирає протоколи безпеки.",
+    "photo": "/assets/img/dossiers/PL_STATION_FARRAGUT.jpg"
+  },
+  {
+    "id": "PL_STATION_WALKER",
+    "summary": "Старша інфекціоністка, тримає зони A/B у робочому стані попри збої.",
+    "photo": "/assets/img/dossiers/PL_STATION_WALKER.jpg"
+  },
+  {
+    "id": "PL_STATION_GREN",
+    "summary": "Керує стабільними штамами у C1 та підозрює приховані мутації.",
+    "photo": "/assets/img/dossiers/PL_STATION_GREN.jpg"
+  },
+  {
+    "id": "PL_STATION_CROW_ISABELLE",
+    "summary": "Медичний офіцер станції, тримає журнал симптомів і пробує стримати витоки.",
+    "photo": "/assets/img/dossiers/PL_STATION_CROW_ISABELLE.jpg"
+  },
+  {
+    "id": "PL_STATION_ROSS",
+    "summary": "Технік життєзабезпечення, тримає апаратуру дихання та очищення в строю.",
+    "photo": "/assets/img/dossiers/PL_STATION_ROSS.jpg"
+  },
+  {
+    "id": "PL_STATION_SATO",
+    "summary": "Інженер систем безпеки, шукає злами в журналах доступу та ремонтує замки.",
+    "photo": "/assets/img/dossiers/PL_STATION_SATO.jpg"
+  },
+  {
+    "id": "PL_STATION_CROW_PSY",
+    "summary": "Психолог станції, моніторить поведінкові мутації серед персоналу.",
+    "photo": "/assets/img/dossiers/PL_STATION_CROW_PSY.jpg"
+  },
+  {
+    "id": "PL_STATION_ALEXI",
+    "summary": "Молодший лаборант, збирає проби та вчиться працювати з глічами системи.",
+    "photo": "/assets/img/dossiers/PL_STATION_ALEXI.jpg"
+  },
+  {
+    "id": "PL_WHO_COORDINATOR",
+    "summary": "Старший координатор ВООЗ, намагається взяти під контроль станцію.",
+    "photo": "/assets/img/dossiers/PL_WHO_COORDINATOR.jpg"
+  },
+  {
+    "id": "PL_WHO_GENETICIST",
+    "summary": "Генетик ВООЗ, шукає походження мутацій та аномальні послідовності.",
+    "photo": "/assets/img/dossiers/PL_WHO_GENETICIST.jpg"
+  },
+  {
+    "id": "PL_WHO_PSYCHOANALYST",
+    "summary": "Психоаналітик ВООЗ, фіксує поведінкові патерни та підозрілу реакцію персоналу.",
+    "photo": "/assets/img/dossiers/PL_WHO_PSYCHOANALYST.jpg"
+  },
+  {
+    "id": "PL_WHO_SECURITY_AGENT",
+    "summary": "Агент безпеки ВООЗ, відповідає за силовий контроль і доступи.",
+    "photo": "/assets/img/dossiers/PL_WHO_SECURITY_AGENT.jpg"
+  },
+  {
+    "id": "PL_WHO_PROGRAMMER",
+    "summary": "Програміст ВООЗ, моніторить логи, шукає зниклі записи та глічі.",
+    "photo": "/assets/img/dossiers/PL_WHO_PROGRAMMER.jpg"
+  },
+  {
+    "id": "PL_WHO_PR",
+    "summary": "Вірусолог ВООЗ, шукає походження мутацій і відслідковує аномальні штами.",
+    "photo": "/assets/img/dossiers/PL_WHO_PR.jpg"
+  },
+  {
+    "id": "PL_WHO_DIPLOMAT",
+    "summary": "Дипломат ВООЗ, тримає баланс між фракціями, шукає союзників.",
+    "photo": "/assets/img/dossiers/PL_WHO_DIPLOMAT.jpg"
+  },
+  {
+    "id": "PL_WHO_GUARD",
+    "summary": "Охоронець ВООЗ, виконує небезпечні завдання та прикриває групу.",
+    "photo": "/assets/img/dossiers/PL_WHO_GUARD.jpg"
+  },
+  {
+    "id": "PL_ILARIA_COMMANDER",
+    "summary": "Командир операції ILARIA, веде силові рішення й повертає контроль.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_COMMANDER.jpg"
+  },
+  {
+    "id": "PL_ILARIA_BIOSEC",
+    "summary": "Офіцер біозахисту ILARIA, знає більше за інших про протоколи.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_BIOSEC.jpg"
+  },
+  {
+    "id": "PL_ILARIA_RADIO",
+    "summary": "Радіотехнік ILARIA, ловить зашифровані сигнали й дивні збої.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_RADIO.jpg"
+  },
+  {
+    "id": "PL_ILARIA_SECURITY",
+    "summary": "Начальник безпеки ILARIA, підозрілий до всіх і не терпить хаосу.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_SECURITY.jpg"
+  },
+  {
+    "id": "PL_ILARIA_MEDIC",
+    "summary": "Санітар ILARIA, має доступ до тіл та заражених матеріалів.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_MEDIC.jpg"
+  },
+  {
+    "id": "PL_ILARIA_DEMO",
+    "summary": "Вибухотехнік ILARIA, чому тут потрібен — питання відкрите.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_DEMO.jpg"
+  },
+  {
+    "id": "PL_ILARIA_SCOUT",
+    "summary": "Розвідник ILARIA, проникає у зони з обмеженнями.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_SCOUT.jpg"
+  },
+  {
+    "id": "PL_ILARIA_PRESS",
+    "summary": "Прес-офіцер ILARIA, створює власну інформаційну реальність.",
+    "photo": "/assets/img/dossiers/PL_ILARIA_PRESS.jpg"
+  }
+]

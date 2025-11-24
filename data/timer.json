@@ -1,0 +1,72 @@
+{
+  "state": "not_started",
+  "duration_seconds": 43200,
+  "elapsed_seconds": 0,
+  "last_updated_epoch": null,
+  "time_triggers": [
+    {
+      "id": "TT_HELIX_RESTORE_PROTOCOL",
+      "quest_id": "Q_OPEN_RESTORE_PROTOCOL",
+      "elapsed_ge_sec": 180,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_BRIEFING",
+      "quest_id": "Q_START_BRIEFING",
+      "elapsed_ge_sec": 420,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_OUTBREAK",
+      "quest_id": "Q_OUTBREAK_ALERT",
+      "elapsed_ge_sec": 1200,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_ORIGIN",
+      "quest_id": "Q_START_ORIGIN",
+      "elapsed_ge_sec": 780,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_ILARIA_DESTROY_SAMPLES",
+      "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
+      "elapsed_ge_sec": 960,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_SEC_004Y",
+      "quest_id": "Q_WHO_CORRIDOR_ALERT",
+      "elapsed_ge_sec": 600,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_ILARIA_SEC_GAMMA",
+      "quest_id": "Q_ILARIA_GATE_ALERT",
+      "elapsed_ge_sec": 540,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_DATA_009",
+      "quest_id": "Q_WHO_WHITE_ZONE",
+      "elapsed_ge_sec": 660,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_LIFEFAIL",
+      "quest_id": "Q_START_LIFEFAIL",
+      "elapsed_ge_sec": 780,
+      "remaining_le_sec": null,
+      "fired": false
+    }
+  ],
+  "last_updated": "2025-12-12T07:00:00Z"
+}
