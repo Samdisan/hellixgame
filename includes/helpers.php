@@ -75,7 +75,7 @@ function human_time(int $seconds): string
     return implode(' ', $parts);
 }
 
-function timer_status(bool $processTriggers = true): array
+function timer_status(bool $processTriggers = true, bool $persistTick = false): array
 {
     $timer = load_json('timer.json');
     $duration = (int) ($timer['duration_seconds'] ?? 0);
@@ -94,18 +94,33 @@ function timer_status(bool $processTriggers = true): array
         $state = 'finished';
     }
 
+    $originalState = $timer['state'] ?? null;
+    $originalTriggers = $timer['time_triggers'] ?? [];
+
     $timer['elapsed_seconds'] = $elapsed;
-    $timer['last_updated_epoch'] = $now;
     $timer['state'] = $state;
 
-    // Always persist the new tick so elapsed/remaining progress survives between requests,
-    // even when no triggers fire.
-    $timer['last_updated'] = gmdate('c', $now);
+    if ($persistTick) {
+        $timer['last_updated_epoch'] = $now;
+        $timer['last_updated'] = gmdate('c', $now);
+    }
+
     if ($processTriggers) {
         $timer = process_time_triggers($timer, $elapsed, $remaining);
     }
 
-    save_json('timer.json', $timer);
+    $triggersChanged = json_encode($timer['time_triggers'] ?? []) !== json_encode($originalTriggers);
+    $stateChanged = $originalState !== $state;
+    $shouldSave = $persistTick || $triggersChanged || $stateChanged;
+
+    if ($shouldSave) {
+        if (!$persistTick) {
+            // Keep last_updated markers in sync only when we intentionally persist.
+            $timer['last_updated_epoch'] = $now;
+            $timer['last_updated'] = gmdate('c', $now);
+        }
+        save_json('timer.json', $timer);
+    }
 
     process_delayed_protocol_broadcasts($elapsed);
 
