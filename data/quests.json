@@ -207,5 +207,24 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_INFECTION_SYMPTOMS",
+    "label": "Запустити фазу Симптоми зараження",
+    "description": "Перехід у фазу активних симптомів після завершення попереднього вікна.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_INFECTION_SYMPTOMS"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "critical",
+        "message": "[PHASE] Симптоми зараження: станція фіксує прогресію, увімкнено підвищений протокол реагування."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]

@@ -88,6 +88,23 @@
       "on_end_quests": [],
       "active_protocols": [],
       "notes": "Паралельна фаза відновлення коду Origin стартує після 13-ї хвилини і триває близько чотирьох годин, може йти одночасно з іншими фазами."
+    },
+    {
+      "id": "PH_INFECTION_SYMPTOMS",
+      "title": "Симптоми зараження",
+      "order": 6,
+      "time_window": {
+        "planned_start_elapsed_sec": 15600,
+        "planned_end_elapsed_sec": 30000
+      },
+      "ui_intensity": "high",
+      "hint_frequency": "high",
+      "on_start_quests": [
+        "Q_START_INFECTION_SYMPTOMS"
+      ],
+      "on_end_quests": [],
+      "active_protocols": [],
+      "notes": "Фаза «Симптоми зараження» починається відразу після завершення попереднього вікна й розкручує підвищений рівень загрози, коли ранні симптоми переходять у небезпечну стадію."
     }
   ],
   "executed_quests": []
