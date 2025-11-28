@@ -73,6 +73,13 @@
       "elapsed_ge_sec": 15600,
       "remaining_le_sec": null,
       "fired": false
+    },
+    {
+      "id": "TT_FIND_ORIGIN_PROTOCOLS",
+      "quest_id": "Q_FIND_ORIGIN_PROTOCOLS",
+      "elapsed_ge_sec": 15600,
+      "remaining_le_sec": null,
+      "fired": false
     }
   ],
   "last_updated": "2025-12-12T07:00:00Z"

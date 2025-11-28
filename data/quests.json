@@ -226,5 +226,20 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_FIND_ORIGIN_PROTOCOLS",
+    "label": "Знайти протоколи віруса Origin",
+    "description": "Директива на виявлення та фіксацію усіх протоколів, що стосуються віруса Origin, коли розпочинається фаза симптомів.",
+    "phase": "PH_INFECTION_SYMPTOMS",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[QUEST] Симптоми загострюються. Знайдіть і захистіть усі протоколи, що стосуються коду Origin."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]
