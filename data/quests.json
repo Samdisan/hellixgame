@@ -63,7 +63,8 @@
         "target": "both",
         "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
       }
-    ]
+    ],
+    "prevent_repeat": true
   },
   {
     "id": "Q_ILARIA_DESTROY_SAMPLES",
