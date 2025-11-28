@@ -1181,8 +1181,8 @@ form.inline {
     border-radius: 12px;
     padding: 12px;
     display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 10px;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
     position: relative;
     overflow: hidden;
 }
@@ -1193,11 +1193,14 @@ form.inline {
     inset: 0;
     background: linear-gradient(120deg, rgba(110, 240, 197, 0.06), transparent 30%, rgba(240, 110, 207, 0.05));
     pointer-events: none;
+    z-index: 0;
 }
 
+.personal-card > * { position: relative; z-index: 1; }
+
 .portrait {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 12px;
     display: grid;
     place-items: center;
@@ -1208,6 +1211,14 @@ form.inline {
 }
 
 .portrait span { filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
+
+.portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
+}
 
 .portrait-station { background: linear-gradient(160deg, #6ef0c5, #1b503f); }
 .portrait-who { background: linear-gradient(160deg, #ffc857, #5a3d0c); color: #0c0f16; }
@@ -1221,6 +1232,7 @@ form.inline {
     color: var(--text);
     margin: 6px 0 0;
     line-height: 1.4;
+    word-break: break-word;
 }
 
 .phase-form {

@@ -20,7 +20,9 @@ include __DIR__ . '/partials/header.php';
         <article class="personal-card">
             <div class="portrait portrait-<?php echo htmlspecialchars($person['faction'], ENT_QUOTES); ?>">
                 <?php if (!empty($file['photo'])): ?>
-                    <img src="<?php echo htmlspecialchars($file['photo'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?>">
+                    <a class="portrait-link" href="<?php echo htmlspecialchars($file['photo'], ENT_QUOTES); ?>" target="_blank" rel="noopener">
+                        <img src="<?php echo htmlspecialchars($file['photo'], ENT_QUOTES); ?>" alt="<?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?>">
+                    </a>
                 <?php else: ?>
                     <span><?php echo mb_substr($person['name'], 0, 1, 'UTF-8'); ?></span>
                 <?php endif; ?>
