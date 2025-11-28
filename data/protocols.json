@@ -323,14 +323,14 @@
     "publish_time": "00:20:00",
     "announce_in_terminal": true,
     "allowed_players": [
-      "PL_FARRAGUT",
-      "PL_WALKER",
-      "PL_GRENN",
-      "PL_CROW",
-      "PL_ROSS",
-      "PL_SATO",
-      "PL_CROW_PSY",
-      "PL_ALEXI"
+      "PL_STATION_FARRAGUT",
+      "PL_STATION_WALKER",
+      "PL_STATION_GREN",
+      "PL_STATION_CROW_ISABELLE",
+      "PL_STATION_ROSS",
+      "PL_STATION_SATO",
+      "PL_STATION_CROW_PSY",
+      "PL_STATION_ALEXI"
     ]
   }
 ]
