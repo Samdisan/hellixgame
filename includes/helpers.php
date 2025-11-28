@@ -1,25 +1,54 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 function load_json(string $file): array
-{ 
-    $path = __DIR__ . '/../data/' . $file;
-    if (!file_exists($path)) {
-        return [];
+{
+    if (!isset($GLOBALS['__helix_json_cache'])) {
+        $GLOBALS['__helix_json_cache'] = [];
     }
+    $cache =& $GLOBALS['__helix_json_cache'];
+    $path = __DIR__ . '/../data/' . $file;
+
+    if (isset($cache[$path])) {
+        return $cache[$path];
+    }
+
+    if (!file_exists($path)) {
+        $cache[$path] = [];
+        return $cache[$path];
+    }
+
     $content = file_get_contents($path);
     $decoded = json_decode($content, true);
     if (!is_array($decoded)) {
-        return [];
+        $cache[$path] = [];
+        return $cache[$path];
     }
+
+    $cache[$path] = $decoded;
     return $decoded;
 }
 
 function save_json(string $file, array $data): bool
 {
+    if (!isset($GLOBALS['__helix_json_cache'])) {
+        $GLOBALS['__helix_json_cache'] = [];
+    }
+    $cache =& $GLOBALS['__helix_json_cache'];
     $path = __DIR__ . '/../data/' . $file;
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    return (bool) file_put_contents($path, $json, LOCK_EX);
+    $result = (bool) file_put_contents($path, $json, LOCK_EX);
+
+    // Bust read cache for future calls this request.
+    if ($result) {
+        $cache[$path] = $data;
+    } else {
+        unset($cache[$path]);
+    }
+
+    return $result;
 }
 
 function require_role(string $role): void
@@ -83,6 +112,13 @@ function timer_status(bool $processTriggers = true, bool $persistTick = false): 
     $state = $timer['state'] ?? 'not_started';
     $lastTick = isset($timer['last_updated_epoch']) ? (int) $timer['last_updated_epoch'] : null;
     $now = time();
+
+    // Clamp bad timestamps that freeze elapsed time and block triggers.
+    if ($state === 'running' && $lastTick !== null && $lastTick > $now) {
+        $lastTick = $now;
+        $timer['last_updated_epoch'] = $now;
+        $persistTick = true;
+    }
 
     if ($state === 'running' && $lastTick) {
         $elapsedBase += max(0, $now - $lastTick);
@@ -488,6 +524,13 @@ function load_terminal_messages_with_ids(): array
 {
     $messages = load_json('terminal-messages.json');
     $changed = false;
+
+    // Trim oversize logs to avoid exhausting memory on low-resource hosts.
+    $maxMessages = 400;
+    if (count($messages) > $maxMessages) {
+        $messages = array_slice($messages, -$maxMessages);
+        $changed = true;
+    }
 
     foreach ($messages as &$msg) {
         if (empty($msg['id'])) {
