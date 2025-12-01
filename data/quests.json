@@ -1,0 +1,251 @@
+[
+  {
+    "id": "Q_OPEN_RESTORE_PROTOCOL",
+    "label": "Відкрити ПРОТОКОЛ ВІДНОВЛЕННЯ ДОСТУПІВ",
+    "description": "Активує документ HELIX-ACC-RESTORE-03 після трьох хвилин фази Прибуття.",
+    "phase": "PH_INTRO",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_ACC_RESTORE_03"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PROTO] HELIX-ACC-RESTORE-03 доступний для тристороннього підтвердження доступів."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_BRIEFING",
+    "label": "Запустити фазу Знайомство",
+    "description": "Перемикає сценарій у фазу знайомства після завершення прибуття.",
+    "phase": "PH_INTRO",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_BRIEFING"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_OUTBREAK_ALERT",
+    "label": "Запустити фазу Перші симптоми",
+    "description": "Перехід у фазу перших симптомів із попередженням для всіх фракцій.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_OUTBREAK"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PHASE] Перші симптоми: системи фіксують аномалії, розпочато OUTBREAK."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_ORIGIN",
+    "label": "Запустити фазу відновлення коду Origin",
+    "description": "Паралельний запуск фази відновлення коду Origin через 13 хвилин гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_ORIGIN_RECOVERY"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ILARIA_DESTROY_SAMPLES",
+    "label": "Іларія: знищити всі аномальні зразки",
+    "description": "Директива Іларії на зачистку зразків, що запускається разом із відновленням коду Origin.",
+    "phase": "PH_ORIGIN_RECOVERY",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_BIOSEC_PHASE3",
+        "allowed_players": [
+          "PL_ILARIA_COMMANDER",
+          "PL_ILARIA_MEDIC"
+        ]
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Секретний наказ ILR-BIOSEC-PHASE3 доступний командиру та санітару. Рішення про розсилку — лише їхнє."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_BRIEFING_ALERT",
+    "label": "Оповіщення про ознайомлення",
+    "description": "Нагадує всім гравцям переглянути особові справи з урахуванням доступів.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ALERT] Ознайомтесь з особовими справами: доступна інформація залежить від вашого рівня доступу."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_LIFEFAIL",
+    "label": "Запустити фазу збою життєзабезпечення",
+    "description": "Перемикає станцію у критичний режим та скорочує таймер до двох годин залишку.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_LIFEFAIL"
+      },
+      {
+        "type": "set_timer_remaining",
+        "remaining_sec": 7200
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
+      }
+    ]
+  },
+  {
+    "id": "Q_WHO_CORRIDOR_ALERT",
+    "label": "WHO-SEC-004.Y: невідомий персонал",
+    "description": "Активує службовий протокол для агента безпеки ВООЗ щодо заборонених коридорів.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_SEC_004Y"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[WHO] WHO-SEC-004.Y: невідомий персонал у заборонених коридорах. Агент безпеки ВООЗ, перевірте M-3, R-12 та обхід Зони B."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ILARIA_GATE_ALERT",
+    "label": "ILARIA-SEC-GAMMA: шлюз R-12",
+    "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після дев’ятої хвилини гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILARIA_SEC_GAMMA"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_WHO_WHITE_ZONE",
+    "label": "WHO-DATA-009: біла зона в логах",
+    "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 11 хвилин гри.",
+    "phase": "PH_BRIEFING",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_DATA_009"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[WHO] WHO-DATA-009: Білий провал у логах. Програміст ВООЗ, відновіть 3 секунди втраченої активності і перевірте фантомного користувача."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ILARIA_FAKE_STERIL",
+    "label": "Іларія: хибні протоколи стерилізації",
+    "description": "Запускає технічну перевірку фальшивих протоколів стерилізації для членів Іларії з доступом 2+ у фазі OUTBREAK.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILARIA_FAKE_STERIL"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ILARIA] Хибні протоколи стерилізації виявлені. Оператори ILARIA (2+) очищують канали."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_STATION_PURGE_FAKE_STERIL",
+    "label": "Станція: знищити хибні протоколи стерилізації",
+    "description": "Завдання для станційного персоналу рівня 1 на очищення підроблених стерилізаційних наказів у фазі OUTBREAK.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "STATION_PURGE_FAKE_STERIL"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[HELIX] Фальшиві протоколи стерилізації виявлено. Персонал станції, очистьте записи негайно."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_START_INFECTION_SYMPTOMS",
+    "label": "Запустити фазу Симптоми зараження",
+    "description": "Перехід у фазу активних симптомів після завершення попереднього вікна.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "set_phase",
+        "to": "PH_INFECTION_SYMPTOMS"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "critical",
+        "message": "[PHASE] Симптоми зараження: станція фіксує прогресію, увімкнено підвищений протокол реагування."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_FIND_ORIGIN_PROTOCOLS",
+    "label": "Знайти протоколи віруса Origin",
+    "description": "Директива на виявлення та фіксацію усіх протоколів, що стосуються віруса Origin, коли розпочинається фаза симптомів.",
+    "phase": "PH_INFECTION_SYMPTOMS",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[QUEST] Симптоми загострюються. Знайдіть і захистіть усі протоколи, що стосуються коду Origin."
+      }
+    ],
+    "prevent_repeat": true
+  }
+]

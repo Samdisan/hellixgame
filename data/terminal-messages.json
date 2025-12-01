@@ -1,0 +1,8 @@
+[
+  {"timestamp": "2025-12-10T07:40:00Z", "target": "public_terminal", "type": "info", "message": "[SYS] Ініціалізація бортових сенсорів завершена."},
+  {"timestamp": "2025-12-10T07:55:00Z", "target": "public_terminal", "type": "protocol", "message": "Протокол PR_PUBLIC_BRIEF опубліковано."},
+  {"timestamp": "2025-12-10T08:05:00Z", "target": "public_terminal", "type": "warning", "message": "Невідповідність температури у секторі B3."},
+  {"timestamp": "2025-12-10T08:20:00Z", "target": "public_terminal", "type": "info", "message": "Калібрування шлюзів завершено."},
+  {"timestamp": "2025-12-10T08:30:00Z", "target": "admin_terminal", "type": "info", "message": "Майстер Оператор увійшов до системи."},
+  {"timestamp": "2025-12-10T08:45:00Z", "target": "public_terminal", "type": "critical", "message": "Збій сенсора тиску у лабораторії 2. Ручний контроль активовано."}
+]

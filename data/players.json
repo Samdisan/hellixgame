@@ -1,0 +1,194 @@
+[
+  {
+    "id": "PL_STATION_FARRAGUT",
+    "name": "Д-р Алан Фарраґут",
+    "role": "Головний вірусолог, керівник C1",
+    "faction": "station",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_STATION_WALKER",
+    "name": "Д-р Джулія Вокер",
+    "role": "Старша інфекціоністка, керівниця зон A/B",
+    "faction": "station",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_STATION_GREN",
+    "name": "Д-р Саймон Гренн",
+    "role": "Керівник стабільних штамів у C1",
+    "faction": "station",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_STATION_CROW_ISABELLE",
+    "name": "Д-р Ізабель Кроу",
+    "role": "Медичний офіцер станції",
+    "faction": "station",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_STATION_ROSS",
+    "name": "Глен Росс",
+    "role": "Технік життєзабезпечення",
+    "faction": "station",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_STATION_SATO",
+    "name": "Кіра Сато",
+    "role": "Інженер систем безпеки",
+    "faction": "station",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_STATION_CROW_PSY",
+    "name": "Кроу (психолог)",
+    "role": "Психолог станції",
+    "faction": "station",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_STATION_ALEXI",
+    "name": "Алексі",
+    "role": "Молодший лаборант (новачок)",
+    "faction": "station",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_WHO_COORDINATOR",
+    "name": "██████",
+    "role": "Старший координатор ВООЗ",
+    "faction": "who",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_WHO_GENETICIST",
+    "name": "██████",
+    "role": "Генетик ВООЗ",
+    "faction": "who",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_WHO_PSYCHOANALYST",
+    "name": "██████",
+    "role": "Психоаналітик ВООЗ",
+    "faction": "who",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_WHO_SECURITY_AGENT",
+    "name": "Агент безпеки ВООЗ",
+    "role": "Фізичний контроль та доступи",
+    "faction": "who",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_WHO_PROGRAMMER",
+    "name": "██████",
+    "role": "Програміст ВООЗ",
+    "faction": "who",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_WHO_PR",
+    "name": "██████",
+    "role": "Вірусолог ВООЗ",
+    "faction": "who",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_WHO_DIPLOMAT",
+    "name": "Дипломат ВООЗ",
+    "role": "Утримання миру між фракціями",
+    "faction": "who",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_WHO_GUARD",
+    "name": "Охоронець (екс-найманець)",
+    "role": "Силовий супровід, небезпечна робота",
+    "faction": "who",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_COMMANDER",
+    "name": "Командир операції ILARIA",
+    "role": "Керує місією, силові рішення",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "active"
+  },
+  {
+    "id": "PL_ILARIA_BIOSEC",
+    "name": "Офіцер із біозахисту ILARIA",
+    "role": "Контроль протоколів, приховані знання",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_RADIO",
+    "name": "Радіотехнік ILARIA",
+    "role": "Моніторинг спілкування та сигналів",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_SECURITY",
+    "name": "Начальник служби безпеки ILARIA",
+    "role": "Силовий контроль, підозрілий до всіх",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_MEDIC",
+    "name": "Санітар ILARIA",
+    "role": "Доступ до тіл і заражених матеріалів",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_DEMO",
+    "name": "Вибухотехнік ILARIA",
+    "role": "Небезпечні рішення у лабораторії",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_SCOUT",
+    "name": "Розвідник ILARIA",
+    "role": "Проникнення у заборонені зони",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  },
+  {
+    "id": "PL_ILARIA_PRESS",
+    "name": "Прес-офіцер ILARIA",
+    "role": "Створює власну інформаційну реальність",
+    "faction": "ilaria",
+    "access_level": 1,
+    "status": "search"
+  }
+]
