@@ -10,7 +10,7 @@ if ($message === '') {
 
 $playerId = $_SESSION['player_id'] ?? 'UNKNOWN';
 $prefix = $playerId ? '[' . $playerId . '] ' : '';
-append_terminal_message('both', 'info', $prefix . $message);
+append_terminal_message('both', 'player', $prefix . $message);
 apply_player_message_triggers($message, $playerId);
 
 respond_json(['status' => 'queued']);

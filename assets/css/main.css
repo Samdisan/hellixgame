@@ -1182,6 +1182,19 @@ body.intensity-warning .life-card__fill {
     border-bottom: 1px solid rgba(110, 240, 197, 0.05);
 }
 
+.terminal-line.line-player {
+    background: linear-gradient(90deg, rgba(110, 240, 197, 0.09), rgba(110, 240, 197, 0));
+    border-left: 3px solid rgba(110, 240, 197, 0.5);
+    padding-left: 8px;
+    border-radius: 6px;
+}
+
+.terminal-line.line-player .badge {
+    background: rgba(110, 240, 197, 0.16);
+    color: #c5ffee;
+    letter-spacing: 0.04em;
+}
+
 .terminal-line span {
     display: inline-block;
     white-space: nowrap;
