@@ -26,7 +26,7 @@ include __DIR__ . '/partials/header.php';
             <div class="request-icon">SYS</div>
             <div>
                 <div class="muted micro">Заявка в систему</div>
-                <div class="request-title">Короткий сигнал для майстрів</div>
+                <div class="request-title">Запит у систему</div>
             </div>
             <span class="chip chip-live">канал зв'язку</span>
         </div>
@@ -35,7 +35,6 @@ include __DIR__ . '/partials/header.php';
             <input id="player-terminal-message" name="message" maxlength="240" placeholder="Введіть зміст заявки — до 240 символів" required>
             <button class="button button-glow" type="submit">Надіслати</button>
         </div>
-        <div class="muted micro">Повідомлення з'являється у майстрів як службова заявка.</div>
         <div class="status micro" data-terminal-status></div>
     </form>
     <?php endif; ?>
