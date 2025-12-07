@@ -140,7 +140,7 @@ include __DIR__ . '/../partials/header.php';
                 <label>Level<br><input class="form-control" type="number" name="level" value="1" min="1" max="5"></label>
             </div>
             <div>
-                <label>Фаза<br><input class="form-control" name="phase" value="PH_INTRO"></label>
+                <label>Фаза<br><input class="form-control" name="phase" value="PH_START"></label>
             </div>
         </div>
         <label>Опис<br><textarea class="form-control" name="description" rows="2"></textarea></label>

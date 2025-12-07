@@ -13,13 +13,7 @@ $canManageAccess = in_array($player['id'], $accessApprovers, true);
 
 $timer = timer_status();
 $phaseData = current_phase();
-$lifeFail = null;
-foreach ($phaseData['active'] ?? [] as $ap) {
-    if (($ap['id'] ?? '') === 'PH_LIFEFAIL') {
-        $lifeFail = $ap;
-        break;
-    }
-}
+$lifeFail = $phaseData['life_support'] ?? null;
 $messages = array_filter(load_json('terminal-messages.json'), function ($row) {
     return $row['target'] === 'public_terminal';
 });
@@ -59,14 +53,14 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div class="glitch-hint">Система знімає показники щосекунди: час — спільний ресурс.</div>
     </div>
-    <div class="panel" data-live-timer data-lifefail-block <?php echo $lifeFail ? '' : 'hidden'; ?>>
+    <div class="panel" data-live-timer data-lifefail-block <?php echo !empty($lifeFail['active']) ? '' : 'hidden'; ?>>
         <h2>До припинення підтримки життєдіяльності</h2>
         <div class="timeline-item digital-readout">
-            <div class="pill-line"><span class="pill-label">Статус</span> <span class="badge level" data-lifefail-status><?php echo $lifeFail ? 'АКТИВНО' : '—'; ?></span></div>
-            <div class="pill-line">Минуло: <span data-lifefail-elapsed><?php echo $lifeFail ? human_time((int) ($lifeFail['elapsed_sec'] ?? 0)) : '—'; ?></span></div>
-            <div class="pill-line">Залишилось: <span data-lifefail-remaining><?php echo $lifeFail && isset($lifeFail['remaining_sec']) ? human_time((int) $lifeFail['remaining_sec']) : '—'; ?></span></div>
+            <div class="pill-line"><span class="pill-label">Статус</span> <span class="badge level" data-lifefail-status><?php echo !empty($lifeFail['active']) ? 'АКТИВНО' : '—'; ?></span></div>
+            <div class="pill-line">Минуло: <span data-lifefail-elapsed><?php echo !empty($lifeFail['active']) && isset($lifeFail['elapsed_sec']) ? human_time((int) $lifeFail['elapsed_sec']) : '—'; ?></span></div>
+            <div class="pill-line">Залишилось: <span data-lifefail-remaining><?php echo (!empty($lifeFail['active']) && isset($lifeFail['remaining_sec'])) ? human_time((int) $lifeFail['remaining_sec']) : '—'; ?></span></div>
         </div>
-        <div class="glitch-hint">PH_LIFEFAIL активна — життєзабезпечення працює в аварійному режимі.</div>
+        <div class="glitch-hint">Критичний режим життєзабезпечення — станція працює на межі.</div>
     </div>
 </section>
 

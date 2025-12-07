@@ -71,53 +71,35 @@ include __DIR__ . '/../partials/header.php';
     </form>
 </section>
 
-<?php
-$lifeFailPhase = null;
-foreach ($phases as $ph) {
-    if (($ph['id'] ?? '') === 'PH_LIFEFAIL') {
-        $lifeFailPhase = $ph;
-        break;
-    }
-}
-?>
+<?php $lifeSupport = $phaseData['life_support'] ?? []; ?>
 
-<?php if ($lifeFailPhase): ?>
-    <section class="panel">
-        <div class="flex between align-center" style="gap: 12px; flex-wrap: wrap;">
-            <div>
-                <h2 style="margin-bottom:4px;">PH_LIFEFAIL — контроль стану</h2>
-                <p class="micro muted">Звідси можна негайно зафіксувати результат збою життєзабезпечення, навіть якщо фаза ще не активна.</p>
-            </div>
-            <div class="flex" style="gap:8px;">
-                <span class="badge level" title="Планове вікно">
-                    <?php
-                        $lfWindow = $lifeFailPhase['time_window'] ?? [];
-                        $lfStart = $lfWindow['planned_start_elapsed_sec'] ?? null;
-                        $lfEnd = $lfWindow['planned_end_elapsed_sec'] ?? null;
-                        $lfDur = ($lfStart !== null && $lfEnd !== null) ? max(0, $lfEnd - $lfStart) : null;
-                        echo $lfStart !== null ? 'Старт: ' . human_time((int)$lfStart) : 'Без старту';
-                        if ($lfDur !== null) {
-                            echo ' · Вікно: ' . human_time((int)$lfDur);
-                        }
-                    ?>
-                </span>
-                <?php $lfOutcome = $lifeFailPhase['outcome'] ?? null; ?>
-                <?php if ($lfOutcome): ?>
-                    <span class="badge level <?php echo $lfOutcome === 'repaired' ? 'success' : 'warning'; ?>">
-                        <?php echo $lfOutcome === 'repaired' ? 'ВІДРЕМОНТОВАНО' : 'НЕ ВІДРЕМОНТОВАНО'; ?>
-                    </span>
-                <?php else: ?>
-                    <form method="post" action="/api/set-phase-outcome.php" class="inline-form" style="gap:6px;">
-                        <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
-                        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
-                        <button class="button" type="submit" name="outcome" value="repaired">Відремонтовано</button>
-                        <button class="button secondary" type="submit" name="outcome" value="not_repaired">Не відремонтована</button>
-                    </form>
-                <?php endif; ?>
-            </div>
+<section class="panel">
+    <div class="flex between align-center" style="gap: 12px; flex-wrap: wrap;">
+        <div>
+            <h2 style="margin-bottom:4px;">Життєзабезпечення — контроль</h2>
+            <p class="micro muted">Критичний режим більше не є фазою. Активуйте або завершіть його напряму.</p>
         </div>
-    </section>
-<?php endif; ?>
+        <div class="flex" style="gap:8px; align-items: center; flex-wrap: wrap;">
+            <span class="badge level <?php echo !empty($lifeSupport['active']) ? 'danger' : 'success'; ?>">
+                <?php echo !empty($lifeSupport['active']) ? 'АКТИВНИЙ ЗБІЙ' : 'СТАБІЛЬНО'; ?>
+            </span>
+            <?php if (!empty($lifeSupport['started_elapsed'])): ?>
+                <span class="badge level">Старт: <?php echo human_time((int) $lifeSupport['started_elapsed']); ?></span>
+            <?php endif; ?>
+            <?php if (!empty($lifeSupport['outcome'])): ?>
+                <span class="badge level <?php echo ($lifeSupport['outcome'] === 'repaired') ? 'success' : 'warning'; ?>">
+                    <?php echo strtoupper($lifeSupport['outcome']); ?>
+                </span>
+            <?php endif; ?>
+            <form method="post" action="/api/set-life-support-state.php" class="inline-form" style="gap:6px;">
+                <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+                <button class="button" type="submit" name="state" value="failure">Увімкнути критичний режим</button>
+                <button class="button secondary" type="submit" name="state" value="repaired">Відремонтовано</button>
+                <button class="button ghost" type="submit" name="state" value="reset">Скинути прапори</button>
+            </form>
+        </div>
+    </div>
+</section>
 
 <section class="panel">
     <h2>Фази</h2>
@@ -176,7 +158,6 @@ foreach ($phases as $ph) {
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php $isLifeFail = ($phase['id'] ?? '') === 'PH_LIFEFAIL'; $outcome = $phase['outcome'] ?? null; ?>
                             <?php if (!empty($current) && $phase['id'] === $current): ?>
                                 Поточна
                             <?php elseif ($status === 'past'): ?>
@@ -187,20 +168,6 @@ foreach ($phases as $ph) {
                                     <input type="hidden" name="redirect" value="/admin/admin-phases.php">
                                     <button class="button secondary" type="submit">Зробити поточною</button>
                                 </form>
-                            <?php endif; ?>
-
-                            <?php if ($isLifeFail): ?>
-                                <div class="micro muted" style="margin-top:6px;">Результат збою:</div>
-                                <?php if ($outcome): ?>
-                                    <span class="badge level"><?php echo $outcome === 'repaired' ? 'ВІДРЕМОНТОВАНО' : 'НЕ ВІДРЕМОНТОВАНО'; ?></span>
-                                <?php else: ?>
-                                    <form method="post" action="/api/set-phase-outcome.php" class="inline-form">
-                                        <input type="hidden" name="phase_id" value="PH_LIFEFAIL">
-                                        <input type="hidden" name="redirect" value="/admin/admin-phases.php">
-                                        <button class="button" type="submit" name="outcome" value="repaired">Відремонтовано</button>
-                                        <button class="button secondary" type="submit" name="outcome" value="not_repaired">Не відремонтована</button>
-                                    </form>
-                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>

@@ -325,7 +325,15 @@ function startLiveTimer() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
             const payload = await res.json();
-            const lifeFail = (payload.phases?.active || []).find((ap) => (ap.id || '') === 'PH_LIFEFAIL');
+            const lifeFail = payload.phases?.life_support || null;
+            const uiMode = payload.phases?.ui_mode || 'normal';
+            const lifeActive = Boolean(lifeFail?.active);
+            const repaired = (lifeFail?.outcome || '') === 'repaired';
+            if (!lifeActive && !repaired && uiMode === 'warning') {
+                document.body.classList.add('intensity-warning');
+            } else {
+                document.body.classList.remove('intensity-warning');
+            }
             containers.forEach((container) => {
                 const elapsedEl = container.querySelector('[data-timer-elapsed]');
                 const remainingEl = container.querySelector('[data-timer-remaining]');
@@ -384,7 +392,7 @@ function startLiveTimer() {
                 }
 
                 if (lifefailBlock) {
-                    const active = Boolean(lifeFail);
+                    const active = Boolean(lifeFail?.active);
                     lifefailBlock.hidden = !active;
                     if (lifefailStatusEl) lifefailStatusEl.textContent = active ? 'АКТИВНО' : '—';
                     if (lifefailElapsedEl) lifefailElapsedEl.textContent = active ? formatHuman(lifeFail.elapsed_sec || 0) : '—';
@@ -431,9 +439,13 @@ function startLifeSupportBoard() {
     }
 
     function applyValues() {
+        const warningMode = document.body.classList.contains('intensity-warning');
         metrics.forEach((metric) => {
             const id = metric.id;
-            const target = lifeFail ? Number(metric.fail) : Number(metric.normal);
+            let target = lifeFail ? Number(metric.fail) : Number(metric.normal);
+            if (warningMode && !lifeFail) {
+                target += (Math.random() - 0.5) * 6;
+            }
             const max = Number(metric.max) || target || 1;
             if (!liveValues[id]) {
                 liveValues[id] = target;
@@ -460,8 +472,7 @@ function startLifeSupportBoard() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
             const payload = await res.json();
-            const active = (payload.phases && Array.isArray(payload.phases.active)) ? payload.phases.active : [];
-            const failNow = active.some((p) => (p.id || '') === 'PH_LIFEFAIL');
+            const failNow = Boolean(payload.phases?.life_support?.active);
             if (failNow !== lifeFail) {
                 lifeFail = failNow;
                 setStateBadge();
@@ -498,6 +509,77 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+function startPlayerPopups() {
+    const modal = document.querySelector('[data-player-popup-modal]');
+    if (!modal) return;
+
+    const bodyEl = modal.querySelector('[data-popup-body]');
+    const closeEls = modal.querySelectorAll('[data-popup-close]');
+    const seenKey = 'helix_seen_player_popups';
+    let queue = [];
+    let showing = null;
+    let seen = [];
+
+    try {
+        const saved = localStorage.getItem(seenKey);
+        seen = saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        seen = [];
+    }
+
+    function saveSeen() {
+        try {
+            localStorage.setItem(seenKey, JSON.stringify(seen.slice(-60)));
+        } catch (e) {
+            // ignore storage errors
+        }
+    }
+
+    function markSeen(id) {
+        if (!id || seen.includes(id)) return;
+        seen.push(id);
+        saveSeen();
+    }
+
+    function hideModal() {
+        modal.hidden = true;
+        showing = null;
+        showNext();
+    }
+
+    closeEls.forEach((el) => el.addEventListener('click', hideModal));
+
+    function showNext() {
+        if (showing || !queue.length) return;
+        const next = queue.shift();
+        showing = next.id || 'unknown';
+        if (bodyEl) {
+            bodyEl.textContent = next.message || '';
+        }
+        modal.hidden = false;
+        markSeen(next.id);
+    }
+
+    async function poll() {
+        try {
+            const res = await fetch('/api/get-terminal-messages.php?target=player_popup&ts=' + Date.now());
+            const payload = await res.json();
+            const messages = (payload.messages || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            messages.forEach((msg) => {
+                const id = msg.id || '';
+                if (!id || seen.includes(id)) return;
+                queue.push(msg);
+            });
+            showNext();
+        } catch (e) {
+            // ignore fetch errors
+        }
+    }
+
+    poll();
+    setInterval(poll, 8000);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     startTerminalFeed('.terminal-feed');
     startRotators();
@@ -507,4 +589,5 @@ window.addEventListener('DOMContentLoaded', () => {
     setupProtocolPopups();
     setupAccessVotes();
     setupPlayerTerminalForm();
+    startPlayerPopups();
 });

@@ -17,6 +17,17 @@
         </div>
     </div>
 </div>
+<div class="player-popup" data-player-popup-modal hidden>
+    <div class="player-popup__overlay" data-popup-close></div>
+    <div class="player-popup__dialog">
+        <div class="player-popup__header">
+            <div class="badge warning">Нагадування</div>
+            <button class="player-popup__close" type="button" aria-label="Закрити" data-popup-close>×</button>
+        </div>
+        <div class="player-popup__body" data-popup-body></div>
+        <div class="micro muted">Сповіщення зберігаються у терміналі. Закрийте, коли прочитано.</div>
+    </div>
+</div>
 <footer class="footer">
     <div>Станція HELIX — автономний режим спостереження.</div>
 </footer>

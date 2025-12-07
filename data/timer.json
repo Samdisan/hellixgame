@@ -21,13 +21,20 @@
     {
       "id": "TT_PHASE_OUTBREAK",
       "quest_id": "Q_OUTBREAK_ALERT",
-      "elapsed_ge_sec": 1200,
+      "elapsed_ge_sec": 720,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_PHASE_ORIGIN",
       "quest_id": "Q_START_ORIGIN",
+      "elapsed_ge_sec": 780,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_PROTOCOL_ALR_01",
+      "quest_id": "Q_WHO_OUTBREAK_ALERT",
       "elapsed_ge_sec": 780,
       "remaining_le_sec": null,
       "fired": false

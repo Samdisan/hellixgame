@@ -3,15 +3,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function load_json(string $file): array
+const HELIX_JSON_CACHE_LIMIT = 10;
+
+function load_json(string $file, bool $useCache = true): array
 {
     if (!isset($GLOBALS['__helix_json_cache'])) {
         $GLOBALS['__helix_json_cache'] = [];
     }
+    if (!isset($GLOBALS['__helix_json_cache_order'])) {
+        $GLOBALS['__helix_json_cache_order'] = [];
+    }
     $cache =& $GLOBALS['__helix_json_cache'];
+    $order =& $GLOBALS['__helix_json_cache_order'];
     $path = __DIR__ . '/../data/' . $file;
 
-    if (isset($cache[$path])) {
+    if ($useCache && isset($cache[$path])) {
+        // Update recency for simple LRU eviction.
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
         return $cache[$path];
     }
 
@@ -23,12 +32,31 @@ function load_json(string $file): array
     $content = file_get_contents($path);
     $decoded = json_decode($content, true);
     if (!is_array($decoded)) {
-        $cache[$path] = [];
-        return $cache[$path];
+        if ($useCache) {
+            $cache[$path] = [];
+        }
+        return [];
     }
 
-    $cache[$path] = $decoded;
+    if ($useCache) {
+        $cache[$path] = $decoded;
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
+
+        // Cap cache growth so long-running processes don't exhaust memory
+        // by reading many different JSON files without clearing the cache.
+        while (count($order) > HELIX_JSON_CACHE_LIMIT) {
+            $evicted = array_shift($order);
+            unset($cache[$evicted]);
+        }
+    }
     return $decoded;
+}
+
+function clear_json_cache(): void
+{
+    $GLOBALS['__helix_json_cache'] = [];
+    $GLOBALS['__helix_json_cache_order'] = [];
 }
 
 function save_json(string $file, array $data): bool
@@ -36,7 +64,11 @@ function save_json(string $file, array $data): bool
     if (!isset($GLOBALS['__helix_json_cache'])) {
         $GLOBALS['__helix_json_cache'] = [];
     }
+    if (!isset($GLOBALS['__helix_json_cache_order'])) {
+        $GLOBALS['__helix_json_cache_order'] = [];
+    }
     $cache =& $GLOBALS['__helix_json_cache'];
+    $order =& $GLOBALS['__helix_json_cache_order'];
     $path = __DIR__ . '/../data/' . $file;
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $result = (bool) file_put_contents($path, $json, LOCK_EX);
@@ -44,8 +76,11 @@ function save_json(string $file, array $data): bool
     // Bust read cache for future calls this request.
     if ($result) {
         $cache[$path] = $data;
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
     } else {
         unset($cache[$path]);
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
     }
 
     return $result;
@@ -247,6 +282,37 @@ function trigger_quest(string $questId, int $elapsed, int $remaining): void
     }
 }
 
+function set_life_support_state(string $state, int $elapsed): void
+{
+    $phases = load_json('phases.json');
+    $phases['life_support_event'] = $phases['life_support_event'] ?? [
+        'active' => false,
+        'started_elapsed' => null,
+        'outcome' => null,
+    ];
+
+    switch ($state) {
+        case 'repaired':
+            $phases['life_support_event']['active'] = false;
+            $phases['life_support_event']['outcome'] = 'repaired';
+            break;
+        case 'reset':
+            $phases['life_support_event'] = [
+                'active' => false,
+                'started_elapsed' => null,
+                'outcome' => null,
+            ];
+            break;
+        default:
+            $phases['life_support_event']['active'] = true;
+            $phases['life_support_event']['started_elapsed'] = $elapsed;
+            $phases['life_support_event']['outcome'] = null;
+            break;
+    }
+
+    save_json('phases.json', $phases);
+}
+
 function set_timer_state(string $action): void
 {
     $timer = load_json('timer.json');
@@ -315,6 +381,11 @@ function reset_timer_and_phases(): array
     $phases['current_phase_started_elapsed'] = 0;
     $phases['active_phases'] = [];
     $phases['executed_quests'] = [];
+    $phases['life_support_event'] = [
+        'active' => false,
+        'started_elapsed' => null,
+        'outcome' => null,
+    ];
 
     if (isset($phases['phases']) && is_array($phases['phases'])) {
         foreach ($phases['phases'] as &$phase) {
@@ -339,10 +410,33 @@ function reset_timer_and_phases(): array
     return timer_status(false);
 }
 
+function life_support_event(array $phases, array $timer): array
+{
+    $event = $phases['life_support_event'] ?? [];
+    $active = !empty($event['active']);
+    $outcome = $event['outcome'] ?? null;
+    $started = isset($event['started_elapsed']) ? (int) $event['started_elapsed'] : null;
+
+    if ($outcome === 'repaired') {
+        $active = false;
+    }
+
+    $elapsed = ($started !== null) ? max(0, ($timer['elapsed'] ?? 0) - $started) : null;
+
+    return [
+        'active' => $active,
+        'outcome' => $outcome,
+        'started_elapsed' => $started,
+        'elapsed_sec' => $active && $elapsed !== null ? $elapsed : null,
+    ];
+}
+
 function current_phase(): array
 {
     $phases = load_json('phases.json');
     $timer = timer_status(false);
+
+    $uiMode = $phases['ui_mode'] ?? 'normal';
 
     $currentId = $phases['current_phase'] ?? null;
     $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
@@ -378,15 +472,8 @@ function current_phase(): array
         }
 
         $isActive = $startElapsed !== null;
-        $isLifeSupportFailure = $id === 'PH_LIFEFAIL';
-        $lifeSupportRepaired = $isLifeSupportFailure && $outcome === 'repaired';
 
-        // The life-support failure should stay active (red mode) until an explicit repair,
-        // even if its planned window has passed or other phases are running concurrently.
-        if ($isActive && $lifeSupportRepaired) {
-            $isActive = false;
-        }
-        if ($isActive && !$isLifeSupportFailure && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
+        if ($isActive && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
             $isActive = false;
         }
 
@@ -430,8 +517,10 @@ function current_phase(): array
     return [
         'current' => $currentId,
         'started_elapsed' => $startedElapsed,
+        'ui_mode' => $uiMode,
         'phases' => $phases['phases'] ?? [],
         'active' => $activePhases,
+        'life_support' => life_support_event($phases, $timer),
         'current_meta' => [
             'duration_sec' => $phaseDuration,
             'elapsed_sec' => $phaseElapsed,
@@ -530,15 +619,14 @@ function apply_player_message_triggers(string $message, string $playerId = ''): 
     }
 }
 
-function load_terminal_messages_with_ids(): array
+function load_terminal_messages_with_ids(int $maxMessages = 200, bool $useCache = true): array
 {
-    $messages = load_json('terminal-messages.json');
+    $messages = load_json('terminal-messages.json', $useCache);
     $changed = false;
 
     // Trim oversize logs to avoid exhausting memory on low-resource hosts.
-    // Keep only the most recent 200 entries to reduce per-request memory usage.
-    $maxMessages = 200;
-    if (count($messages) > $maxMessages) {
+    // Keep only the most recent entries to reduce per-request memory usage.
+    if ($maxMessages > 0 && count($messages) > $maxMessages) {
         $messages = array_slice($messages, -$maxMessages);
         $changed = true;
     }
@@ -600,6 +688,20 @@ function run_quest_actions(array $quest): void
                     save_json('timer.json', $timerData);
                     append_terminal_message('admin_terminal', 'warning', '[TIMER] Новий залишок: ' . human_time($newRemaining));
                 }
+                break;
+            case 'set_life_support_state':
+                $state = $action['state'] ?? 'failure';
+                set_life_support_state($state, (int) ($timer['elapsed'] ?? 0));
+                $phases = load_json('phases.json');
+                $phasesDirty = true;
+                append_terminal_message('admin_terminal', 'warning', '[LIFE] Режим життєзабезпечення: ' . $state);
+                break;
+            case 'set_ui_mode':
+                $mode = $action['mode'] ?? 'normal';
+                $phases = load_json('phases.json');
+                $phases['ui_mode'] = $mode;
+                $phasesDirty = true;
+                append_terminal_message('admin_terminal', 'warning', '[UI] Режим станції: ' . $mode);
                 break;
             case 'activate_protocol':
             case 'deactivate_protocol':
