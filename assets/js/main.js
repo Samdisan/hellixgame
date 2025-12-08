@@ -170,7 +170,12 @@ function setupAccessVotes() {
             const res = await fetch('/api/access-vote.php', { method: 'POST', body: form });
             const payload = await res.json();
             if (!res.ok || payload.error) {
-                status.textContent = 'Помилка: ' + (payload.message || payload.error || res.statusText);
+                let msg = payload.message || payload.error || res.statusText;
+                if (payload.retry_in) {
+                    const minutes = Math.max(1, Math.ceil(payload.retry_in / 60));
+                    msg += ` (спробуйте через ~${minutes} хв)`;
+                }
+                status.textContent = 'Помилка: ' + msg;
                 btn.disabled = false;
                 return;
             }
@@ -183,11 +188,16 @@ function setupAccessVotes() {
             const stamp = document.createElement('span');
             stamp.className = 'muted micro';
 
+            const remaining = typeof payload.remaining === 'number' ? payload.remaining : null;
+
             if (payload.leveled_up) {
                 status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
                 stamp.textContent = 'Підвищено';
             } else {
                 status.textContent = `Ваш голос зафіксовано. ${payload.approvals}/3 підтверджень.`;
+                if (remaining !== null) {
+                    status.textContent += ` | Залишилось підвищень: ${remaining}`;
+                }
                 stamp.textContent = 'Ваш голос зафіксовано';
             }
 
