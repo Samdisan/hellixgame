@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 const HELIX_JSON_CACHE_LIMIT = 10;
+const HELIX_JSON_CACHE_SIZE_CAP_BYTES = 5 * 1024 * 1024; // Skip caching very large JSON blobs to avoid memory spikes.
 
 function load_json(string $file, bool $useCache = true): array
 {
@@ -38,7 +39,7 @@ function load_json(string $file, bool $useCache = true): array
         return [];
     }
 
-    if ($useCache) {
+    if ($useCache && filesize($path) <= HELIX_JSON_CACHE_SIZE_CAP_BYTES) {
         $cache[$path] = $decoded;
         $order = array_values(array_filter($order, fn($p) => $p !== $path));
         $order[] = $path;
@@ -50,6 +51,10 @@ function load_json(string $file, bool $useCache = true): array
             unset($cache[$evicted]);
         }
     }
+
+    // For oversized files we bypass the cache above; the decoded array will be
+    // released after the caller finishes, preventing long-running scripts from
+    // retaining multi-megabyte payloads in globals.
     return $decoded;
 }
 
