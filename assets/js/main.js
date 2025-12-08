@@ -527,6 +527,7 @@ function startPlayerPopups() {
     let queue = [];
     let showing = null;
     let seen = [];
+    let autoHideTimer = null;
 
     try {
         const saved = localStorage.getItem(seenKey);
@@ -550,6 +551,10 @@ function startPlayerPopups() {
     }
 
     function hideModal() {
+        if (autoHideTimer) {
+            clearTimeout(autoHideTimer);
+            autoHideTimer = null;
+        }
         modal.hidden = true;
         showing = null;
         showNext();
@@ -566,6 +571,10 @@ function startPlayerPopups() {
         }
         modal.hidden = false;
         markSeen(next.id);
+        if (autoHideTimer) clearTimeout(autoHideTimer);
+        autoHideTimer = setTimeout(() => {
+            hideModal();
+        }, 10000);
     }
 
     async function poll() {
