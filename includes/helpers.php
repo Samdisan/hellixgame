@@ -264,7 +264,7 @@ function process_delayed_protocol_broadcasts(int $elapsed): void
         $protocols[$redactedIndex]['announce_in_terminal'] = true;
         $protocols[$redactedIndex]['publish_time'] = 'broadcast';
 
-        append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 авто-розіслано: команда Іларії має повний наказ, інші отримали пошкоджену копію.');
+        append_terminal_message_to_players($ilariaPlayers, 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 авто-розіслано: команда Іларії має повний наказ, інші отримали пошкоджену копію.');
         $changed = true;
     }
     unset($protocol);
@@ -584,6 +584,47 @@ function append_terminal_message(string $target, string $type, string $message):
     save_json('terminal-messages.json', $messages);
 }
 
+function append_terminal_message_to_players(array $playerIds, string $type, string $message): void
+{
+    $uniqueIds = array_values(array_unique(array_filter(array_map('strval', $playerIds))));
+    if (empty($uniqueIds) || $message === '') {
+        return;
+    }
+
+    foreach ($uniqueIds as $playerId) {
+        append_terminal_message('player:' . $playerId, $type, $message);
+    }
+}
+
+function resolve_player_ids_by_group(string $group, array $players): array
+{
+    switch ($group) {
+        case 'ilaria':
+            return array_column(array_filter($players, function ($p) {
+                return ($p['faction'] ?? '') === 'ilaria';
+            }), 'id');
+        case 'medics':
+            $keywords = ['мед', 'інфек', 'вірус', 'санітар'];
+            $manual = ['PL_STATION_GREN'];
+            $ids = [];
+            foreach ($players as $player) {
+                $role = mb_strtolower($player['role'] ?? '');
+                foreach ($keywords as $kw) {
+                    if ($role !== '' && mb_strpos($role, $kw) !== false) {
+                        $ids[] = $player['id'];
+                        continue 2;
+                    }
+                }
+                if (in_array($player['id'], $manual, true)) {
+                    $ids[] = $player['id'];
+                }
+            }
+            return array_values(array_unique($ids));
+        default:
+            return [];
+    }
+}
+
 function load_message_triggers(): array
 {
     $triggers = load_json('message-triggers.json');
@@ -741,8 +782,37 @@ function run_quest_actions(array $quest): void
                 $target = $action['target'] ?? 'public_terminal';
                 $type = $action['level'] ?? 'info';
                 $text = $action['message'] ?? ($action['message_id'] ?? '');
+                $playerTargets = $action['player_targets'] ?? [];
+                $factionTarget = $action['faction_target'] ?? '';
+                $groupTarget = $action['player_group'] ?? '';
+
+                $resolvedTargets = [];
+                foreach ((array) $playerTargets as $pid) {
+                    $pid = trim((string) $pid);
+                    if ($pid !== '') {
+                        $resolvedTargets[] = $pid;
+                    }
+                }
+
+                if ($factionTarget !== '') {
+                    foreach ($players as $p) {
+                        if (($p['faction'] ?? '') === $factionTarget) {
+                            $resolvedTargets[] = $p['id'];
+                        }
+                    }
+                }
+
+                if ($groupTarget !== '') {
+                    $resolvedTargets = array_merge($resolvedTargets, resolve_player_ids_by_group($groupTarget, $players));
+                }
+
                 if ($text !== '') {
-                    append_terminal_message($target, $type, $text);
+                    $uniqueTargets = array_values(array_unique($resolvedTargets));
+                    if (!empty($uniqueTargets)) {
+                        append_terminal_message_to_players($uniqueTargets, $type, $text);
+                    } else {
+                        append_terminal_message($target, $type, $text);
+                    }
                 }
                 break;
         }
