@@ -672,7 +672,6 @@ function run_quest_actions(array $quest): void
                     set_current_phase($action['to']);
                     $phases = load_json('phases.json');
                     $phasesDirty = true;
-                    append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
                 }
                 break;
             case 'set_timer_remaining':

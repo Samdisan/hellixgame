@@ -32,11 +32,6 @@
       {
         "type": "push_terminal",
         "target": "both",
-        "message": "[PHASE] Прибуття та знайомство: блок знайомства стартує та триває до 12-ї хвилини."
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
         "message": "[ALERT] Ознайомтесь з особовими справами: доступна інформація залежить від вашого рівня доступу."
       }
     ],
@@ -66,12 +61,6 @@
         "type": "push_terminal",
         "target": "both",
         "level": "warning",
-        "message": "[PHASE] OUTBREAK: системи відновлені, але сенсори фіксують перші симптоми. Станція переходить у жовтий режим."
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "level": "warning",
         "message": "[MED] Медгрупи, тримайте канали відкритими: фракційний тиск і запити на стабілізацію симптомів зростатимуть."
       },
       {
@@ -89,11 +78,7 @@
     "description": "Паралельний запуск відновлення коду Origin через 13 хвилин гри як окремий квест, без нової фази.",
     "phase": "PH_OUTBREAK",
     "actions": [
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
-      }
+      
     ],
     "prevent_repeat": true
   },
@@ -257,12 +242,6 @@
       {
         "type": "set_phase",
         "to": "PH_INFECTION_SYMPTOMS"
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "level": "critical",
-        "message": "[PHASE] Симптоми зараження: станція фіксує прогресію, увімкнено підвищений протокол реагування."
       }
     ],
     "prevent_repeat": true
