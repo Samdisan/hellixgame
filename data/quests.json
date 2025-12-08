@@ -96,19 +96,14 @@
           "PL_ILARIA_MEDIC"
         ]
       },
-      {
-        "type": "push_terminal",
-        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
-        "player_group": "ilaria"
-      },
-      {
-        "type": "push_terminal",
-        "message": "[ILARIA] Секретний наказ ILR-BIOSEC-PHASE3 доступний командиру та санітару. Рішення про розсилку — лише їхнє.",
-        "player_group": "ilaria"
-      }
-    ],
-    "prevent_repeat": true
-  },
+        {
+          "type": "push_terminal",
+          "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
+          "player_group": "ilaria"
+        }
+      ],
+      "prevent_repeat": true
+    },
   {
     "id": "Q_START_LIFEFAIL",
     "label": "Запустити фазу збою життєзабезпечення",

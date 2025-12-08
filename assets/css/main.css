@@ -123,6 +123,51 @@ body.intensity-critical .card {
     box-shadow: 0 8px 32px rgba(255, 77, 77, 0.12);
 }
 
+/* Life-support failure visual identity (distinct from yellow warning) */
+body.phase-ph_lifefail {
+    --bg: #0c090f;
+    --panel: #180d14;
+    --accent: #ff9fb6;
+    --accent-2: #7de2ff;
+    --text: #ffe4ed;
+    --muted: #ffb8c9;
+    --warning: #ff9f7f;
+    --critical: #ff627d;
+}
+
+body.phase-ph_lifefail::before {
+    background:
+        linear-gradient(45deg, rgba(255, 98, 125, 0.08) 1px, transparent 1px),
+        linear-gradient(-45deg, rgba(125, 226, 255, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 30% 40%, rgba(255, 98, 125, 0.28), transparent 35%),
+        radial-gradient(circle at 80% 60%, rgba(125, 226, 255, 0.22), transparent 30%);
+    opacity: 0.25;
+    animation: gridDrift 7s linear infinite;
+}
+
+body.phase-ph_lifefail::after {
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255, 98, 125, 0.22), transparent 32%),
+        radial-gradient(circle at 70% 70%, rgba(125, 226, 255, 0.2), transparent 35%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 2px, transparent 2px, transparent 6px);
+    opacity: 0.18;
+}
+
+body.phase-ph_lifefail .top-bar,
+body.phase-ph_lifefail .admin-nav {
+    background: linear-gradient(90deg, rgba(24, 13, 20, 0.95), rgba(24, 13, 20, 0.82));
+    border-color: rgba(255, 98, 125, 0.45);
+    box-shadow: 0 0 18px rgba(255, 98, 125, 0.2);
+}
+
+body.phase-ph_lifefail .panel,
+body.phase-ph_lifefail .terminal-shell,
+body.phase-ph_lifefail .card {
+    border-color: rgba(255, 98, 125, 0.32);
+    background: linear-gradient(155deg, rgba(24, 13, 20, 0.9), rgba(17, 12, 19, 0.78));
+    box-shadow: 0 12px 30px rgba(255, 98, 125, 0.14), 0 0 24px rgba(125, 226, 255, 0.08);
+}
+
 body.intensity-critical .btn,
 body.intensity-critical button,
 body.intensity-critical .chip {
@@ -599,12 +644,32 @@ h4 { font-size: 14px; }
     overflow: hidden;
 }
 
+.life-support[data-lifefail="1"] {
+    background: linear-gradient(135deg, rgba(20, 8, 14, 0.9), rgba(12, 8, 16, 0.82));
+    border-color: rgba(255, 98, 125, 0.38);
+    box-shadow: 0 0 46px rgba(255, 98, 125, 0.18), inset 0 0 0 1px rgba(125, 226, 255, 0.1);
+}
+
 .life-support:before {
     content: '';
     position: absolute;
     inset: 0;
     background: radial-gradient(circle at 20% 20%, rgba(120, 200, 255, 0.08), transparent 40%),
         radial-gradient(circle at 80% 10%, rgba(255, 100, 100, 0.08), transparent 45%);
+    pointer-events: none;
+}
+
+.life-support[data-lifefail="1"]:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 2px, transparent 2px, transparent 6px),
+        radial-gradient(circle at 70% 25%, rgba(255, 98, 125, 0.12), transparent 30%),
+        radial-gradient(circle at 25% 75%, rgba(125, 226, 255, 0.12), transparent 28%);
+    mix-blend-mode: screen;
+    opacity: 0.35;
+    animation: alarmScan 2.8s linear infinite;
     pointer-events: none;
 }
 
@@ -675,6 +740,12 @@ body.intensity-warning .life-card__fill {
     animation: alarmScan 3s linear infinite;
 }
 
+.life-support[data-lifefail="1"] .life-card {
+    background: rgba(18, 10, 14, 0.92);
+    border-color: rgba(255, 98, 125, 0.36);
+    box-shadow: inset 0 0 0 1px rgba(255, 98, 125, 0.16), 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
 .life-card__head {
     display: grid;
     grid-template-columns: 1fr auto auto;
@@ -693,6 +764,11 @@ body.intensity-warning .life-card__fill {
     font-weight: 800;
     color: #c7f7ff;
     text-shadow: 0 0 18px rgba(109, 226, 255, 0.5);
+}
+
+.life-support[data-lifefail="1"] .life-card__value {
+    color: #ffd7de;
+    text-shadow: 0 0 18px rgba(255, 98, 125, 0.4);
 }
 
 .life-card__unit {
@@ -721,6 +797,10 @@ body.intensity-warning .life-card__fill {
 .life-support[data-lifefail="1"] .life-card__fill {
     background: linear-gradient(90deg, #ff4d6d, #ff874d);
     box-shadow: 0 0 16px rgba(255, 116, 116, 0.4);
+}
+
+.life-support[data-lifefail="1"] .life-card__markers {
+    color: #ffb3c5;
 }
 
 .life-card__markers {
