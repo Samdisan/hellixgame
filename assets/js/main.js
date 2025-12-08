@@ -6,12 +6,20 @@ function startTerminalFeed(selector, fallbackTarget = 'public_terminal') {
     container.dataset.feedStarted = '1';
 
     const target = container.dataset.target || fallbackTarget;
+    const playerId = container.dataset.playerId || '';
     const canDelete = container.dataset.canDelete === '1';
     const pollMs = parseInt(container.dataset.pollMs || '6000', 10);
 
     async function refresh() {
         try {
-            const res = await fetch('/api/get-terminal-messages.php?target=' + encodeURIComponent(target) + '&ts=' + Date.now());
+            const query = new URLSearchParams({
+                target,
+                ts: Date.now().toString(),
+            });
+            if (playerId) {
+                query.set('player_id', playerId);
+            }
+            const res = await fetch('/api/get-terminal-messages.php?' + query.toString());
             const payload = await res.json();
             const filtered = (payload.messages || [])
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));

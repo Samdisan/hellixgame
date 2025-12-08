@@ -142,7 +142,7 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
+        "target": "player:PL_WHO_SECURITY_AGENT",
         "message": "[WHO] WHO-SEC-004.Y: невідомий персонал у заборонених коридорах. Агент безпеки ВООЗ, перевірте M-3, R-12 та обхід Зони B."
       }
     ],
