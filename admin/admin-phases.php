@@ -41,7 +41,7 @@ include __DIR__ . '/../partials/header.php';
         <div class="timeline-item">
             <div class="muted">Статус таймера</div>
             <div class="phase-badge" data-timer-status><?php echo strtoupper($timer['state']); ?></div>
-            <div class="micro">Оновлюється щосекунди</div>
+            <div class="micro">Оновлюється кожні 3 секунди</div>
         </div>
         <div class="timeline-item">
             <div>Минуло: <span data-timer-elapsed><?php echo human_time((int)$timer['elapsed']); ?></span></div>

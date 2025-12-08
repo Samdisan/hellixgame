@@ -419,7 +419,7 @@ function startLiveTimer() {
     }
 
     refresh();
-    setInterval(refresh, 1000);
+    setInterval(refresh, 3000);
 }
 
 function startLifeSupportBoard() {

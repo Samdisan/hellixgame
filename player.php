@@ -51,7 +51,7 @@ include __DIR__ . '/partials/header.php';
             <div class="pill-line">Минуло: <span><?php echo human_time((int) $timer['elapsed']); ?></span></div>
             <div class="pill-line">Залишилось: <span><?php echo human_time((int) $timer['remaining']); ?></span></div>
         </div>
-        <div class="glitch-hint">Система знімає показники щосекунди: час — спільний ресурс.</div>
+        <div class="glitch-hint">Система знімає показники раз на 3 секунди: час — спільний ресурс.</div>
     </div>
     <div class="panel" data-live-timer data-lifefail-block <?php echo !empty($lifeFail['active']) ? '' : 'hidden'; ?>>
         <h2>До припинення підтримки життєдіяльності</h2>
