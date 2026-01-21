@@ -538,6 +538,7 @@ function startPlayerPopups() {
     let showing = null;
     let seen = [];
     let autoHideTimer = null;
+    let showingSince = 0;
 
     try {
         const saved = localStorage.getItem(seenKey);
@@ -567,6 +568,7 @@ function startPlayerPopups() {
         }
         modal.hidden = true;
         showing = null;
+        showingSince = 0;
         showNext();
     }
 
@@ -581,6 +583,7 @@ function startPlayerPopups() {
         }
         modal.hidden = false;
         markSeen(next.id);
+        showingSince = Date.now();
         if (autoHideTimer) clearTimeout(autoHideTimer);
         autoHideTimer = setTimeout(() => {
             hideModal();
@@ -604,6 +607,12 @@ function startPlayerPopups() {
     }
 
     poll();
+    setInterval(() => {
+        if (!showingSince || !showing) return;
+        if (Date.now() - showingSince >= 11000) {
+            hideModal();
+        }
+    }, 2000);
     setInterval(poll, 8000);
 }
 

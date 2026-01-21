@@ -70,7 +70,6 @@ include __DIR__ . '/../partials/header.php';
                     <div>
                         <span class="tag">ID <?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?></span>
                         <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
-                        <p class="muted">Рівень <?php echo (int)$protocol['level']; ?> · Фаза <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></p>
                     </div>
                     <div class="toggles">
                         <form method="post" class="inline">
