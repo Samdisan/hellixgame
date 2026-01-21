@@ -123,7 +123,8 @@
         "target": "both",
         "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
       }
-    ]
+    ],
+    "prevent_repeat": true
   },
   {
     "id": "Q_WHO_CORRIDOR_ALERT",
@@ -188,8 +189,8 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
-        "message": "[WHO] WHO-PROTOCOL-ALR-01 активовано: ALR-01 / OUTBREAK ALERT RESPONSE. Усі представники ВООЗ, виконайте інструкції ALR-01."
+        "message": "[WHO] WHO-PROTOCOL-ALR-01 активовано: ALR-01 / OUTBREAK ALERT RESPONSE. Усі представники ВООЗ, виконайте інструкції ALR-01.",
+        "faction_target": "who"
       }
     ],
     "prevent_repeat": true
