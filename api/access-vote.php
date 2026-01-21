@@ -14,12 +14,17 @@ $players = load_json('players.json');
 $votes = load_json('access-votes.json');
 
 $now = time();
-$meta = $votes['_meta'] ?? ['promotions' => []];
+$meta = $votes['_meta'] ?? ['promotions' => [], 'clicks' => []];
 $promotionLedger = $meta['promotions'] ?? [];
+$clickLedger = $meta['clicks'] ?? [];
 
 // Backward compatibility: previously an array of timestamps; now per-approver buckets.
 if (isset($promotionLedger[0]) && is_int($promotionLedger[0])) {
     $promotionLedger = [$actor => $promotionLedger];
+}
+
+if (isset($clickLedger[0]) && is_int($clickLedger[0])) {
+    $clickLedger = [$actor => $clickLedger];
 }
 
 $actorPromotions = $promotionLedger[$actor] ?? [];
@@ -27,7 +32,16 @@ if (!is_array($actorPromotions)) {
     $actorPromotions = [];
 }
 
+$actorClicks = $clickLedger[$actor] ?? [];
+if (!is_array($actorClicks)) {
+    $actorClicks = [];
+}
+
 $recentPromotions = array_values(array_filter($actorPromotions, function ($ts) use ($now) {
+    return is_int($ts) && $ts >= ($now - 3600);
+}));
+
+$recentClicks = array_values(array_filter($actorClicks, function ($ts) use ($now) {
     return is_int($ts) && $ts >= ($now - 3600);
 }));
 
@@ -53,12 +67,18 @@ $votes[$targetId]['approvals'] = array_values(array_unique(array_merge($votes[$t
 $approvalCount = count($votes[$targetId]['approvals']);
 $leveledUp = false;
 
-if ($approvalCount >= 2 && count($recentPromotions) >= 3) {
+if (count($recentClicks) >= 3) {
+    $retryIn = max(0, ($recentClicks[0] + 3600) - $now);
     respond_json([
         'error' => 'rate_limited',
-        'message' => 'Ліміт підвищень вичерпано. Спробуйте за годину.',
+        'message' => 'Ліміт: не більше 3 спроб підвищити доступ за годину.',
+        'retry_in' => $retryIn,
+        'remaining' => 0,
     ], 429);
 }
+
+$recentClicks[] = $now;
+$clickLedger[$actor] = $recentClicks;
 
 if ($approvalCount >= 2) {
     $target['access_level'] = min(3, $currentLevel + 1);
@@ -72,6 +92,7 @@ if ($approvalCount >= 2) {
 }
 
 $meta['promotions'] = $promotionLedger;
+$meta['clicks'] = $clickLedger;
 $votes['_meta'] = $meta;
 
 save_json('access-votes.json', $votes);
@@ -82,4 +103,5 @@ respond_json([
     'approvals' => $approvalCount,
     'leveled_up' => $leveledUp,
     'new_level' => $target['access_level'],
+    'remaining' => max(0, 3 - count($recentClicks)),
 ]);

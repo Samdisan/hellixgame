@@ -203,7 +203,7 @@ flowchart TB
 ### admin-phases.php — Перемикач фаз
 ```
 ┌───────────── Чотири блоки фаз ------------------------------┐
-│ PH_INTRO | PH_OUTBREAK | PH_QUARANTINE | PH_FINAL           │
+│ PH_START | PH_OUTBREAK | PH_QUARANTINE | PH_FINAL           │
 │ Назва, опис, порядок, ui_intensity                         │
 ├───────────── Дії ------------------------------------------┤
 │ [Зробити поточною] → запускає on_start/on_end квести       │
@@ -212,7 +212,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  Intro[PH_INTRO] --> Outbreak[PH_OUTBREAK]
+  Intro[PH_START] --> Outbreak[PH_OUTBREAK]
   Outbreak --> Quarantine[PH_QUARANTINE]
   Quarantine --> Final[PH_FINAL]
   Intro --- Actions[Make current → on_start/on_end]

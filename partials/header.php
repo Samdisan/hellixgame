@@ -6,6 +6,8 @@ $currentPhaseId = $phaseData['current'] ?? null;
 $currentPhaseConfig = null;
 $currentPhaseOutcome = null;
 $phaseOutcomes = [];
+$lifeSupport = $phaseData['life_support'] ?? [];
+$uiMode = $phaseData['ui_mode'] ?? 'normal';
 foreach ($phaseData['phases'] ?? [] as $phaseCfg) {
     $phaseOutcomes[$phaseCfg['id'] ?? ''] = $phaseCfg['outcome'] ?? null;
     if (($phaseCfg['id'] ?? null) === $currentPhaseId) {
@@ -17,24 +19,20 @@ foreach ($phaseData['phases'] ?? [] as $phaseCfg) {
 
 $intensity = $currentPhaseConfig['ui_intensity'] ?? null;
 $bodyClasses = ['helix-shell'];
-$isRepairedFailure = $currentPhaseId === 'PH_LIFEFAIL' && $currentPhaseOutcome === 'repaired';
 $activePhases = $phaseData['active'] ?? [];
-$lifeFailActive = false;
-foreach ($activePhases as $ap) {
-    if (($ap['id'] ?? '') === 'PH_LIFEFAIL' && ($phaseOutcomes['PH_LIFEFAIL'] ?? null) !== 'repaired') {
-        $lifeFailActive = true;
-        break;
-    }
-}
+$lifeFailActive = !empty($lifeSupport['active']);
 
 if ($lifeFailActive) {
     $bodyClasses[] = 'phase-ph_lifefail';
     $bodyClasses[] = 'intensity-critical';
 }
-if ($currentPhaseId && (!$lifeFailActive || $currentPhaseId !== 'PH_LIFEFAIL') && !$isRepairedFailure) {
+if ($currentPhaseId && !$lifeFailActive) {
     $bodyClasses[] = 'phase-' . strtolower($currentPhaseId);
 }
-if ($intensity && !$lifeFailActive && !$isRepairedFailure) {
+if ($uiMode === 'warning' && !$lifeFailActive) {
+    $bodyClasses[] = 'intensity-warning';
+}
+if ($intensity && !$lifeFailActive) {
     $bodyClasses[] = 'intensity-' . strtolower($intensity);
 }
 ?>

@@ -81,7 +81,7 @@ $protocols[$baseIndex]['flags']['broadcasted'] = true;
 $protocols[$baseIndex]['flags']['broadcasted_at'] = gmdate('c');
 
 save_json('protocols.json', $protocols);
-append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 розіслано: команда Іларії бачить повний наказ; інші отримали ушкоджену копію.');
+append_terminal_message_to_players($ilariaPlayers, 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 розіслано: команда Іларії бачить повний наказ; інші отримали ушкоджену копію.');
 
 respond_json([
     'status' => 'sent',

@@ -77,7 +77,7 @@ $count = count($metrics);
     <div class="life-admin__grid">
         <div class="life-admin__card">
             <div class="life-admin__card-title">Статуси каналів</div>
-            <p class="muted">Сенсори публікуються в реальному часі. При активній фазі збою (PH_LIFEFAIL) значення падають до меж збою.</p>
+            <p class="muted">Сенсори публікуються в реальному часі. При критичному режимі значення падають до меж збою.</p>
             <div class="life-admin__chips">
                 <?php foreach ($metrics as $metric): ?>
                     <div class="chip">

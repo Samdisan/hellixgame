@@ -15,7 +15,6 @@ include __DIR__ . '/partials/header.php';
         <?php $isRedacted = !empty($protocol['flags']['redacted']); ?>
         <div class="protocol-card <?php echo $isRedacted ? 'redacted' : ''; ?>">
             <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
-            <div class="muted">Рівень: <?php echo (int)$protocol['level']; ?> · Фаза: <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></div>
             <p><?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?></p>
             <?php if ($isRedacted): ?><div class="micro muted">Деякі блоки приховано. Відображення містить глічі.</div><?php endif; ?>
             <button type="button" class="button secondary protocol-open"

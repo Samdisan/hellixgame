@@ -3,32 +3,115 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function load_json(string $file): array
+const HELIX_JSON_CACHE_LIMIT = 10;
+const HELIX_JSON_CACHE_SIZE_CAP_BYTES = 5 * 1024 * 1024; // Skip caching very large JSON blobs to avoid memory spikes.
+const HELIX_JSON_READ_LIMIT_BYTES = 50 * 1024 * 1024; // Hard-stop oversized JSON reads to prevent fatal memory exhaustion.
+const HELIX_JSON_READ_CHUNK_BYTES = 1024 * 1024; // 1MB chunks for safe streaming reads.
+
+function safe_read_json_payload(string $path, string $file): ?string
+{
+    $handle = @fopen($path, 'rb');
+    if (!$handle) {
+        error_log("HELIX: failed to open JSON '{$file}'");
+        return null;
+    }
+
+    $buffer = '';
+    while (!feof($handle)) {
+        $chunk = fread($handle, HELIX_JSON_READ_CHUNK_BYTES);
+        if ($chunk === false) {
+            fclose($handle);
+            error_log("HELIX: failed to read JSON '{$file}'");
+            return null;
+        }
+        $buffer .= $chunk;
+        if (strlen($buffer) > HELIX_JSON_READ_LIMIT_BYTES) {
+            fclose($handle);
+            error_log("HELIX: refusing to read oversized JSON '{$file}' (>{HELIX_JSON_READ_LIMIT_BYTES} bytes) to avoid OOM");
+            return null;
+        }
+    }
+
+    fclose($handle);
+    return $buffer;
+}
+
+function load_json(string $file, bool $useCache = true): array
 {
     if (!isset($GLOBALS['__helix_json_cache'])) {
         $GLOBALS['__helix_json_cache'] = [];
     }
+    if (!isset($GLOBALS['__helix_json_cache_order'])) {
+        $GLOBALS['__helix_json_cache_order'] = [];
+    }
     $cache =& $GLOBALS['__helix_json_cache'];
+    $order =& $GLOBALS['__helix_json_cache_order'];
     $path = __DIR__ . '/../data/' . $file;
+    $size = @filesize($path);
 
-    if (isset($cache[$path])) {
+    if ($useCache && isset($cache[$path])) {
+        // Update recency for simple LRU eviction.
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
         return $cache[$path];
     }
 
     if (!file_exists($path)) {
-        $cache[$path] = [];
-        return $cache[$path];
+        if ($useCache) {
+            $cache[$path] = [];
+        }
+        return [];
     }
 
-    $content = file_get_contents($path);
+    if ($size !== false && $size > HELIX_JSON_READ_LIMIT_BYTES) {
+        error_log("HELIX: refusing to load oversized JSON '{$file}' ({$size} bytes) to avoid OOM");
+        // Never cache an oversized file; callers receive an empty payload instead of a fatal OOM.
+        return [];
+    }
+
+    $content = safe_read_json_payload($path, $file);
+    if ($content === null) {
+        return [];
+    }
+
+    // Guard against missing/unknown sizes where filesize() returned false but
+    // the payload is still too large to safely parse in memory.
+    if (strlen($content) > HELIX_JSON_READ_LIMIT_BYTES) {
+        error_log("HELIX: refusing to parse '{$file}' (" . strlen($content) . " bytes) to avoid OOM");
+        return [];
+    }
+
     $decoded = json_decode($content, true);
     if (!is_array($decoded)) {
-        $cache[$path] = [];
-        return $cache[$path];
+        if ($useCache) {
+            $cache[$path] = [];
+        }
+        return [];
     }
 
-    $cache[$path] = $decoded;
+    if ($useCache && filesize($path) <= HELIX_JSON_CACHE_SIZE_CAP_BYTES) {
+        $cache[$path] = $decoded;
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
+
+        // Cap cache growth so long-running processes don't exhaust memory
+        // by reading many different JSON files without clearing the cache.
+        while (count($order) > HELIX_JSON_CACHE_LIMIT) {
+            $evicted = array_shift($order);
+            unset($cache[$evicted]);
+        }
+    }
+
+    // For oversized files we bypass the cache above; the decoded array will be
+    // released after the caller finishes, preventing long-running scripts from
+    // retaining multi-megabyte payloads in globals.
     return $decoded;
+}
+
+function clear_json_cache(): void
+{
+    $GLOBALS['__helix_json_cache'] = [];
+    $GLOBALS['__helix_json_cache_order'] = [];
 }
 
 function save_json(string $file, array $data): bool
@@ -36,7 +119,11 @@ function save_json(string $file, array $data): bool
     if (!isset($GLOBALS['__helix_json_cache'])) {
         $GLOBALS['__helix_json_cache'] = [];
     }
+    if (!isset($GLOBALS['__helix_json_cache_order'])) {
+        $GLOBALS['__helix_json_cache_order'] = [];
+    }
     $cache =& $GLOBALS['__helix_json_cache'];
+    $order =& $GLOBALS['__helix_json_cache_order'];
     $path = __DIR__ . '/../data/' . $file;
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     $result = (bool) file_put_contents($path, $json, LOCK_EX);
@@ -44,8 +131,11 @@ function save_json(string $file, array $data): bool
     // Bust read cache for future calls this request.
     if ($result) {
         $cache[$path] = $data;
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
+        $order[] = $path;
     } else {
         unset($cache[$path]);
+        $order = array_values(array_filter($order, fn($p) => $p !== $path));
     }
 
     return $result;
@@ -229,7 +319,7 @@ function process_delayed_protocol_broadcasts(int $elapsed): void
         $protocols[$redactedIndex]['announce_in_terminal'] = true;
         $protocols[$redactedIndex]['publish_time'] = 'broadcast';
 
-        append_terminal_message('both', 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 авто-розіслано: команда Іларії має повний наказ, інші отримали пошкоджену копію.');
+        append_terminal_message_to_players($ilariaPlayers, 'protocol', '[ILARIA] ILR-BIOSEC-PHASE3 авто-розіслано: команда Іларії має повний наказ, інші отримали пошкоджену копію.');
         $changed = true;
     }
     unset($protocol);
@@ -245,6 +335,37 @@ function trigger_quest(string $questId, int $elapsed, int $remaining): void
     if ($quest && quest_time_allowed($quest, $elapsed, $remaining)) {
         run_quest_actions($quest);
     }
+}
+
+function set_life_support_state(string $state, int $elapsed): void
+{
+    $phases = load_json('phases.json');
+    $phases['life_support_event'] = $phases['life_support_event'] ?? [
+        'active' => false,
+        'started_elapsed' => null,
+        'outcome' => null,
+    ];
+
+    switch ($state) {
+        case 'repaired':
+            $phases['life_support_event']['active'] = false;
+            $phases['life_support_event']['outcome'] = 'repaired';
+            break;
+        case 'reset':
+            $phases['life_support_event'] = [
+                'active' => false,
+                'started_elapsed' => null,
+                'outcome' => null,
+            ];
+            break;
+        default:
+            $phases['life_support_event']['active'] = true;
+            $phases['life_support_event']['started_elapsed'] = $elapsed;
+            $phases['life_support_event']['outcome'] = null;
+            break;
+    }
+
+    save_json('phases.json', $phases);
 }
 
 function set_timer_state(string $action): void
@@ -315,6 +436,11 @@ function reset_timer_and_phases(): array
     $phases['current_phase_started_elapsed'] = 0;
     $phases['active_phases'] = [];
     $phases['executed_quests'] = [];
+    $phases['life_support_event'] = [
+        'active' => false,
+        'started_elapsed' => null,
+        'outcome' => null,
+    ];
 
     if (isset($phases['phases']) && is_array($phases['phases'])) {
         foreach ($phases['phases'] as &$phase) {
@@ -339,10 +465,33 @@ function reset_timer_and_phases(): array
     return timer_status(false);
 }
 
+function life_support_event(array $phases, array $timer): array
+{
+    $event = $phases['life_support_event'] ?? [];
+    $active = !empty($event['active']);
+    $outcome = $event['outcome'] ?? null;
+    $started = isset($event['started_elapsed']) ? (int) $event['started_elapsed'] : null;
+
+    if ($outcome === 'repaired') {
+        $active = false;
+    }
+
+    $elapsed = ($started !== null) ? max(0, ($timer['elapsed'] ?? 0) - $started) : null;
+
+    return [
+        'active' => $active,
+        'outcome' => $outcome,
+        'started_elapsed' => $started,
+        'elapsed_sec' => $active && $elapsed !== null ? $elapsed : null,
+    ];
+}
+
 function current_phase(): array
 {
     $phases = load_json('phases.json');
     $timer = timer_status(false);
+
+    $uiMode = $phases['ui_mode'] ?? 'normal';
 
     $currentId = $phases['current_phase'] ?? null;
     $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
@@ -378,15 +527,8 @@ function current_phase(): array
         }
 
         $isActive = $startElapsed !== null;
-        $isLifeSupportFailure = $id === 'PH_LIFEFAIL';
-        $lifeSupportRepaired = $isLifeSupportFailure && $outcome === 'repaired';
 
-        // The life-support failure should stay active (red mode) until an explicit repair,
-        // even if its planned window has passed or other phases are running concurrently.
-        if ($isActive && $lifeSupportRepaired) {
-            $isActive = false;
-        }
-        if ($isActive && !$isLifeSupportFailure && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
+        if ($isActive && $plannedEnd !== null && ($timer['elapsed'] ?? 0) > $plannedEnd) {
             $isActive = false;
         }
 
@@ -430,8 +572,10 @@ function current_phase(): array
     return [
         'current' => $currentId,
         'started_elapsed' => $startedElapsed,
+        'ui_mode' => $uiMode,
         'phases' => $phases['phases'] ?? [],
         'active' => $activePhases,
+        'life_support' => life_support_event($phases, $timer),
         'current_meta' => [
             'duration_sec' => $phaseDuration,
             'elapsed_sec' => $phaseElapsed,
@@ -475,12 +619,37 @@ function set_current_phase(string $phaseId): void
 function append_terminal_message(string $target, string $type, string $message): void
 {
     $messages = load_terminal_messages_with_ids();
+    $fingerprints = load_message_fingerprints();
+    $fingerprint = sha1($target . '|' . $type . '|' . $message);
 
     // Prevent duplicate inserts of identical content so each message only appears once.
+    $globalTargets = ['public_terminal', 'admin_terminal', 'both'];
+    $isGlobal = in_array($target, $globalTargets, true);
+
+    if (!empty($fingerprints[$fingerprint])) {
+        return;
+    }
+    if ($isGlobal) {
+        $globalFingerprint = sha1('global|' . $type . '|' . $message);
+        if (!empty($fingerprints[$globalFingerprint])) {
+            return;
+        }
+    }
+
     foreach ($messages as $existing) {
-        if (($existing['target'] ?? '') === $target
-            && ($existing['type'] ?? '') === $type
-            && ($existing['message'] ?? '') === $message) {
+        $existingTarget = $existing['target'] ?? '';
+        $existingType = $existing['type'] ?? '';
+        $existingMessage = $existing['message'] ?? '';
+
+        if ($existingTarget === $target && $existingType === $type && $existingMessage === $message) {
+            return;
+        }
+
+        // Also avoid double-posting the same system alert across the shared feeds.
+        if ($isGlobal
+            && in_array($existingTarget, $globalTargets, true)
+            && $existingType === $type
+            && $existingMessage === $message) {
             return;
         }
     }
@@ -493,6 +662,59 @@ function append_terminal_message(string $target, string $type, string $message):
         'message' => $message,
     ];
     save_json('terminal-messages.json', $messages);
+
+    $fingerprints[$fingerprint] = time();
+    if ($isGlobal) {
+        $fingerprints[sha1('global|' . $type . '|' . $message)] = time();
+    }
+
+    if (count($fingerprints) > 500) {
+        arsort($fingerprints);
+        $fingerprints = array_slice($fingerprints, 0, 500, true);
+    }
+
+    save_json('message-fingerprints.json', $fingerprints);
+}
+
+function append_terminal_message_to_players(array $playerIds, string $type, string $message): void
+{
+    $uniqueIds = array_values(array_unique(array_filter(array_map('strval', $playerIds))));
+    if (empty($uniqueIds) || $message === '') {
+        return;
+    }
+
+    foreach ($uniqueIds as $playerId) {
+        append_terminal_message('player:' . $playerId, $type, $message);
+    }
+}
+
+function resolve_player_ids_by_group(string $group, array $players): array
+{
+    switch ($group) {
+        case 'ilaria':
+            return array_column(array_filter($players, function ($p) {
+                return ($p['faction'] ?? '') === 'ilaria';
+            }), 'id');
+        case 'medics':
+            $keywords = ['мед', 'інфек', 'вірус', 'санітар'];
+            $manual = ['PL_STATION_GREN'];
+            $ids = [];
+            foreach ($players as $player) {
+                $role = mb_strtolower($player['role'] ?? '');
+                foreach ($keywords as $kw) {
+                    if ($role !== '' && mb_strpos($role, $kw) !== false) {
+                        $ids[] = $player['id'];
+                        continue 2;
+                    }
+                }
+                if (in_array($player['id'], $manual, true)) {
+                    $ids[] = $player['id'];
+                }
+            }
+            return array_values(array_unique($ids));
+        default:
+            return [];
+    }
 }
 
 function load_message_triggers(): array
@@ -530,15 +752,14 @@ function apply_player_message_triggers(string $message, string $playerId = ''): 
     }
 }
 
-function load_terminal_messages_with_ids(): array
+function load_terminal_messages_with_ids(int $maxMessages = 200, bool $useCache = true): array
 {
-    $messages = load_json('terminal-messages.json');
+    $messages = load_json('terminal-messages.json', $useCache);
     $changed = false;
 
     // Trim oversize logs to avoid exhausting memory on low-resource hosts.
-    // Keep only the most recent 200 entries to reduce per-request memory usage.
-    $maxMessages = 200;
-    if (count($messages) > $maxMessages) {
+    // Keep only the most recent entries to reduce per-request memory usage.
+    if ($maxMessages > 0 && count($messages) > $maxMessages) {
         $messages = array_slice($messages, -$maxMessages);
         $changed = true;
     }
@@ -556,6 +777,12 @@ function load_terminal_messages_with_ids(): array
     }
 
     return $messages;
+}
+
+function load_message_fingerprints(): array
+{
+    $fingerprints = load_json('message-fingerprints.json');
+    return is_array($fingerprints) ? $fingerprints : [];
 }
 
 function run_quest_actions(array $quest): void
@@ -584,7 +811,6 @@ function run_quest_actions(array $quest): void
                     set_current_phase($action['to']);
                     $phases = load_json('phases.json');
                     $phasesDirty = true;
-                    append_terminal_message('admin_terminal', 'info', '[PHASE] Перемкнено на ' . $action['to']);
                 }
                 break;
             case 'set_timer_remaining':
@@ -600,6 +826,20 @@ function run_quest_actions(array $quest): void
                     save_json('timer.json', $timerData);
                     append_terminal_message('admin_terminal', 'warning', '[TIMER] Новий залишок: ' . human_time($newRemaining));
                 }
+                break;
+            case 'set_life_support_state':
+                $state = $action['state'] ?? 'failure';
+                set_life_support_state($state, (int) ($timer['elapsed'] ?? 0));
+                $phases = load_json('phases.json');
+                $phasesDirty = true;
+                append_terminal_message('admin_terminal', 'warning', '[LIFE] Режим життєзабезпечення: ' . $state);
+                break;
+            case 'set_ui_mode':
+                $mode = $action['mode'] ?? 'normal';
+                $phases = load_json('phases.json');
+                $phases['ui_mode'] = $mode;
+                $phasesDirty = true;
+                append_terminal_message('admin_terminal', 'warning', '[UI] Режим станції: ' . $mode);
                 break;
             case 'activate_protocol':
             case 'deactivate_protocol':
@@ -640,8 +880,38 @@ function run_quest_actions(array $quest): void
                 $target = $action['target'] ?? 'public_terminal';
                 $type = $action['level'] ?? 'info';
                 $text = $action['message'] ?? ($action['message_id'] ?? '');
+                $playerTargets = $action['player_targets'] ?? [];
+                $factionTarget = $action['faction_target'] ?? '';
+                $groupTarget = $action['player_group'] ?? '';
+                $hasTargeting = !empty($playerTargets) || $factionTarget !== '' || $groupTarget !== '';
+
+                $resolvedTargets = [];
+                foreach ((array) $playerTargets as $pid) {
+                    $pid = trim((string) $pid);
+                    if ($pid !== '') {
+                        $resolvedTargets[] = $pid;
+                    }
+                }
+
+                if ($factionTarget !== '') {
+                    foreach ($players as $p) {
+                        if (($p['faction'] ?? '') === $factionTarget) {
+                            $resolvedTargets[] = $p['id'];
+                        }
+                    }
+                }
+
+                if ($groupTarget !== '') {
+                    $resolvedTargets = array_merge($resolvedTargets, resolve_player_ids_by_group($groupTarget, $players));
+                }
+
                 if ($text !== '') {
-                    append_terminal_message($target, $type, $text);
+                    $uniqueTargets = array_values(array_unique($resolvedTargets));
+                    if (!empty($uniqueTargets)) {
+                        append_terminal_message_to_players($uniqueTargets, $type, $text);
+                    } elseif (!$hasTargeting) {
+                        append_terminal_message($target, $type, $text);
+                    }
                 }
                 break;
         }
@@ -776,6 +1046,64 @@ function has_opened_protocol(string $playerId, string $protocolId): bool
 {
     $progress = load_json('player-progress.json');
     return in_array($protocolId, $progress['players'][$playerId]['opened_protocols'] ?? [], true);
+}
+
+function find_goal_scope_for_player(array $player): ?array
+{
+    $goals = load_json('goals.json');
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'player:' . ($player['id'] ?? '')) {
+            return $entry;
+        }
+    }
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'faction:' . ($player['faction'] ?? '')) {
+            return $entry;
+        }
+    }
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'default') {
+            return $entry;
+        }
+    }
+
+    return null;
+}
+
+function goal_key(string $scope, string $text): string
+{
+    return $scope . '|' . md5($text);
+}
+
+function completed_goal_keys(string $playerId): array
+{
+    $progress = load_json('player-progress.json');
+    return $progress['players'][$playerId]['completed_goals'] ?? [];
+}
+
+function set_goal_completion(string $playerId, string $goalKey, bool $completed): array
+{
+    $progress = load_json('player-progress.json');
+    $progress['players'] = $progress['players'] ?? [];
+    $progress['players'][$playerId] = $progress['players'][$playerId] ?? ['opened_protocols' => [], 'completed_goals' => []];
+
+    $completedList = $progress['players'][$playerId]['completed_goals'] ?? [];
+
+    if ($completed) {
+        if (!in_array($goalKey, $completedList, true)) {
+            $completedList[] = $goalKey;
+        }
+    } else {
+        $completedList = array_values(array_filter($completedList, fn($g) => $g !== $goalKey));
+    }
+
+    $progress['players'][$playerId]['completed_goals'] = $completedList;
+    save_json('player-progress.json', $progress);
+
+    return $completedList;
 }
 
 function protocol_accessible(array $protocol, array $player): bool

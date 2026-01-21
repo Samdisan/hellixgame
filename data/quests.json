@@ -3,7 +3,7 @@
     "id": "Q_OPEN_RESTORE_PROTOCOL",
     "label": "Відкрити ПРОТОКОЛ ВІДНОВЛЕННЯ ДОСТУПІВ",
     "description": "Активує документ HELIX-ACC-RESTORE-03 після трьох хвилин фази Прибуття.",
-    "phase": "PH_INTRO",
+    "phase": "PH_START",
     "actions": [
       {
         "type": "activate_protocol",
@@ -13,38 +13,61 @@
         "type": "push_terminal",
         "target": "both",
         "message": "[PROTO] HELIX-ACC-RESTORE-03 доступний для тристороннього підтвердження доступів."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "HELIX-ACC-RESTORE-03 відкрито. Потрібно зібрати три підтвердження доступів у протоколі відновлення."
       }
     ],
     "prevent_repeat": true
   },
   {
     "id": "Q_START_BRIEFING",
-    "label": "Запустити фазу Знайомство",
-    "description": "Перемикає сценарій у фазу знайомства після завершення прибуття.",
-    "phase": "PH_INTRO",
+    "label": "Активувати блок знайомства",
+    "description": "Нагадує про знайомство всередині фази прибуття, без переключення на окрему фазу.",
+    "phase": "PH_START",
     "actions": [
       {
-        "type": "set_phase",
-        "to": "PH_BRIEFING"
+        "type": "push_terminal",
+        "target": "both",
+        "message": "[ALERT] Ознайомтесь з особовими справами: доступна інформація залежить від вашого рівня доступу."
       }
     ],
     "prevent_repeat": true
   },
   {
     "id": "Q_OUTBREAK_ALERT",
-    "label": "Запустити фазу Перші симптоми",
-    "description": "Перехід у фазу перших симптомів із попередженням для всіх фракцій.",
-    "phase": "PH_BRIEFING",
+    "label": "OUTBREAK: системні попередження після ремонту",
+    "description": "Глобальний автоквест OUTBREAK після 12-ї хвилини: перемикає у фазу перших симптомів, вмикає жовтий режим станції й шле попередження всім гравцям.",
+    "phase": "PH_OUTBREAK",
     "actions": [
       {
         "type": "set_phase",
         "to": "PH_OUTBREAK"
       },
       {
+        "type": "set_ui_mode",
+        "mode": "warning"
+      },
+      {
         "type": "push_terminal",
         "target": "both",
         "level": "warning",
-        "message": "[PHASE] Перші симптоми: системи фіксують аномалії, розпочато OUTBREAK."
+        "message": "⚠ SYSTEM ALERT: ANOMALOUS SYMPTOMS DETECTED\nВиявлено множинні реакції, що не відповідають нормам HELIX.\nМедичний персонал: перевірити стан колег.\nАдміністрація: встановити посилений моніторинг.\nПричина: НЕВІДОМА.\nРЕКОМЕНДАЦІЯ: залишися на своєму рівні доступу та чекай додаткової інформації."
+      },
+      {
+        "type": "push_terminal",
+        "level": "warning",
+        "message": "[MED] Медгрупи, тримайте канали відкритими: фракційний тиск і запити на стабілізацію симптомів зростатимуть.",
+        "player_group": "medics"
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "OUTBREAK активовано. Перші симптоми зафіксовано — тримайте медичні сенсори під контролем."
       }
     ],
     "prevent_repeat": true
@@ -52,26 +75,16 @@
   {
     "id": "Q_START_ORIGIN",
     "label": "Запустити фазу відновлення коду Origin",
-    "description": "Паралельний запуск фази відновлення коду Origin через 13 хвилин гри.",
-    "phase": "PH_BRIEFING",
-    "actions": [
-      {
-        "type": "set_phase",
-        "to": "PH_ORIGIN_RECOVERY"
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "message": "[PHASE] Стартує паралельна фаза: відновлення коду віруса Origin. Вікно триватиме 4 години."
-      }
-    ],
+    "description": "Паралельний запуск відновлення коду Origin через 13 хвилин гри як окремий квест, без нової фази.",
+    "phase": "PH_OUTBREAK",
+    "actions": [],
     "prevent_repeat": true
   },
   {
     "id": "Q_ILARIA_DESTROY_SAMPLES",
     "label": "Іларія: знищити всі аномальні зразки",
     "description": "Директива Іларії на зачистку зразків, що запускається разом із відновленням коду Origin.",
-    "phase": "PH_ORIGIN_RECOVERY",
+    "phase": "PH_OUTBREAK",
     "actions": [
       {
         "type": "activate_protocol",
@@ -83,27 +96,8 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
-        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin."
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "message": "[ILARIA] Секретний наказ ILR-BIOSEC-PHASE3 доступний командиру та санітару. Рішення про розсилку — лише їхнє."
-      }
-    ],
-    "prevent_repeat": true
-  },
-  {
-    "id": "Q_BRIEFING_ALERT",
-    "label": "Оповіщення про ознайомлення",
-    "description": "Нагадує всім гравцям переглянути особові справи з урахуванням доступів.",
-    "phase": "PH_BRIEFING",
-    "actions": [
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "message": "[ALERT] Ознайомтесь з особовими справами: доступна інформація залежить від вашого рівня доступу."
+        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
+        "player_group": "ilaria"
       }
     ],
     "prevent_repeat": true
@@ -111,12 +105,12 @@
   {
     "id": "Q_START_LIFEFAIL",
     "label": "Запустити фазу збою життєзабезпечення",
-    "description": "Перемикає станцію у критичний режим та скорочує таймер до двох годин залишку.",
-    "phase": "PH_BRIEFING",
+    "description": "Квест переводить системи у критичний режим без окремої фази й обрізає глобальний таймер.",
+    "phase": "PH_OUTBREAK",
     "actions": [
       {
-        "type": "set_phase",
-        "to": "PH_LIFEFAIL"
+        "type": "set_life_support_state",
+        "state": "failure"
       },
       {
         "type": "set_timer_remaining",
@@ -127,13 +121,46 @@
         "target": "both",
         "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
       }
-    ]
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_SYNC_ENCRYPTION",
+    "label": "Синхронізація шифрування",
+    "description": "Кооперація станції та служби безпеки ILARIA: інженери запускають діагностику лише після отримання ключа ALPHA-7-ZULU від охорони.",
+    "phase": "PH_START",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_KEY_99",
+        "allowed_players": [
+          "PL_ILARIA_SECURITY",
+          "PL_ILARIA_COMMANDER"
+        ]
+      },
+      {
+        "type": "push_terminal",
+        "message": "[ILARIA] ILR-KEY-99 активований: код шифрування ALPHA-7-ZULU. Передайте його інженерам станції для відновлення каналу.",
+        "player_targets": [
+          "PL_ILARIA_SECURITY",
+          "PL_ILARIA_COMMANDER"
+        ],
+        "level": "info"
+      },
+      {
+        "type": "push_terminal",
+        "message": "Ціль: виконати /run diagnostic ALPHA-7-ZULU у терміналі. Ключ потрібно отримати від служби безпеки ILARIA.",
+        "faction_target": "station",
+        "level": "info"
+      }
+    ],
+    "prevent_repeat": true
   },
   {
     "id": "Q_WHO_CORRIDOR_ALERT",
     "label": "WHO-SEC-004.Y: невідомий персонал",
     "description": "Активує службовий протокол для агента безпеки ВООЗ щодо заборонених коридорів.",
-    "phase": "PH_BRIEFING",
+    "phase": "PH_START",
     "actions": [
       {
         "type": "activate_protocol",
@@ -141,8 +168,23 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
+        "target": "player:PL_WHO_SECURITY_AGENT",
         "message": "[WHO] WHO-SEC-004.Y: невідомий персонал у заборонених коридорах. Агент безпеки ВООЗ, перевірте M-3, R-12 та обхід Зони B."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_WHO_MEDICAL_SCREENING",
+    "label": "WHO: медичний скрінінг",
+    "description": "Вибіркова перевірка біометрії трьох співробітників через команду /run check_bio <ID> для створення ранньої підозри.",
+    "phase": "PH_START",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "message": "[WHO] Вибіркова перевірка біометрії. Введіть /run check_bio <ID> для трьох співробітників і зафіксуйте результати.",
+        "faction_target": "who",
+        "level": "info"
       }
     ],
     "prevent_repeat": true
@@ -151,7 +193,7 @@
     "id": "Q_ILARIA_GATE_ALERT",
     "label": "ILARIA-SEC-GAMMA: шлюз R-12",
     "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після дев’ятої хвилини гри.",
-    "phase": "PH_BRIEFING",
+    "phase": "PH_START",
     "actions": [
       {
         "type": "activate_protocol",
@@ -164,7 +206,7 @@
     "id": "Q_WHO_WHITE_ZONE",
     "label": "WHO-DATA-009: біла зона в логах",
     "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 11 хвилин гри.",
-    "phase": "PH_BRIEFING",
+    "phase": "PH_START",
     "actions": [
       {
         "type": "activate_protocol",
@@ -172,8 +214,28 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
-        "message": "[WHO] WHO-DATA-009: Білий провал у логах. Програміст ВООЗ, відновіть 3 секунди втраченої активності і перевірте фантомного користувача."
+        "message": "[WHO] WHO-DATA-009: Білий провал у логах. Програміст ВООЗ, відновіть 3 секунди втраченої активності і перевірте фантомного користувача.",
+        "player_targets": [
+          "PL_WHO_PROGRAMMER"
+        ]
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_WHO_OUTBREAK_ALERT",
+    "label": "WHO-PROTOCOL-ALR-01: OUTBREAK ALERT RESPONSE",
+    "description": "Активує протокол WHO-PROTOCOL-ALR-01 для всіх представників ВООЗ на 13-й хвилині у фазі OUTBREAK.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_PROTOCOL_ALR_01"
+      },
+      {
+        "type": "push_terminal",
+        "message": "[WHO] WHO-PROTOCOL-ALR-01 активовано: ALR-01 / OUTBREAK ALERT RESPONSE. Усі представники ВООЗ, виконайте інструкції ALR-01.",
+        "faction_target": "who"
       }
     ],
     "prevent_repeat": true
@@ -190,8 +252,8 @@
       },
       {
         "type": "push_terminal",
-        "target": "both",
-        "message": "[ILARIA] Хибні протоколи стерилізації виявлені. Оператори ILARIA (2+) очищують канали."
+        "message": "[ILARIA] Хибні протоколи стерилізації виявлені. Оператори ILARIA (2+) очищують канали.",
+        "player_group": "ilaria"
       }
     ],
     "prevent_repeat": true
@@ -223,12 +285,6 @@
       {
         "type": "set_phase",
         "to": "PH_INFECTION_SYMPTOMS"
-      },
-      {
-        "type": "push_terminal",
-        "target": "both",
-        "level": "critical",
-        "message": "[PHASE] Симптоми зараження: станція фіксує прогресію, увімкнено підвищений протокол реагування."
       }
     ],
     "prevent_repeat": true

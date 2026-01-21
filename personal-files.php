@@ -31,6 +31,7 @@ include __DIR__ . '/partials/header.php';
                 <h3><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></h3>
                 <div class="muted">Роль: <?php echo htmlspecialchars($person['role'], ENT_QUOTES); ?></div>
                 <div class="badge status-<?php echo htmlspecialchars($person['status'], ENT_QUOTES); ?>">Статус: <?php echo htmlspecialchars($person['status'], ENT_QUOTES); ?></div>
+                <div class="chip">ID: <?php echo htmlspecialchars($person['id'], ENT_QUOTES); ?></div>
                 <div class="chip">Доступ: <?php echo (int) $person['access_level']; ?></div>
                 <div class="chip">Фракція: <?php echo htmlspecialchars($person['faction'], ENT_QUOTES); ?></div>
             </div>
