@@ -6,6 +6,35 @@ if (session_status() === PHP_SESSION_NONE) {
 const HELIX_JSON_CACHE_LIMIT = 10;
 const HELIX_JSON_CACHE_SIZE_CAP_BYTES = 5 * 1024 * 1024; // Skip caching very large JSON blobs to avoid memory spikes.
 const HELIX_JSON_READ_LIMIT_BYTES = 50 * 1024 * 1024; // Hard-stop oversized JSON reads to prevent fatal memory exhaustion.
+const HELIX_JSON_READ_CHUNK_BYTES = 1024 * 1024; // 1MB chunks for safe streaming reads.
+
+function safe_read_json_payload(string $path, string $file): ?string
+{
+    $handle = @fopen($path, 'rb');
+    if (!$handle) {
+        error_log("HELIX: failed to open JSON '{$file}'");
+        return null;
+    }
+
+    $buffer = '';
+    while (!feof($handle)) {
+        $chunk = fread($handle, HELIX_JSON_READ_CHUNK_BYTES);
+        if ($chunk === false) {
+            fclose($handle);
+            error_log("HELIX: failed to read JSON '{$file}'");
+            return null;
+        }
+        $buffer .= $chunk;
+        if (strlen($buffer) > HELIX_JSON_READ_LIMIT_BYTES) {
+            fclose($handle);
+            error_log("HELIX: refusing to read oversized JSON '{$file}' (>{HELIX_JSON_READ_LIMIT_BYTES} bytes) to avoid OOM");
+            return null;
+        }
+    }
+
+    fclose($handle);
+    return $buffer;
+}
 
 function load_json(string $file, bool $useCache = true): array
 {
@@ -28,8 +57,10 @@ function load_json(string $file, bool $useCache = true): array
     }
 
     if (!file_exists($path)) {
-        $cache[$path] = [];
-        return $cache[$path];
+        if ($useCache) {
+            $cache[$path] = [];
+        }
+        return [];
     }
 
     if ($size !== false && $size > HELIX_JSON_READ_LIMIT_BYTES) {
@@ -38,9 +69,8 @@ function load_json(string $file, bool $useCache = true): array
         return [];
     }
 
-    $content = file_get_contents($path);
-    if ($content === false) {
-        error_log("HELIX: failed to read JSON '{$file}'");
+    $content = safe_read_json_payload($path, $file);
+    if ($content === null) {
         return [];
     }
 
