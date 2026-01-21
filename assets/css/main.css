@@ -79,6 +79,23 @@ body.intensity-warning .glitch-overlay {
     animation-duration: 4.5s;
 }
 
+/* If warning and critical classes ever overlap temporarily, force critical to win visually. */
+body.intensity-critical.intensity-warning {
+    --bg: #130607;
+    --panel: #1f0c10;
+    --accent: #ff6b6b;
+    --accent-2: #ff9f43;
+    --text: #ffe7e7;
+    --muted: #ffb3b3;
+    --warning: #ffb347;
+    --critical: #ff4d4d;
+}
+
+body.intensity-critical.intensity-warning .glitch-overlay {
+    opacity: 0.32;
+    animation-duration: 6s;
+}
+
 body.intensity-critical {
     --bg: #130607;
     --panel: #1f0c10;
