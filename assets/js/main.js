@@ -339,6 +339,33 @@ function startLiveTimer() {
     if (window.__helixTimerLoop) return;
     window.__helixTimerLoop = true;
 
+    function syncBodyClasses(payload) {
+        const lifeFail = payload?.phases?.life_support || null;
+        const currentPhase = (payload?.phases?.current || '').toLowerCase();
+        const lifeActive = Boolean(lifeFail?.active);
+        const uiMode = payload?.phases?.ui_mode || 'normal';
+
+        const phaseClasses = Array.from(document.body.classList).filter((c) => c.startsWith('phase-'));
+        phaseClasses.forEach((c) => document.body.classList.remove(c));
+        document.body.classList.remove('intensity-critical');
+
+        if (lifeActive) {
+            document.body.classList.add('phase-ph_lifefail', 'intensity-critical');
+            document.body.classList.remove('intensity-warning');
+            return;
+        }
+
+        if (currentPhase) {
+            document.body.classList.add(`phase-${currentPhase}`);
+        }
+
+        if (uiMode === 'warning') {
+            document.body.classList.add('intensity-warning');
+        } else {
+            document.body.classList.remove('intensity-warning');
+        }
+    }
+
     async function refresh() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
@@ -347,11 +374,7 @@ function startLiveTimer() {
             const uiMode = payload.phases?.ui_mode || 'normal';
             const lifeActive = Boolean(lifeFail?.active);
             const repaired = (lifeFail?.outcome || '') === 'repaired';
-            if (!lifeActive && !repaired && uiMode === 'warning') {
-                document.body.classList.add('intensity-warning');
-            } else {
-                document.body.classList.remove('intensity-warning');
-            }
+            syncBodyClasses(payload);
             containers.forEach((container) => {
                 const elapsedEl = container.querySelector('[data-timer-elapsed]');
                 const remainingEl = container.querySelector('[data-timer-remaining]');
@@ -534,9 +557,11 @@ function startPlayerPopups() {
     const bodyEl = modal.querySelector('[data-popup-body]');
     const closeEls = modal.querySelectorAll('[data-popup-close]');
     const seenKey = 'helix_seen_player_popups';
+    const seenMessagesKey = 'helix_seen_player_popup_messages';
     let queue = [];
     let showing = null;
     let seen = [];
+    let seenBodies = [];
     let autoHideTimer = null;
     let showingSince = 0;
 
@@ -547,9 +572,17 @@ function startPlayerPopups() {
         seen = [];
     }
 
+    try {
+        const savedBodies = localStorage.getItem(seenMessagesKey);
+        seenBodies = savedBodies ? JSON.parse(savedBodies) : [];
+    } catch (e) {
+        seenBodies = [];
+    }
+
     function saveSeen() {
         try {
             localStorage.setItem(seenKey, JSON.stringify(seen.slice(-60)));
+            localStorage.setItem(seenMessagesKey, JSON.stringify(seenBodies.slice(-60)));
         } catch (e) {
             // ignore storage errors
         }
@@ -558,6 +591,13 @@ function startPlayerPopups() {
     function markSeen(id) {
         if (!id || seen.includes(id)) return;
         seen.push(id);
+        saveSeen();
+    }
+
+    function markBodySeen(msg) {
+        if (!msg) return;
+        if (seenBodies.includes(msg)) return;
+        seenBodies.push(msg);
         saveSeen();
     }
 
@@ -583,6 +623,7 @@ function startPlayerPopups() {
         }
         modal.hidden = false;
         markSeen(next.id);
+        markBodySeen(next.message || '');
         showingSince = Date.now();
         if (autoHideTimer) clearTimeout(autoHideTimer);
         autoHideTimer = setTimeout(() => {
@@ -597,7 +638,9 @@ function startPlayerPopups() {
             const messages = (payload.messages || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             messages.forEach((msg) => {
                 const id = msg.id || '';
+                const body = (msg.message || '').trim();
                 if (!id || seen.includes(id)) return;
+                if (body && seenBodies.includes(body)) return;
                 queue.push(msg);
             });
             showNext();
