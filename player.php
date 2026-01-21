@@ -29,6 +29,7 @@ include __DIR__ . '/partials/header.php';
         <div class="timeline-item">
             <strong><?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?></strong> — <?php echo htmlspecialchars($player['role'], ENT_QUOTES); ?><br>
             <span class="badge level">Рівень доступу: <?php echo (int)$player['access_level']; ?></span>
+            <div class="muted">ID: <?php echo htmlspecialchars($player['id'], ENT_QUOTES); ?></div>
             <div class="muted">Фракція: <?php echo htmlspecialchars(strtoupper($player['faction']), ENT_QUOTES); ?></div>
         </div>
         <div style="margin-top:12px;" class="quick-actions">
