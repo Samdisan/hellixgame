@@ -39,6 +39,18 @@ function load_json(string $file, bool $useCache = true): array
     }
 
     $content = file_get_contents($path);
+    if ($content === false) {
+        error_log("HELIX: failed to read JSON '{$file}'");
+        return [];
+    }
+
+    // Guard against missing/unknown sizes where filesize() returned false but
+    // the payload is still too large to safely parse in memory.
+    if (strlen($content) > HELIX_JSON_READ_LIMIT_BYTES) {
+        error_log("HELIX: refusing to parse '{$file}' (" . strlen($content) . " bytes) to avoid OOM");
+        return [];
+    }
+
     $decoded = json_decode($content, true);
     if (!is_array($decoded)) {
         if ($useCache) {
