@@ -47,6 +47,13 @@
       "fired": false
     },
     {
+      "id": "TT_WHO_MEDICAL_SCREENING",
+      "quest_id": "Q_WHO_MEDICAL_SCREENING",
+      "elapsed_ge_sec": 630,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_ILARIA_DESTROY_SAMPLES",
       "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
       "elapsed_ge_sec": 960,

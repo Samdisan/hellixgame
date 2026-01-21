@@ -175,6 +175,21 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_WHO_MEDICAL_SCREENING",
+    "label": "WHO: медичний скрінінг",
+    "description": "Вибіркова перевірка біометрії трьох співробітників через команду /run check_bio <ID> для створення ранньої підозри.",
+    "phase": "PH_START",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "message": "[WHO] Вибіркова перевірка біометрії. Введіть /run check_bio <ID> для трьох співробітників і зафіксуйте результати.",
+        "faction_target": "who",
+        "level": "info"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_ILARIA_GATE_ALERT",
     "label": "ILARIA-SEC-GAMMA: шлюз R-12",
     "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після дев’ятої хвилини гри.",

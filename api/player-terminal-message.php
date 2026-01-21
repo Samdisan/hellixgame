@@ -9,6 +9,15 @@ if ($message === '') {
 }
 
 $playerId = $_SESSION['player_id'] ?? 'UNKNOWN';
+$players = load_json('players.json');
+$player = null;
+foreach ($players as $candidate) {
+    if (($candidate['id'] ?? '') === $playerId) {
+        $player = $candidate;
+        break;
+    }
+}
+
 $prefix = $playerId ? '[' . $playerId . '] ' : '';
 append_terminal_message('admin_terminal', 'player', $prefix . $message);
 
@@ -26,6 +35,29 @@ if (preg_match('/^\/run\s+diagnostic\s+(.+)$/i', $normalized, $m)) {
             'admin_terminal',
             'info',
             "[DIAG] {$playerId} виконав діагностику з кодом ALPHA-7-ZULU"
+        );
+    }
+}
+
+// WHO medical screening: /run check_bio <id>.
+if (preg_match('/^\/run\s+check_bio\s+(\S+)$/i', $normalized, $match)) {
+    $targetId = strtoupper(trim($match[1]));
+    $isWho = ($player['faction'] ?? '') === 'who';
+
+    if (!$isWho) {
+        append_terminal_message('player:' . $playerId, 'info', 'Команда доступна лише представникам ВООЗ.');
+    } else {
+        $alertIds = ['7733'];
+        $isAlert = in_array($targetId, $alertIds, true);
+        $response = $isAlert
+            ? "Суб'єкт {$targetId}: УВАГА! ПІДВИЩЕНИЙ РІВЕНЬ КОРТИЗОЛУ. СЛІДИ НЕВІДОМОГО БІЛКА."
+            : "Суб'єкт {$targetId}: ПОКАЗНИКИ В НОРМІ.";
+
+        append_terminal_message('player:' . $playerId, 'system', $response);
+        append_terminal_message(
+            'admin_terminal',
+            $isAlert ? 'warning' : 'info',
+            "[BIO] {$playerId} перевірив {$targetId}: " . ($isAlert ? 'анормальні показники' : 'норма')
         );
     }
 }
