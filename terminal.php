@@ -18,6 +18,7 @@ include __DIR__ . '/partials/header.php';
     </div>
     <div class="terminal-hero" style="margin:12px 0;">
         <div class="terminal-line line-info"><span class="muted">[STREAM]</span><span class="badge">LIVE</span><span>Повідомлення системи, аварійні сигнали, витоки даних, галюцинації станції.</span></div>
+        <div class="terminal-line line-info"><span class="muted">[PHANTOM]</span><span>Після відновлення систем з’являються фантомні сигнали: рух у порожніх секторах · логіни персоналу, який мертвий · автоматичні команди без джерела.</span></div>
     </div>
     <div class="terminal terminal-feed" data-player-id="<?php echo htmlspecialchars($_SESSION['player_id'] ?? '', ENT_QUOTES); ?>">
     </div>
