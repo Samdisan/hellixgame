@@ -803,6 +803,7 @@ function run_quest_actions(array $quest): void
                 $playerTargets = $action['player_targets'] ?? [];
                 $factionTarget = $action['faction_target'] ?? '';
                 $groupTarget = $action['player_group'] ?? '';
+                $hasTargeting = !empty($playerTargets) || $factionTarget !== '' || $groupTarget !== '';
 
                 $resolvedTargets = [];
                 foreach ((array) $playerTargets as $pid) {
@@ -828,7 +829,7 @@ function run_quest_actions(array $quest): void
                     $uniqueTargets = array_values(array_unique($resolvedTargets));
                     if (!empty($uniqueTargets)) {
                         append_terminal_message_to_players($uniqueTargets, $type, $text);
-                    } else {
+                    } elseif (!$hasTargeting) {
                         append_terminal_message($target, $type, $text);
                     }
                 }
