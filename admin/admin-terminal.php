@@ -4,48 +4,12 @@ require_role('admin');
 
 $response = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $command = trim($_POST['command']);
-    if (stripos($command, '/msg') === 0) {
-        if (preg_match('/^\/msg\s+\"?(.*?)\"?$/', $command, $m)) {
-            append_terminal_message('both', 'info', $m[1]);
-            $response = 'Надіслано у всі термінали';
-        } else {
-            $response = 'Формат: /msg "текст"';
-        }
-    } elseif (stripos($command, '/run') === 0) {
-        $id = trim(substr($command, 4));
-        $quest = find_quest($id);
-        if ($quest) {
-            run_quest_actions($quest);
-            append_terminal_message('both', 'protocol', 'Запущено квест ' . $id);
-            $response = 'Квест виконано: ' . $id;
-        } else {
-            $response = 'Квест не знайдено';
-        }
-    } elseif (stripos($command, '/setaccess') === 0) {
-        $parts = preg_split('/\s+/', $command);
-        if (count($parts) === 3) {
-            [$cmd, $playerId, $level] = $parts;
-            $players = load_json('players.json');
-            foreach ($players as &$player) {
-                if ($player['id'] === $playerId) {
-                    $player['access_level'] = (int) $level;
-                    append_terminal_message('both', 'info', "[ACCESS] {$playerId} -> {$level}");
-                }
-            }
-            unset($player);
-            save_json('players.json', $players);
-            $response = "Рівень доступу {$playerId} встановлено на {$level}";
-        } else {
-            $response = 'Формат: /setaccess PLAYER LEVEL';
-        }
-    } elseif (stripos($command, '/phase') === 0) {
-        $id = trim(substr($command, 6));
-        set_current_phase($id);
-        append_terminal_message('both', 'info', 'Фазу змінено на ' . $id);
-        $response = 'Фаза оновлена';
+    $message = trim($_POST['message'] ?? '');
+    if ($message === '') {
+        $response = 'Введіть текст повідомлення';
     } else {
-        $response = 'Невідома команда';
+        append_terminal_message('both', 'info', $message);
+        $response = 'Надіслано у всі термінали';
     }
 }
 
@@ -55,10 +19,10 @@ include __DIR__ . '/../partials/header.php';
 <section class="panel">
     <div class="glitch-overlay"></div>
     <h1>Адмінський термінал</h1>
-    <p class="muted">Чиста консоль для архітектора гри. Команди /msg, /run, /setaccess, /phase керують станцією; усі повідомлення гравців одразу з’являються тут як чат.</p>
+    <p class="muted">Проста консоль для швидких оголошень. Введіть текст — він одразу піде у всі термінали; нижче видно останні записи.</p>
     <form method="post">
-        <input class="form-control" name="command" placeholder="/run Q_OUTBREAK_01" required>
-        <button class="button" type="submit" style="margin-top:8px;">Виконати</button>
+        <input class="form-control" name="message" placeholder="Текст повідомлення" required>
+        <button class="button" type="submit" style="margin-top:8px;">Надіслати</button>
     </form>
     <?php if ($response): ?><div class="protocol-card" style="margin-top:8px;"><?php echo htmlspecialchars($response, ENT_QUOTES); ?></div><?php endif; ?>
     <div class="overlay-text">full control</div>

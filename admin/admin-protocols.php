@@ -70,7 +70,6 @@ include __DIR__ . '/../partials/header.php';
                     <div>
                         <span class="tag">ID <?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?></span>
                         <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
-                        <p class="muted">Рівень <?php echo (int)$protocol['level']; ?> · Фаза <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></p>
                     </div>
                     <div class="toggles">
                         <form method="post" class="inline">
@@ -140,7 +139,7 @@ include __DIR__ . '/../partials/header.php';
                 <label>Level<br><input class="form-control" type="number" name="level" value="1" min="1" max="5"></label>
             </div>
             <div>
-                <label>Фаза<br><input class="form-control" name="phase" value="PH_INTRO"></label>
+                <label>Фаза<br><input class="form-control" name="phase" value="PH_START"></label>
             </div>
         </div>
         <label>Опис<br><textarea class="form-control" name="description" rows="2"></textarea></label>

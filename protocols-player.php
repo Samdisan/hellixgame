@@ -46,7 +46,6 @@ include __DIR__ . '/partials/header.php';
         ?>
         <div class="protocol-card <?php echo implode(' ', $classes); ?>">
             <h3><?php echo htmlspecialchars($protocol['label'], ENT_QUOTES); ?></h3>
-            <div class="muted">Рівень <?php echo (int)$protocol['level']; ?> · Фаза: <?php echo htmlspecialchars($protocol['phase'], ENT_QUOTES); ?></div>
             <p><?php echo htmlspecialchars($protocol['description'], ENT_QUOTES); ?></p>
             <?php if ($isRedacted): ?><div class="micro muted">Ця копія містить приховані блоки та глічі.</div><?php endif; ?>
             <button type="button" class="button secondary protocol-open" data-protocol-id="<?php echo htmlspecialchars($protocol['id'], ENT_QUOTES); ?>"
