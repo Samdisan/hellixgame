@@ -1,4 +1,14 @@
-<?php include __DIR__ . '/partials/header.php'; ?>
+<?php
+require_once __DIR__ . '/includes/helpers.php';
+$players = load_json('players.json');
+$playersByFaction = [];
+foreach ($players as $player) {
+    $faction = strtoupper($player['faction'] ?? 'OTHER');
+    $playersByFaction[$faction][] = $player;
+}
+ksort($playersByFaction);
+include __DIR__ . '/partials/header.php';
+?>
 <section class="panel landing-hero" id="access">
     <div class="glitch-overlay"></div>
     <div>
@@ -26,15 +36,27 @@
         <h2>Термінал</h2>
         <div class="terminal terminal-feed" aria-live="polite"></div>
         <div class="protocol-card" style="margin-top:16px;">
-            <h3>Вхід за кодом</h3>
-            <p class="muted">Станція сканує зовнішній сигнал. Введіть один параметр — система визначить, чи ви гравець, чи майстер.</p>
-            <?php $error = isset($_GET['error']) ? 'Невірний код доступу.' : null; ?>
+            <h3>Вхід у систему</h3>
+            <p class="muted">Станція сканує зовнішній сигнал. Оберіть свій профіль або увійдіть у режим адміна.</p>
+            <?php $error = isset($_GET['error']) ? 'Невірний вибір доступу.' : null; ?>
             <?php if ($error): ?><div class="protocol-card" style="border-color: rgba(255,107,107,0.4); color: var(--critical);">⚠️ <?php echo htmlspecialchars($error, ENT_QUOTES); ?></div><?php endif; ?>
             <form method="post" action="/api/login.php" class="stacked" style="margin-top:12px;">
-                <input class="form-control" type="text" name="code" placeholder="Код доступу" required>
+                <label class="micro muted" for="player-select">Оберіть персонажа</label>
+                <select class="form-control" id="player-select" name="player_id" required>
+                    <option value="" disabled selected>Оберіть персонажа…</option>
+                    <?php foreach ($playersByFaction as $faction => $members): ?>
+                        <optgroup label="<?php echo htmlspecialchars($faction, ENT_QUOTES); ?>">
+                            <?php foreach ($members as $member): ?>
+                                <option value="<?php echo htmlspecialchars($member['id'], ENT_QUOTES); ?>">
+                                    <?php echo htmlspecialchars($member['name'] ?? $member['id'], ENT_QUOTES); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
                 <div class="quick-actions" style="margin-top:10px;">
-                    <button class="button" type="submit">Підтвердити</button>
-                    <span class="badge level flicker">SCANNING PIPELINE</span>
+                    <button class="button" type="submit">Увійти</button>
+                    <button class="button secondary" type="submit" name="admin" value="1">Адмін</button>
                 </div>
             </form>
         </div>
