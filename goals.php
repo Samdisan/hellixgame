@@ -8,33 +8,9 @@ if (!$player) {
     exit;
 }
 
-$goals = load_json('goals.json');
-$scopeEntry = null;
-
-foreach ($goals as $entry) {
-    if (($entry['scope'] ?? '') === 'player:' . $player['id']) {
-        $scopeEntry = $entry;
-        break;
-    }
-}
-
-if (!$scopeEntry) {
-    foreach ($goals as $entry) {
-        if (($entry['scope'] ?? '') === 'faction:' . ($player['faction'] ?? '')) {
-            $scopeEntry = $entry;
-            break;
-        }
-    }
-}
-
-if (!$scopeEntry) {
-    foreach ($goals as $entry) {
-        if (($entry['scope'] ?? '') === 'default') {
-            $scopeEntry = $entry;
-            break;
-        }
-    }
-}
+$scopeEntry = find_goal_scope_for_player($player);
+$completed = completed_goal_keys($player['id']);
+$scopeId = $scopeEntry['scope'] ?? 'default';
 
 include __DIR__ . '/partials/header.php';
 ?>
@@ -51,13 +27,24 @@ include __DIR__ . '/partials/header.php';
             <div class="glitch-overlay"></div>
             <div class="goal-card__meta">Фракція: <?php echo strtoupper(htmlspecialchars($player['faction'], ENT_QUOTES)); ?></div>
             <h2><?php echo htmlspecialchars($scopeEntry['title'] ?? 'Цілі станції', ENT_QUOTES); ?></h2>
-            <ol>
-                <?php foreach (($scopeEntry['goals'] ?? []) as $goal): ?>
-                    <li><?php echo htmlspecialchars($goal, ENT_QUOTES); ?></li>
-                <?php endforeach; ?>
-            </ol>
-            <?php if (!empty($scopeEntry['notes'])): ?>
-                <div class="muted micro">Примітка: <?php echo htmlspecialchars($scopeEntry['notes'], ENT_QUOTES); ?></div>
+            <?php if (empty($scopeEntry)): ?>
+                <p>Немає цілей для відображення.</p>
+            <?php else: ?>
+                <ol class="goal-list">
+                    <?php foreach (($scopeEntry['goals'] ?? []) as $goal): ?>
+                        <?php $key = goal_key($scopeId, (string) $goal); ?>
+                        <li class="goal-list__item" data-goal-key="<?php echo htmlspecialchars($key, ENT_QUOTES); ?>">
+                            <label class="goal-toggle">
+                                <input type="checkbox" data-goal-key="<?php echo htmlspecialchars($key, ENT_QUOTES); ?>" <?php echo in_array($key, $completed, true) ? 'checked' : ''; ?>>
+                                <span class="goal-toggle__box" aria-hidden="true"></span>
+                                <span class="goal-toggle__text"><?php echo htmlspecialchars($goal, ENT_QUOTES); ?></span>
+                            </label>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+                <?php if (!empty($scopeEntry['notes'])): ?>
+                    <div class="muted micro">Примітка: <?php echo htmlspecialchars($scopeEntry['notes'], ENT_QUOTES); ?></div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>

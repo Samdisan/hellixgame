@@ -2055,6 +2055,67 @@ form.inline {
     gap: 6px;
 }
 
+.goal-list {
+    list-style: none;
+    margin: 12px 0 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.goal-list__item {
+    display: block;
+}
+
+.goal-toggle {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.goal-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.goal-toggle__box {
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.goal-toggle input[type="checkbox"]:checked + .goal-toggle__box {
+    background: linear-gradient(135deg, #31d67c, #55ffa1);
+    border-color: #55ffa1;
+    box-shadow: 0 0 0 3px rgba(85, 255, 161, 0.15);
+}
+
+.goal-toggle__box::after {
+    content: '\2713';
+    font-size: 12px;
+    color: #0b0d12;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.goal-toggle input[type="checkbox"]:checked + .goal-toggle__box::after {
+    opacity: 1;
+}
+
+.goal-toggle__text {
+    line-height: 1.4;
+}
+
 .table-wrapper {
     overflow-x: auto;
     margin-top: 12px;

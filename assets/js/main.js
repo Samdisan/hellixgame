@@ -145,6 +145,44 @@ function setupPlayerTerminalForm() {
     });
 }
 
+function setupGoalToggles() {
+    const checkboxes = document.querySelectorAll('input[data-goal-key]');
+    if (!checkboxes.length) return;
+
+    checkboxes.forEach((box) => {
+        box.addEventListener('change', async (e) => {
+            const goalKey = e.target.dataset.goalKey || '';
+            if (!goalKey) return;
+
+            const desired = box.checked;
+            box.disabled = true;
+
+            try {
+                const form = new FormData();
+                form.append('goal_key', goalKey);
+                form.append('completed', desired ? '1' : '0');
+                const res = await fetch('/api/toggle-goal.php', {
+                    method: 'POST',
+                    body: form,
+                    credentials: 'same-origin',
+                });
+                const payload = await res.json();
+                if (!payload.success) {
+                    throw new Error(payload.error || 'failed');
+                }
+
+                const keys = payload.completed_keys || [];
+                box.checked = keys.includes(goalKey);
+            } catch (err) {
+                box.checked = !desired;
+                alert('Не вдалося оновити статус цілі. Спробуйте ще раз.');
+            } finally {
+                box.disabled = false;
+            }
+        });
+    });
+}
+
 function setupAccessVotes() {
     const table = document.querySelector('[data-access-table]');
     if (!table) return;
@@ -668,5 +706,6 @@ window.addEventListener('DOMContentLoaded', () => {
     setupProtocolPopups();
     setupAccessVotes();
     setupPlayerTerminalForm();
+    setupGoalToggles();
     startPlayerPopups();
 });

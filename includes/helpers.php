@@ -571,10 +571,23 @@ function append_terminal_message(string $target, string $type, string $message):
     $messages = load_terminal_messages_with_ids();
 
     // Prevent duplicate inserts of identical content so each message only appears once.
+    $globalTargets = ['public_terminal', 'admin_terminal', 'both'];
+    $isGlobal = in_array($target, $globalTargets, true);
+
     foreach ($messages as $existing) {
-        if (($existing['target'] ?? '') === $target
-            && ($existing['type'] ?? '') === $type
-            && ($existing['message'] ?? '') === $message) {
+        $existingTarget = $existing['target'] ?? '';
+        $existingType = $existing['type'] ?? '';
+        $existingMessage = $existing['message'] ?? '';
+
+        if ($existingTarget === $target && $existingType === $type && $existingMessage === $message) {
+            return;
+        }
+
+        // Also avoid double-posting the same system alert across the shared feeds.
+        if ($isGlobal
+            && in_array($existingTarget, $globalTargets, true)
+            && $existingType === $type
+            && $existingMessage === $message) {
             return;
         }
     }
@@ -952,6 +965,64 @@ function has_opened_protocol(string $playerId, string $protocolId): bool
 {
     $progress = load_json('player-progress.json');
     return in_array($protocolId, $progress['players'][$playerId]['opened_protocols'] ?? [], true);
+}
+
+function find_goal_scope_for_player(array $player): ?array
+{
+    $goals = load_json('goals.json');
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'player:' . ($player['id'] ?? '')) {
+            return $entry;
+        }
+    }
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'faction:' . ($player['faction'] ?? '')) {
+            return $entry;
+        }
+    }
+
+    foreach ($goals as $entry) {
+        if (($entry['scope'] ?? '') === 'default') {
+            return $entry;
+        }
+    }
+
+    return null;
+}
+
+function goal_key(string $scope, string $text): string
+{
+    return $scope . '|' . md5($text);
+}
+
+function completed_goal_keys(string $playerId): array
+{
+    $progress = load_json('player-progress.json');
+    return $progress['players'][$playerId]['completed_goals'] ?? [];
+}
+
+function set_goal_completion(string $playerId, string $goalKey, bool $completed): array
+{
+    $progress = load_json('player-progress.json');
+    $progress['players'] = $progress['players'] ?? [];
+    $progress['players'][$playerId] = $progress['players'][$playerId] ?? ['opened_protocols' => [], 'completed_goals' => []];
+
+    $completedList = $progress['players'][$playerId]['completed_goals'] ?? [];
+
+    if ($completed) {
+        if (!in_array($goalKey, $completedList, true)) {
+            $completedList[] = $goalKey;
+        }
+    } else {
+        $completedList = array_values(array_filter($completedList, fn($g) => $g !== $goalKey));
+    }
+
+    $progress['players'][$playerId]['completed_goals'] = $completedList;
+    save_json('player-progress.json', $progress);
+
+    return $completedList;
 }
 
 function protocol_accessible(array $protocol, array $player): bool
