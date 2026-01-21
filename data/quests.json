@@ -77,9 +77,7 @@
     "label": "Запустити фазу відновлення коду Origin",
     "description": "Паралельний запуск відновлення коду Origin через 13 хвилин гри як окремий квест, без нової фази.",
     "phase": "PH_OUTBREAK",
-    "actions": [
-      
-    ],
+    "actions": [],
     "prevent_repeat": true
   },
   {
@@ -96,14 +94,14 @@
           "PL_ILARIA_MEDIC"
         ]
       },
-        {
-          "type": "push_terminal",
-          "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
-          "player_group": "ilaria"
-        }
-      ],
-      "prevent_repeat": true
-    },
+      {
+        "type": "push_terminal",
+        "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
+        "player_group": "ilaria"
+      }
+    ],
+    "prevent_repeat": true
+  },
   {
     "id": "Q_START_LIFEFAIL",
     "label": "Запустити фазу збою життєзабезпечення",
@@ -122,6 +120,38 @@
         "type": "push_terminal",
         "target": "both",
         "message": "[ALERT] Системи життєзабезпечення дають збій. Залишилось 2 години. Перехід у червоний режим тривоги."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_SYNC_ENCRYPTION",
+    "label": "Синхронізація шифрування",
+    "description": "Кооперація станції та служби безпеки ILARIA: інженери запускають діагностику лише після отримання ключа ALPHA-7-ZULU від охорони.",
+    "phase": "PH_START",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ILR_KEY_99",
+        "allowed_players": [
+          "PL_ILARIA_SECURITY",
+          "PL_ILARIA_COMMANDER"
+        ]
+      },
+      {
+        "type": "push_terminal",
+        "message": "[ILARIA] ILR-KEY-99 активований: код шифрування ALPHA-7-ZULU. Передайте його інженерам станції для відновлення каналу.",
+        "player_targets": [
+          "PL_ILARIA_SECURITY",
+          "PL_ILARIA_COMMANDER"
+        ],
+        "level": "info"
+      },
+      {
+        "type": "push_terminal",
+        "message": "Ціль: виконати /run diagnostic ALPHA-7-ZULU у терміналі. Ключ потрібно отримати від служби безпеки ILARIA.",
+        "faction_target": "station",
+        "level": "info"
       }
     ],
     "prevent_repeat": true

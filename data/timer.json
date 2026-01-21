@@ -26,6 +26,13 @@
       "fired": false
     },
     {
+      "id": "TT_SYNC_ENCRYPTION",
+      "quest_id": "Q_SYNC_ENCRYPTION",
+      "elapsed_ge_sec": 480,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_ORIGIN",
       "quest_id": "Q_START_ORIGIN",
       "elapsed_ge_sec": 780,
