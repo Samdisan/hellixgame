@@ -569,10 +569,22 @@ function set_current_phase(string $phaseId): void
 function append_terminal_message(string $target, string $type, string $message): void
 {
     $messages = load_terminal_messages_with_ids();
+    $fingerprints = load_message_fingerprints();
+    $fingerprint = sha1($target . '|' . $type . '|' . $message);
 
     // Prevent duplicate inserts of identical content so each message only appears once.
     $globalTargets = ['public_terminal', 'admin_terminal', 'both'];
     $isGlobal = in_array($target, $globalTargets, true);
+
+    if (!empty($fingerprints[$fingerprint])) {
+        return;
+    }
+    if ($isGlobal) {
+        $globalFingerprint = sha1('global|' . $type . '|' . $message);
+        if (!empty($fingerprints[$globalFingerprint])) {
+            return;
+        }
+    }
 
     foreach ($messages as $existing) {
         $existingTarget = $existing['target'] ?? '';
@@ -600,6 +612,18 @@ function append_terminal_message(string $target, string $type, string $message):
         'message' => $message,
     ];
     save_json('terminal-messages.json', $messages);
+
+    $fingerprints[$fingerprint] = time();
+    if ($isGlobal) {
+        $fingerprints[sha1('global|' . $type . '|' . $message)] = time();
+    }
+
+    if (count($fingerprints) > 500) {
+        arsort($fingerprints);
+        $fingerprints = array_slice($fingerprints, 0, 500, true);
+    }
+
+    save_json('message-fingerprints.json', $fingerprints);
 }
 
 function append_terminal_message_to_players(array $playerIds, string $type, string $message): void
@@ -703,6 +727,12 @@ function load_terminal_messages_with_ids(int $maxMessages = 200, bool $useCache 
     }
 
     return $messages;
+}
+
+function load_message_fingerprints(): array
+{
+    $fingerprints = load_json('message-fingerprints.json');
+    return is_array($fingerprints) ? $fingerprints : [];
 }
 
 function run_quest_actions(array $quest): void

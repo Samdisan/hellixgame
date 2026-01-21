@@ -383,11 +383,10 @@ function startLiveTimer() {
 
         const phaseClasses = Array.from(document.body.classList).filter((c) => c.startsWith('phase-'));
         phaseClasses.forEach((c) => document.body.classList.remove(c));
-        document.body.classList.remove('intensity-critical');
+        document.body.classList.remove('intensity-critical', 'intensity-warning');
 
         if (lifeActive) {
             document.body.classList.add('phase-ph_lifefail', 'intensity-critical');
-            document.body.classList.remove('intensity-warning');
             return;
         }
 
