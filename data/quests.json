@@ -303,5 +303,18 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_HELIX_LAB_PROTO_09",
+    "label": "Відкрити HELIX-LAB-PROTO-09",
+    "description": "Активує лабораторний протокол HELIX-LAB-PROTO-09 через 25 хв після старту гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_LAB_PROTO_09"
+      }
+    ],
+    "prevent_repeat": true
   }
 ]
