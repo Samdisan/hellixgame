@@ -56,11 +56,11 @@ schema.md — JSON Schema для HELIX ECHELON
 Призначення: інформація про фази гри.
 
 {
-  "current_phase": "PH_INTRO",    // string, id активної фази
+  "current_phase": "PH_START",    // string, id активної фази
   "current_phase_started_elapsed": 0, // коли фаза реально стала активною (сек з початку гри)
   "phases": [
     {
-      "id": "PH_INTRO",           // string, унікальний ID фази
+      "id": "PH_START",           // string, унікальний ID фази
       "title": "Прибуття експедиції", // string, назва
       "description": "Початкова фаза гри...", // string
       "order": 1,                 // integer, порядок
@@ -127,7 +127,7 @@ Time-window поля та списки квестів потрібні для с
     "id": "Q_START_OUTBREAK",     // string, унікальний ID
     "label": "Запуск фази OUTBREAK", // string, коротка назва
     "description": "Станція переходить у фазу перших симптомів.", // string, опц.
-    "phase": "PH_INTRO",          // string, до якої фази належить
+    "phase": "PH_START",          // string, до якої фази належить
     "time_constraints": {         // опційно: обмеження по глобальному часу
       "min_elapsed_sec": 900,     // не раніше 15 хв від початку гри
       "max_elapsed_sec": null

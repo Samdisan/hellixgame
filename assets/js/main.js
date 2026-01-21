@@ -6,12 +6,20 @@ function startTerminalFeed(selector, fallbackTarget = 'public_terminal') {
     container.dataset.feedStarted = '1';
 
     const target = container.dataset.target || fallbackTarget;
+    const playerId = container.dataset.playerId || '';
     const canDelete = container.dataset.canDelete === '1';
     const pollMs = parseInt(container.dataset.pollMs || '6000', 10);
 
     async function refresh() {
         try {
-            const res = await fetch('/api/get-terminal-messages.php?target=' + encodeURIComponent(target) + '&ts=' + Date.now());
+            const query = new URLSearchParams({
+                target,
+                ts: Date.now().toString(),
+            });
+            if (playerId) {
+                query.set('player_id', playerId);
+            }
+            const res = await fetch('/api/get-terminal-messages.php?' + query.toString());
             const payload = await res.json();
             const filtered = (payload.messages || [])
                 .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -137,6 +145,44 @@ function setupPlayerTerminalForm() {
     });
 }
 
+function setupGoalToggles() {
+    const checkboxes = document.querySelectorAll('input[data-goal-key]');
+    if (!checkboxes.length) return;
+
+    checkboxes.forEach((box) => {
+        box.addEventListener('change', async (e) => {
+            const goalKey = e.target.dataset.goalKey || '';
+            if (!goalKey) return;
+
+            const desired = box.checked;
+            box.disabled = true;
+
+            try {
+                const form = new FormData();
+                form.append('goal_key', goalKey);
+                form.append('completed', desired ? '1' : '0');
+                const res = await fetch('/api/toggle-goal.php', {
+                    method: 'POST',
+                    body: form,
+                    credentials: 'same-origin',
+                });
+                const payload = await res.json();
+                if (!payload.success) {
+                    throw new Error(payload.error || 'failed');
+                }
+
+                const keys = payload.completed_keys || [];
+                box.checked = keys.includes(goalKey);
+            } catch (err) {
+                box.checked = !desired;
+                alert('Не вдалося оновити статус цілі. Спробуйте ще раз.');
+            } finally {
+                box.disabled = false;
+            }
+        });
+    });
+}
+
 function setupAccessVotes() {
     const table = document.querySelector('[data-access-table]');
     if (!table) return;
@@ -162,7 +208,12 @@ function setupAccessVotes() {
             const res = await fetch('/api/access-vote.php', { method: 'POST', body: form });
             const payload = await res.json();
             if (!res.ok || payload.error) {
-                status.textContent = 'Помилка: ' + (payload.message || payload.error || res.statusText);
+                let msg = payload.message || payload.error || res.statusText;
+                if (payload.retry_in) {
+                    const minutes = Math.max(1, Math.ceil(payload.retry_in / 60));
+                    msg += ` (спробуйте через ~${minutes} хв)`;
+                }
+                status.textContent = 'Помилка: ' + msg;
                 btn.disabled = false;
                 return;
             }
@@ -175,11 +226,20 @@ function setupAccessVotes() {
             const stamp = document.createElement('span');
             stamp.className = 'muted micro';
 
+            const remaining = typeof payload.remaining === 'number' ? payload.remaining : null;
+
             if (payload.leveled_up) {
-                status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
+                if (payload.ross_override_used) {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (Глен Росс).`;
+                } else {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
+                }
                 stamp.textContent = 'Підвищено';
             } else {
                 status.textContent = `Ваш голос зафіксовано. ${payload.approvals}/3 підтверджень.`;
+                if (remaining !== null) {
+                    status.textContent += ` | Залишилось підвищень: ${remaining}`;
+                }
                 stamp.textContent = 'Ваш голос зафіксовано';
             }
 
@@ -316,16 +376,44 @@ function setupProtocolPopups() {
 
 function startLiveTimer() {
     const containers = document.querySelectorAll('[data-live-timer]');
-    if (!containers.length) return;
-
     if (window.__helixTimerLoop) return;
     window.__helixTimerLoop = true;
+
+    function syncBodyClasses(payload) {
+        const lifeFail = payload?.phases?.life_support || null;
+        const currentPhase = (payload?.phases?.current || '').toLowerCase();
+        const lifeActive = Boolean(lifeFail?.active);
+        const uiMode = payload?.phases?.ui_mode || 'normal';
+
+        const phaseClasses = Array.from(document.body.classList).filter((c) => c.startsWith('phase-'));
+        phaseClasses.forEach((c) => document.body.classList.remove(c));
+        document.body.classList.remove('intensity-critical', 'intensity-warning');
+
+        if (lifeActive) {
+            document.body.classList.add('phase-ph_lifefail', 'intensity-critical');
+            return;
+        }
+
+        if (currentPhase) {
+            document.body.classList.add(`phase-${currentPhase}`);
+        }
+
+        if (uiMode === 'warning') {
+            document.body.classList.add('intensity-warning');
+        } else {
+            document.body.classList.remove('intensity-warning');
+        }
+    }
 
     async function refresh() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
             const payload = await res.json();
-            const lifeFail = (payload.phases?.active || []).find((ap) => (ap.id || '') === 'PH_LIFEFAIL');
+            const lifeFail = payload.phases?.life_support || null;
+            const uiMode = payload.phases?.ui_mode || 'normal';
+            const lifeActive = Boolean(lifeFail?.active);
+            const repaired = (lifeFail?.outcome || '') === 'repaired';
+            syncBodyClasses(payload);
             containers.forEach((container) => {
                 const elapsedEl = container.querySelector('[data-timer-elapsed]');
                 const remainingEl = container.querySelector('[data-timer-remaining]');
@@ -384,7 +472,7 @@ function startLiveTimer() {
                 }
 
                 if (lifefailBlock) {
-                    const active = Boolean(lifeFail);
+                    const active = Boolean(lifeFail?.active);
                     lifefailBlock.hidden = !active;
                     if (lifefailStatusEl) lifefailStatusEl.textContent = active ? 'АКТИВНО' : '—';
                     if (lifefailElapsedEl) lifefailElapsedEl.textContent = active ? formatHuman(lifeFail.elapsed_sec || 0) : '—';
@@ -403,7 +491,7 @@ function startLiveTimer() {
     }
 
     refresh();
-    setInterval(refresh, 1000);
+    setInterval(refresh, 3000);
 }
 
 function startLifeSupportBoard() {
@@ -431,9 +519,13 @@ function startLifeSupportBoard() {
     }
 
     function applyValues() {
+        const warningMode = document.body.classList.contains('intensity-warning');
         metrics.forEach((metric) => {
             const id = metric.id;
-            const target = lifeFail ? Number(metric.fail) : Number(metric.normal);
+            let target = lifeFail ? Number(metric.fail) : Number(metric.normal);
+            if (warningMode && !lifeFail) {
+                target += (Math.random() - 0.5) * 6;
+            }
             const max = Number(metric.max) || target || 1;
             if (!liveValues[id]) {
                 liveValues[id] = target;
@@ -460,8 +552,7 @@ function startLifeSupportBoard() {
         try {
             const res = await fetch('/api/get-state.php?ts=' + Date.now());
             const payload = await res.json();
-            const active = (payload.phases && Array.isArray(payload.phases.active)) ? payload.phases.active : [];
-            const failNow = active.some((p) => (p.id || '') === 'PH_LIFEFAIL');
+            const failNow = Boolean(payload.phases?.life_support?.active);
             if (failNow !== lifeFail) {
                 lifeFail = failNow;
                 setStateBadge();
@@ -498,6 +589,115 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+function startPlayerPopups() {
+    const modal = document.querySelector('[data-player-popup-modal]');
+    if (!modal) return;
+
+    const bodyEl = modal.querySelector('[data-popup-body]');
+    const closeEls = modal.querySelectorAll('[data-popup-close]');
+    const seenKey = 'helix_seen_player_popups';
+    const seenMessagesKey = 'helix_seen_player_popup_messages';
+    let queue = [];
+    let showing = null;
+    let seen = [];
+    let seenBodies = [];
+    let autoHideTimer = null;
+    let showingSince = 0;
+
+    try {
+        const saved = localStorage.getItem(seenKey);
+        seen = saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        seen = [];
+    }
+
+    try {
+        const savedBodies = localStorage.getItem(seenMessagesKey);
+        seenBodies = savedBodies ? JSON.parse(savedBodies) : [];
+    } catch (e) {
+        seenBodies = [];
+    }
+
+    function saveSeen() {
+        try {
+            localStorage.setItem(seenKey, JSON.stringify(seen.slice(-60)));
+            localStorage.setItem(seenMessagesKey, JSON.stringify(seenBodies.slice(-60)));
+        } catch (e) {
+            // ignore storage errors
+        }
+    }
+
+    function markSeen(id) {
+        if (!id || seen.includes(id)) return;
+        seen.push(id);
+        saveSeen();
+    }
+
+    function markBodySeen(msg) {
+        if (!msg) return;
+        if (seenBodies.includes(msg)) return;
+        seenBodies.push(msg);
+        saveSeen();
+    }
+
+    function hideModal() {
+        if (autoHideTimer) {
+            clearTimeout(autoHideTimer);
+            autoHideTimer = null;
+        }
+        modal.hidden = true;
+        showing = null;
+        showingSince = 0;
+        showNext();
+    }
+
+    closeEls.forEach((el) => el.addEventListener('click', hideModal));
+
+    function showNext() {
+        if (showing || !queue.length) return;
+        const next = queue.shift();
+        showing = next.id || 'unknown';
+        if (bodyEl) {
+            bodyEl.textContent = next.message || '';
+        }
+        modal.hidden = false;
+        markSeen(next.id);
+        markBodySeen(next.message || '');
+        showingSince = Date.now();
+        if (autoHideTimer) clearTimeout(autoHideTimer);
+        autoHideTimer = setTimeout(() => {
+            hideModal();
+        }, 10000);
+    }
+
+    async function poll() {
+        try {
+            const res = await fetch('/api/get-terminal-messages.php?target=player_popup&ts=' + Date.now());
+            const payload = await res.json();
+            const messages = (payload.messages || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            messages.forEach((msg) => {
+                const id = msg.id || '';
+                const body = (msg.message || '').trim();
+                if (!id || seen.includes(id)) return;
+                if (body && seenBodies.includes(body)) return;
+                queue.push(msg);
+            });
+            showNext();
+        } catch (e) {
+            // ignore fetch errors
+        }
+    }
+
+    poll();
+    setInterval(() => {
+        if (!showingSince || !showing) return;
+        if (Date.now() - showingSince >= 11000) {
+            hideModal();
+        }
+    }, 2000);
+    setInterval(poll, 8000);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     startTerminalFeed('.terminal-feed');
     startRotators();
@@ -507,4 +707,6 @@ window.addEventListener('DOMContentLoaded', () => {
     setupProtocolPopups();
     setupAccessVotes();
     setupPlayerTerminalForm();
+    setupGoalToggles();
+    startPlayerPopups();
 });

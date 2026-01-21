@@ -56,12 +56,10 @@ if ($outcome === 'repaired') {
         }
     }
 
-    // When life support is repaired, continue directly with the Origin recovery effort.
-    set_current_phase('PH_ORIGIN_RECOVERY');
 }
 
 save_json('phases.json', $phases);
-append_terminal_message('both', 'info', '[PHASE] ' . $phaseId . ' → ' . ($outcome === 'repaired' ? 'система відремонтована' : 'система не відремонтована'));
+append_terminal_message('both', 'info', $phaseId . ' → ' . ($outcome === 'repaired' ? 'система відремонтована' : 'система не відремонтована'));
 
 $_SESSION['success'] = 'Результат фази оновлено.';
 header('Location: ' . $redirect);

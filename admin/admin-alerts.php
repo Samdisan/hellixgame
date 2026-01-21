@@ -43,10 +43,8 @@ function classify_bucket(array $entry): string
 }
 
 // Normalise messages --------------------------------------------------
-$rawMessages = load_json('terminal-messages.json');
-if (!is_array($rawMessages)) {
-    $rawMessages = [];
-}
+// Load only the recent slice of logs without caching the full history in memory.
+$rawMessages = load_terminal_messages_with_ids(400, false);
 
 $events = [];
 $index = 0;

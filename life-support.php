@@ -3,8 +3,7 @@ require_once __DIR__ . '/includes/helpers.php';
 
 $metrics = load_json('life-support.json');
 $phaseData = current_phase();
-$activeIds = array_map(fn($p) => $p['id'] ?? '', $phaseData['active'] ?? []);
-$isLifeFail = in_array('PH_LIFEFAIL', $activeIds, true);
+$isLifeFail = !empty(($phaseData['life_support']['active'] ?? false));
 
 include __DIR__ . '/partials/header.php';
 ?>
@@ -18,7 +17,7 @@ include __DIR__ . '/partials/header.php';
     <div class="hero-callout">
         <div class="micro muted">Режим</div>
         <div class="hero-mode <?php echo $isLifeFail ? 'alert' : 'ok'; ?>">
-            <?php echo $isLifeFail ? 'PH_LIFEFAIL — критичний спад' : 'Норма — системи стабільні'; ?>
+            <?php echo $isLifeFail ? 'Критичний режим — збій систем життєзабезпечення' : 'Норма — системи стабільні'; ?>
         </div>
         <div class="micro muted">Джерело даних: фазовий таймер + сенсори HELIX</div>
     </div>
@@ -59,7 +58,7 @@ include __DIR__ . '/partials/header.php';
     <div class="life-support__legend">
         <div class="legend-pill legend-pill--ok">Норма</div>
         <div class="legend-pill legend-pill--drop">Критичний спад</div>
-        <div class="legend-pill legend-pill--pulse">Фаза PH_LIFEFAIL</div>
+        <div class="legend-pill legend-pill--pulse">Критичний режим</div>
     </div>
 </section>
 
