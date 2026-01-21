@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 const HELIX_JSON_CACHE_LIMIT = 10;
 const HELIX_JSON_CACHE_SIZE_CAP_BYTES = 5 * 1024 * 1024; // Skip caching very large JSON blobs to avoid memory spikes.
+const HELIX_JSON_READ_LIMIT_BYTES = 50 * 1024 * 1024; // Hard-stop oversized JSON reads to prevent fatal memory exhaustion.
 
 function load_json(string $file, bool $useCache = true): array
 {
@@ -17,6 +18,7 @@ function load_json(string $file, bool $useCache = true): array
     $cache =& $GLOBALS['__helix_json_cache'];
     $order =& $GLOBALS['__helix_json_cache_order'];
     $path = __DIR__ . '/../data/' . $file;
+    $size = @filesize($path);
 
     if ($useCache && isset($cache[$path])) {
         // Update recency for simple LRU eviction.
@@ -28,6 +30,12 @@ function load_json(string $file, bool $useCache = true): array
     if (!file_exists($path)) {
         $cache[$path] = [];
         return $cache[$path];
+    }
+
+    if ($size !== false && $size > HELIX_JSON_READ_LIMIT_BYTES) {
+        error_log("HELIX: refusing to load oversized JSON '{$file}' ({$size} bytes) to avoid OOM");
+        // Never cache an oversized file; callers receive an empty payload instead of a fatal OOM.
+        return [];
     }
 
     $content = file_get_contents($path);
