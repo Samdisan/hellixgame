@@ -17,6 +17,7 @@ $now = time();
 $meta = $votes['_meta'] ?? ['promotions' => [], 'clicks' => []];
 $promotionLedger = $meta['promotions'] ?? [];
 $clickLedger = $meta['clicks'] ?? [];
+$settings = $meta['settings'] ?? [];
 
 // Backward compatibility: previously an array of timestamps; now per-approver buckets.
 if (isset($promotionLedger[0]) && is_int($promotionLedger[0])) {
@@ -36,6 +37,11 @@ $actorClicks = $clickLedger[$actor] ?? [];
 if (!is_array($actorClicks)) {
     $actorClicks = [];
 }
+
+$rossOverrideEnabled = !empty($settings['ross_single_promotion_enabled']);
+$rossOverrideCooldown = (int) ($settings['ross_single_promotion_cooldown_sec'] ?? 7200);
+$rossOverrideLastUsed = (int) ($settings['ross_single_promotion_last_used'] ?? 0);
+$rossOverrideRemaining = max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - $now);
 
 $recentPromotions = array_values(array_filter($actorPromotions, function ($ts) use ($now) {
     return is_int($ts) && $ts >= ($now - 3600);
@@ -66,6 +72,33 @@ if ($currentLevel >= 3) {
 $votes[$targetId]['approvals'] = array_values(array_unique(array_merge($votes[$targetId]['approvals'] ?? [], [$actor])));
 $approvalCount = count($votes[$targetId]['approvals']);
 $leveledUp = false;
+$rossOverrideUsed = false;
+
+if ($actor === 'PL_STATION_ROSS' && $rossOverrideEnabled && $rossOverrideRemaining === 0) {
+    $target['access_level'] = min(3, $currentLevel + 1);
+    $leveledUp = $target['access_level'] !== $currentLevel;
+    $votes[$targetId]['approvals'] = [];
+    $rossOverrideUsed = $leveledUp;
+    $settings['ross_single_promotion_last_used'] = $now;
+    $meta['settings'] = $settings;
+
+    if ($leveledUp) {
+        append_terminal_message('both', 'info', '[ACCESS] ' . $target['id'] . ' піднято до ' . $target['access_level'] . ' (Глен Росс)');
+    }
+
+    save_json('access-votes.json', $votes);
+    save_json('players.json', $players);
+
+    respond_json([
+        'ok' => true,
+        'approvals' => 0,
+        'leveled_up' => $leveledUp,
+        'new_level' => $target['access_level'],
+        'remaining' => max(0, 3 - count($recentClicks)),
+        'ross_override_used' => $rossOverrideUsed,
+        'ross_retry_in' => $rossOverrideCooldown,
+    ]);
+}
 
 if (count($recentClicks) >= 3) {
     $retryIn = max(0, ($recentClicks[0] + 3600) - $now);
@@ -93,6 +126,7 @@ if ($approvalCount >= 2) {
 
 $meta['promotions'] = $promotionLedger;
 $meta['clicks'] = $clickLedger;
+$meta['settings'] = $settings;
 $votes['_meta'] = $meta;
 
 save_json('access-votes.json', $votes);
@@ -104,4 +138,6 @@ respond_json([
     'leveled_up' => $leveledUp,
     'new_level' => $target['access_level'],
     'remaining' => max(0, 3 - count($recentClicks)),
+    'ross_override_used' => $rossOverrideUsed,
+    'ross_retry_in' => $rossOverrideRemaining,
 ]);

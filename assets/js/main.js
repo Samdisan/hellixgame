@@ -229,7 +229,11 @@ function setupAccessVotes() {
             const remaining = typeof payload.remaining === 'number' ? payload.remaining : null;
 
             if (payload.leveled_up) {
-                status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
+                if (payload.ross_override_used) {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (Глен Росс).`;
+                } else {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
+                }
                 stamp.textContent = 'Підвищено';
             } else {
                 status.textContent = `Ваш голос зафіксовано. ${payload.approvals}/3 підтверджень.`;

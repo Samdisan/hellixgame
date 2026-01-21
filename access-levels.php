@@ -12,6 +12,12 @@ $players = load_json('players.json');
 $votes = load_json('access-votes.json');
 $approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO'];
 $isApprover = in_array($player['id'], $approvers, true);
+$accessMeta = $votes['_meta'] ?? [];
+$accessSettings = $accessMeta['settings'] ?? [];
+$rossOverrideEnabled = !empty($accessSettings['ross_single_promotion_enabled']);
+$rossOverrideCooldown = (int) ($accessSettings['ross_single_promotion_cooldown_sec'] ?? 7200);
+$rossOverrideLastUsed = (int) ($accessSettings['ross_single_promotion_last_used'] ?? 0);
+$rossOverrideRemaining = $rossOverrideEnabled ? max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - time()) : null;
 
 include __DIR__ . '/partials/header.php';
 ?>
@@ -36,6 +42,16 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div class="badge level">Ви: <?php echo htmlspecialchars($player['name'], ENT_QUOTES); ?></div>
     </div>
+    <?php if ($player['id'] === 'PL_STATION_ROSS' && $rossOverrideEnabled): ?>
+        <div class="micro muted" style="margin-bottom: 10px;">
+            Спец-доступ: одноосібне підвищення на 1 рівень раз на 2 години.
+            <?php if ($rossOverrideRemaining !== null && $rossOverrideRemaining > 0): ?>
+                Доступно через <?php echo human_time((int) $rossOverrideRemaining); ?>.
+            <?php else: ?>
+                Доступно зараз.
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
     <div class="table-wrapper" data-access-table>
         <table>
             <thead>

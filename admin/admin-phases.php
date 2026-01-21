@@ -28,6 +28,14 @@ $protocolsById = [];
 foreach (load_json('protocols.json') as $protocol) {
     $protocolsById[$protocol['id']] = $protocol;
 }
+$now = time();
+$accessVotes = load_json('access-votes.json');
+$accessMeta = $accessVotes['_meta'] ?? [];
+$accessSettings = $accessMeta['settings'] ?? [];
+$rossOverrideEnabled = !empty($accessSettings['ross_single_promotion_enabled']);
+$rossOverrideCooldown = (int) ($accessSettings['ross_single_promotion_cooldown_sec'] ?? 7200);
+$rossOverrideLastUsed = (int) ($accessSettings['ross_single_promotion_last_used'] ?? 0);
+$rossOverrideRemaining = $rossOverrideEnabled ? max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - $now) : null;
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
@@ -98,6 +106,35 @@ include __DIR__ . '/../partials/header.php';
                 <button class="button ghost" type="submit" name="state" value="reset">Скинути прапори</button>
             </form>
         </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="flex between align-center" style="gap:12px; flex-wrap: wrap;">
+        <div>
+            <h2 style="margin-bottom:4px;">Доступи — спец-право Глена Росса</h2>
+            <p class="micro muted">Можливість для PL_STATION_ROSS підняти доступ на 1 рівень одноосібно раз на 2 години.</p>
+            <?php if ($rossOverrideEnabled): ?>
+                <p class="micro muted">
+                    <?php if ($rossOverrideLastUsed): ?>
+                        Останнє використання: <?php echo gmdate('Y-m-d H:i:s', $rossOverrideLastUsed); ?> UTC.
+                    <?php else: ?>
+                        Ще не використовувалось.
+                    <?php endif; ?>
+                    <?php if ($rossOverrideRemaining !== null): ?>
+                        Залишилось до доступності: <?php echo human_time((int) $rossOverrideRemaining); ?>.
+                    <?php endif; ?>
+                </p>
+            <?php endif; ?>
+        </div>
+        <form method="post" action="/api/set-access-settings.php" class="inline-form" style="gap:8px; align-items: center;">
+            <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+            <label class="micro muted" style="display:flex; align-items:center; gap:6px;">
+                <input type="checkbox" name="ross_single_promotion_enabled" value="1" <?php echo $rossOverrideEnabled ? 'checked' : ''; ?>>
+                Увімкнути спец-доступ
+            </label>
+            <button class="button" type="submit">Зберегти</button>
+        </form>
     </div>
 </section>
 
