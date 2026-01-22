@@ -409,6 +409,33 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_WHO_SECURITY_BREACH",
+    "label": "WHO: попередження про дезінформацію",
+    "description": "Надсилає ВООЗ системне попередження про спробу дезінформації на 95-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_SECURITY_BREACH"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "faction_target": "who",
+        "message": "[ALERT] SECURITY BREACH: зафіксовано спробу дезінформації. Захистіть вакцину."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "faction_target": "who",
+        "message": "SYSTEM ALERT: SECURITY BREACH. Дії для ВООЗ у протоколі."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_60",
     "label": "Біореактор: попередження про розмноження культури (60 хв)",
     "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 60-й хвилині.",

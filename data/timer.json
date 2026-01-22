@@ -145,6 +145,13 @@
       "fired": false
     },
     {
+      "id": "TT_WHO_SECURITY_BREACH",
+      "quest_id": "Q_WHO_SECURITY_BREACH",
+      "elapsed_ge_sec": 5700,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 15780,

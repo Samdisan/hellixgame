@@ -406,5 +406,27 @@
     "active": false,
     "publish_time": "01:30:00",
     "announce_in_terminal": false
+  },
+  {
+    "id": "WHO_SECURITY_BREACH",
+    "label": "SYSTEM ALERT: SECURITY BREACH",
+    "description": "HELIX AI DEFENSE попереджає ВООЗ про спробу дезінформації та захист вакцини.",
+    "content": "Заголовок: SYSTEM ALERT: SECURITY BREACH\nВід: HELIX AI DEFENSE\nСтатус: WARNING\n\nУВАГА! СПРОБА ДЕЗІНФОРМАЦІЇ. Виявлено несанкціоноване втручання в систему оповіщення. Невідомий зловмисник розсилає фейкові протоколи, щоб зірвати вакцинацію.\n\nВАШІ ДІЇ:\n\nЗберігайте спокій.\n\nЗахистіть кейс із вакциною будь-якою ціною.\n\nДоведіть персоналу, що ліки справжні.\n\nЯкщо ви втратите вакцину — станція загине.",
+    "level": 1,
+    "public": false,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "01:35:00",
+    "announce_in_terminal": false,
+    "allowed_players": [
+      "PL_WHO_COORDINATOR",
+      "PL_WHO_GENETICIST",
+      "PL_WHO_PSYCHOANALYST",
+      "PL_WHO_SECURITY_AGENT",
+      "PL_WHO_PROGRAMMER",
+      "PL_WHO_PR",
+      "PL_WHO_DIPLOMAT",
+      "PL_WHO_GUARD"
+    ]
   }
 ]
