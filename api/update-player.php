@@ -5,6 +5,7 @@ require_role_api('admin');
 $playerId = $_POST['id'] ?? '';
 $level = isset($_POST['access_level']) ? (int)$_POST['access_level'] : null;
 $status = $_POST['status'] ?? null;
+$infected = isset($_POST['infected']) ? (bool)$_POST['infected'] : null;
 
 $players = load_json('players.json');
 $updated = false;
@@ -15,6 +16,9 @@ foreach ($players as &$player) {
         }
         if ($status !== null) {
             $player['status'] = $status;
+        }
+        if ($infected !== null) {
+            $player['infected'] = $infected;
         }
         $updated = true;
         break;
