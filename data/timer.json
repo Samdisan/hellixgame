@@ -119,7 +119,7 @@
     {
       "id": "TT_BIOREACTOR_NOTICE_60",
       "quest_id": "Q_BIOREACTOR_NOTICE_60",
-      "elapsed_ge_sec": 3600,
+      "elapsed_ge_sec": 4200,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -133,7 +133,7 @@
     {
       "id": "TT_BIOREACTOR_NOTICE_75",
       "quest_id": "Q_BIOREACTOR_NOTICE_75",
-      "elapsed_ge_sec": 4500,
+      "elapsed_ge_sec": 5100,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -147,7 +147,7 @@
     {
       "id": "TT_BIOREACTOR_NOTICE_90",
       "quest_id": "Q_BIOREACTOR_NOTICE_90",
-      "elapsed_ge_sec": 5400,
+      "elapsed_ge_sec": 6000,
       "remaining_le_sec": null,
       "fired": false
     },
