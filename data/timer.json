@@ -117,6 +117,13 @@
       "fired": false
     },
     {
+      "id": "TT_BIOMETRIC_DUPLICATE_ALERT",
+      "quest_id": "Q_BIOMETRIC_DUPLICATE_ALERT",
+      "elapsed_ge_sec": 3600,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_BIOREACTOR_NOTICE_60",
       "quest_id": "Q_BIOREACTOR_NOTICE_60",
       "elapsed_ge_sec": 4200,
