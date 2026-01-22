@@ -370,5 +370,17 @@
       "PL_STATION_CROW_PSY",
       "PL_STATION_ALEXI"
     ]
+  },
+  {
+    "id": "HELIX_MFG_BATCH_04",
+    "label": "HELIX-MFG-BATCH-04 — терміновий протокол",
+    "description": "Масовий синтез антигену для лабораторії BSL-4.",
+    "content": "ДОКУМЕНТ: HELIX-MFG-BATCH-04\nПРИЗНАЧЕННЯ: ЛАБОРАТОРІЯ BSL-4\nСТАТУС: ТЕРМІНОВИЙ ПРОТОКОЛ\n\n⚗️ ІНСТРУКЦІЯ: МАСОВИЙ СИНТЕЗ АНТИГЕНУ",
+    "level": 1,
+    "public": false,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "01:05:00",
+    "announce_in_terminal": true
   }
 ]
