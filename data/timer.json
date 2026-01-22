@@ -19,16 +19,44 @@
       "fired": false
     },
     {
-      "id": "TT_PHASE_OUTBREAK",
-      "quest_id": "Q_OUTBREAK_ALERT",
-      "elapsed_ge_sec": 720,
+      "id": "TT_SYNC_ENCRYPTION",
+      "quest_id": "Q_SYNC_ENCRYPTION",
+      "elapsed_ge_sec": 480,
       "remaining_le_sec": null,
       "fired": false
     },
     {
-      "id": "TT_SYNC_ENCRYPTION",
-      "quest_id": "Q_SYNC_ENCRYPTION",
-      "elapsed_ge_sec": 480,
+      "id": "TT_ILARIA_SEC_GAMMA",
+      "quest_id": "Q_ILARIA_GATE_ALERT",
+      "elapsed_ge_sec": 540,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_SEC_004Y",
+      "quest_id": "Q_WHO_CORRIDOR_ALERT",
+      "elapsed_ge_sec": 600,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_MEDICAL_SCREENING",
+      "quest_id": "Q_WHO_MEDICAL_SCREENING",
+      "elapsed_ge_sec": 630,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_DATA_009",
+      "quest_id": "Q_WHO_WHITE_ZONE",
+      "elapsed_ge_sec": 660,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_OUTBREAK",
+      "quest_id": "Q_OUTBREAK_ALERT",
+      "elapsed_ge_sec": 720,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -47,41 +75,6 @@
       "fired": false
     },
     {
-      "id": "TT_WHO_MEDICAL_SCREENING",
-      "quest_id": "Q_WHO_MEDICAL_SCREENING",
-      "elapsed_ge_sec": 630,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_ILARIA_DESTROY_SAMPLES",
-      "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
-      "elapsed_ge_sec": 960,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_WHO_SEC_004Y",
-      "quest_id": "Q_WHO_CORRIDOR_ALERT",
-      "elapsed_ge_sec": 600,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_ILARIA_SEC_GAMMA",
-      "quest_id": "Q_ILARIA_GATE_ALERT",
-      "elapsed_ge_sec": 540,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_WHO_DATA_009",
-      "quest_id": "Q_WHO_WHITE_ZONE",
-      "elapsed_ge_sec": 660,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
       "id": "TT_PHASE_LIFEFAIL",
       "quest_id": "Q_START_LIFEFAIL",
       "elapsed_ge_sec": 780,
@@ -89,16 +82,9 @@
       "fired": false
     },
     {
-      "id": "TT_PHASE_INFECTION_SYMPTOMS",
-      "quest_id": "Q_START_INFECTION_SYMPTOMS",
-      "elapsed_ge_sec": 15600,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_FIND_ORIGIN_PROTOCOLS",
-      "quest_id": "Q_FIND_ORIGIN_PROTOCOLS",
-      "elapsed_ge_sec": 15600,
+      "id": "TT_ILARIA_DESTROY_SAMPLES",
+      "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
+      "elapsed_ge_sec": 960,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -113,6 +99,20 @@
       "id": "TT_LAB_SAMPLE_ALERT",
       "quest_id": "Q_LAB_SAMPLE_ALERT",
       "elapsed_ge_sec": 2700,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_INFECTION_SYMPTOMS",
+      "quest_id": "Q_START_INFECTION_SYMPTOMS",
+      "elapsed_ge_sec": 15600,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_FIND_ORIGIN_PROTOCOLS",
+      "quest_id": "Q_FIND_ORIGIN_PROTOCOLS",
+      "elapsed_ge_sec": 15600,
       "remaining_le_sec": null,
       "fired": false
     }
