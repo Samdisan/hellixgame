@@ -117,6 +117,13 @@
       "fired": false
     },
     {
+      "id": "TT_MFG_BATCH_04",
+      "quest_id": "Q_MFG_BATCH_04",
+      "elapsed_ge_sec": 3900,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_BIOREACTOR_NOTICE_75",
       "quest_id": "Q_BIOREACTOR_NOTICE_75",
       "elapsed_ge_sec": 4500,

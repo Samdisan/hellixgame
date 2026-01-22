@@ -34,7 +34,7 @@
       "title": "Перші симптоми",
       "order": 2,
       "time_window": {
-        "planned_start_elapsed_sec": 720,
+        "planned_start_elapsed_sec": 900,
         "planned_end_elapsed_sec": 15600
       },
       "ui_intensity": "medium",
@@ -45,15 +45,15 @@
       ],
       "on_end_quests": [],
       "active_protocols": [],
-      "notes": "Фаза перших симптомів стартує відразу після 12-ї хвилини й може йти паралельно з іншими процесами до 4 годин."
+      "notes": "Фаза перших симптомів стартує відразу після 15-ї хвилини й може йти паралельно з іншими процесами до 4 годин."
     },
     {
       "id": "PH_INFECTION_SYMPTOMS",
       "title": "Симптоми зараження",
       "order": 3,
       "time_window": {
-        "planned_start_elapsed_sec": 15600,
-        "planned_end_elapsed_sec": 30000
+        "planned_start_elapsed_sec": 15780,
+        "planned_end_elapsed_sec": 43200
       },
       "ui_intensity": "high",
       "hint_frequency": "high",
@@ -62,7 +62,7 @@
       ],
       "on_end_quests": [],
       "active_protocols": [],
-      "notes": "Фаза «Симптоми зараження» підвищує рівень загрози після 260-ї хвилини."
+      "notes": "Фаза «Симптоми зараження» підвищує рівень загрози після 263-ї хвилини та триває до завершення сесії."
     }
   ],
   "executed_quests": []

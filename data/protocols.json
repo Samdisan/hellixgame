@@ -382,5 +382,17 @@
     "active": false,
     "publish_time": "00:58:00",
     "announce_in_terminal": false
+  },
+  {
+    "id": "HELIX_MFG_BATCH_04",
+    "label": "HELIX-MFG-BATCH-04 — масовий синтез антигену",
+    "description": "HELIX-MFG-BATCH-04 — терміновий протокол для запуску масового синтезу антигену у BSL-4.",
+    "content": "ДОКУМЕНТ: HELIX-MFG-BATCH-04\nПРИЗНАЧЕННЯ: ЛАБОРАТОРІЯ BSL-4\nСТАТУС: <span style=\"color:orange\">ТЕРМІНОВИЙ ПРОТОКОЛ</span>\n\n⚗️ ІНСТРУКЦІЯ: МАСОВИЙ СИНТЕЗ АНТИГЕНУ",
+    "level": 1,
+    "public": true,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "01:05:00",
+    "announce_in_terminal": false
   }
 ]

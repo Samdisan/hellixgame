@@ -359,6 +359,31 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_MFG_BATCH_04",
+    "label": "HELIX: масовий синтез антигену (Batch-04)",
+    "description": "Розсилає всім гравцям терміновий протокол HELIX-MFG-BATCH-04 на 65-й хвилині гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_MFG_BATCH_04"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] HELIX-MFG-BATCH-04: масовий синтез антигену доступний для всіх гравців."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "Новий протокол: HELIX-MFG-BATCH-04 (масовий синтез антигену)."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_60",
     "label": "Біореактор: попередження про розмноження культури (60 хв)",
     "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 60-й хвилині.",
