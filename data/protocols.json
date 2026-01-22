@@ -81,7 +81,7 @@
     "public": false,
     "phase": "PH_START",
     "active": false,
-    "publish_time": "00:09:00",
+    "publish_time": "00:14:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_ILARIA_SECURITY"
@@ -114,7 +114,7 @@
     "public": false,
     "phase": "PH_OUTBREAK",
     "active": false,
-    "publish_time": "00:15:00",
+    "publish_time": "00:19:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_ILARIA_COMMANDER",
@@ -262,7 +262,7 @@
     "public": false,
     "phase": "PH_START",
     "active": false,
-    "publish_time": "00:11:00",
+    "publish_time": "00:14:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_WHO_PROGRAMMER"
@@ -280,7 +280,7 @@
     "public": false,
     "phase": "PH_START",
     "active": false,
-    "publish_time": "00:10:00",
+    "publish_time": "00:15:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_WHO_SECURITY_AGENT"
@@ -309,7 +309,7 @@
     "active": false,
     "announce_in_terminal": false,
     "public": false,
-    "publish_time": "00:13:00"
+    "publish_time": "00:16:00"
   },
   {
     "id": "ILR_KEY_99",
@@ -319,7 +319,7 @@
     "public": false,
     "phase": "PH_START",
     "active": false,
-    "publish_time": "00:08:00",
+    "publish_time": "00:12:00",
     "announce_in_terminal": false,
     "allowed_players": [
       "PL_ILARIA_SECURITY",
@@ -336,7 +336,7 @@
     "public": false,
     "phase": "PH_OUTBREAK",
     "active": false,
-    "publish_time": "00:20:00",
+    "publish_time": "00:23:00",
     "announce_in_terminal": true,
     "allowed_players": [
       "PL_ILARIA_COMMANDER",
@@ -358,7 +358,7 @@
     "public": false,
     "phase": "PH_OUTBREAK",
     "active": false,
-    "publish_time": "00:20:00",
+    "publish_time": "00:23:00",
     "announce_in_terminal": true,
     "allowed_players": [
       "PL_STATION_FARRAGUT",
@@ -370,5 +370,17 @@
       "PL_STATION_CROW_PSY",
       "PL_STATION_ALEXI"
     ]
+  },
+  {
+    "id": "ZERO_RESEARCH_PROTOCOL",
+    "label": "ПРОТОКОЛ ДОСЛІДЖЕННЯ: СУБ’ЄКТ \"ZERO\"",
+    "description": "Дослідницький протокол щодо суб’єкта ZERO з ідентифікатором #88-NVK.",
+    "content": "🔬 ПРОТОКОЛ ДОСЛІДЖЕННЯ: СУБ’ЄКТ \"ZERO\"\n1. ІДЕНТИФІКАЦІЯ\n\nВид: Macaca mulatta (Макака резус).\n\nID тегу: #88-NVK.",
+    "level": 1,
+    "public": false,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "00:58:00",
+    "announce_in_terminal": false
   }
 ]
