@@ -79,6 +79,7 @@
 - **27:00 (27 хв).** Тригер `TT_WHO_MEDICAL_SCREENING` → квест `Q_WHO_MEDICAL_SCREENING`, дає ВООЗ завдання виконати три команди `/run check_bio <ID>` для вибіркової біометрії (один з ID покаже аномалію).
 - **32:00 (32 хв).** Тригер `TT_ILARIA_DESTROY_SAMPLES` → квест `Q_ILARIA_DESTROY_SAMPLES`, активує ILR-BIOSEC-PHASE3.
 - **33:00 (33 хв).** Паралельні тригери `TT_PHASE_LIFEFAIL` (квест `Q_START_LIFEFAIL`, критичний режим життєзабезпечення) і `TT_PHASE_ORIGIN` (квест `Q_START_ORIGIN`, стартує відновлення коду Origin як квест події).
+- **40:00 (40 хв).** Тригер `TT_SECURITY_HUB_ALPHA_ALERT` → квест `Q_SECURITY_HUB_ALPHA_ALERT`, надсилає випадковим гравцям попередження з Security Hub Alpha.
 - **53:00 (53 хв).** Тригер `TT_WHO_ORIGIN_UPLINK` → квест `Q_WHO_ORIGIN_UPLINK`, надсилає ВООЗ інструкції щодо ручного обходу каналу зв’язку.
 - **58:00 (58 хв).** Тригер `TT_LAB_SAMPLE_ALERT` → квест `Q_LAB_SAMPLE_ALERT`, публічне попередження про чистий лабораторний зразок.
 - **68:00 (68 хв).** Тригер `TT_ZERO_RESEARCH_PROTOCOL` → квест `Q_ZERO_RESEARCH_PROTOCOL`, розсилає всім гравцям протокол дослідження суб’єкта ZERO.
@@ -103,6 +104,7 @@
 - **ZERO Research Protocol (68:00).** `TT_ZERO_RESEARCH_PROTOCOL` відкриває протокол дослідження суб’єкта ZERO для всіх гравців.
 - **HELIX-MFG-BATCH-04 (75:00).** `TT_MFG_BATCH_04` відкриває терміновий протокол масового синтезу антигену для всіх гравців.
 - **FILE #99-OMEGA (100:00).** `TT_OPS_CLEAN_SLATE_OMEGA` відкриває критичний витік OPS-CLEAN-SLATE для всіх гравців.
+- **SECURITY HUB ALPHA (40:00).** `TT_SECURITY_HUB_ALPHA_ALERT` надсилає випадковим гравцям зламаний дамп із камери CAM-77-B.
 - **SYSTEM ALERT: SECURITY BREACH (105:00).** `TT_WHO_SECURITY_BREACH` відкриває попередження HELIX AI DEFENSE для всієї команди ВООЗ.
 - **#FEED-X9 (115:00).** `TT_VECTOR_FEEDING` надсилає протокол «Годування звіра» трьом обраним гравцям.
 - **HELIX-SEC-PEST-05 (117:00).** `TT_HELIX_SEC_PEST_05` відкриває пошкоджений протокол для всіх гравців.

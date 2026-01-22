@@ -925,6 +925,22 @@ function run_quest_actions(array $quest): void
                     }
                 }
                 break;
+            case 'push_terminal_random':
+                $type = $action['level'] ?? 'info';
+                $text = $action['message'] ?? ($action['message_id'] ?? '');
+                $count = (int) ($action['count'] ?? 1);
+                $count = max(1, $count);
+
+                $pool = array_values(array_filter(array_map(function ($player) {
+                    return $player['id'] ?? null;
+                }, $players)));
+
+                if ($text !== '' && !empty($pool)) {
+                    shuffle($pool);
+                    $targets = array_slice($pool, 0, min($count, count($pool)));
+                    append_terminal_message_to_players($targets, $type, $text);
+                }
+                break;
         }
     }
 

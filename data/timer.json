@@ -96,6 +96,13 @@
       "fired": false
     },
     {
+      "id": "TT_SECURITY_HUB_ALPHA_ALERT",
+      "quest_id": "Q_SECURITY_HUB_ALPHA_ALERT",
+      "elapsed_ge_sec": 2400,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_LAB_SAMPLE_ALERT",
       "quest_id": "Q_LAB_SAMPLE_ALERT",
       "elapsed_ge_sec": 2880,

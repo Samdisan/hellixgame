@@ -449,6 +449,21 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_SECURITY_HUB_ALPHA_ALERT",
+    "label": "SECURITY_HUB_ALPHA: помилка адресації",
+    "description": "Надсилає випадковим гравцям пошкоджений дамп із камери CAM-77-B на 40-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 3,
+        "message": "[ТЕРМІНАЛ: SECURITY_HUB_ALPHA]\n> ВХІДНИЙ ПОТІК ДАНИХ: ПОМИЛКА АДРЕСАЦІЇ\n> ДЖЕРЕЛО: CAM-77-B [ТЕХНІЧНИЙ КОЛЕКТОР / ЗОНА КОНСЕРВАЦІЇ]\n> СТАТУС ПРИСТРОЮ: OFFLINE (NO POWER)\n> ЧАС ЗАПИСУ: 00:44:59 (BUFFER DUMP)\n\nPlaintext\n\n! СИСТЕМНЕ ПОПЕРЕДЖЕННЯ !\nОтримано пакет візуальних даних від знеструмленого модуля.\nЦілісність даних: 14%.\nАвтоматичний аналіз руху: ПОЗИТИВНИЙ. Отримайте файл 0.2"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_VECTOR_FEEDING",
     "label": "HELIX: годування суб’єкта X-9",
     "description": "Надсилає протокол #FEED-X9 трьом обраним гравцям на 115-й хвилині.",
