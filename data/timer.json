@@ -98,7 +98,7 @@
     {
       "id": "TT_SECURITY_HUB_ALPHA_ALERT",
       "quest_id": "Q_SECURITY_HUB_ALPHA_ALERT",
-      "elapsed_ge_sec": 2400,
+      "elapsed_ge_sec": 2820,
       "remaining_le_sec": null,
       "fired": false
     },
