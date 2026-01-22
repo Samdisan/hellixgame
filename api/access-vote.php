@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/helpers.php';
 require_role_api('player');
 
-$approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO'];
+$approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO', 'PL_WHO_PROGRAMMER'];
 $actor = $_SESSION['player_id'] ?? '';
 $targetId = $_POST['target'] ?? '';
 
@@ -42,6 +42,10 @@ $rossOverrideEnabled = !empty($settings['ross_single_promotion_enabled']);
 $rossOverrideCooldown = (int) ($settings['ross_single_promotion_cooldown_sec'] ?? 7200);
 $rossOverrideLastUsed = (int) ($settings['ross_single_promotion_last_used'] ?? 0);
 $rossOverrideRemaining = max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - $now);
+$whoOverrideEnabled = !empty($settings['who_programmer_single_promotion_enabled']);
+$whoOverrideCooldown = (int) ($settings['who_programmer_single_promotion_cooldown_sec'] ?? 7200);
+$whoOverrideLastUsed = (int) ($settings['who_programmer_single_promotion_last_used'] ?? 0);
+$whoOverrideRemaining = max(0, ($whoOverrideLastUsed + $whoOverrideCooldown) - $now);
 
 $recentPromotions = array_values(array_filter($actorPromotions, function ($ts) use ($now) {
     return is_int($ts) && $ts >= ($now - 3600);
@@ -73,6 +77,7 @@ $votes[$targetId]['approvals'] = array_values(array_unique(array_merge($votes[$t
 $approvalCount = count($votes[$targetId]['approvals']);
 $leveledUp = false;
 $rossOverrideUsed = false;
+$whoOverrideUsed = false;
 
 if ($actor === 'PL_STATION_ROSS' && $rossOverrideEnabled && $rossOverrideRemaining === 0) {
     $target['access_level'] = min(3, $currentLevel + 1);
@@ -86,6 +91,7 @@ if ($actor === 'PL_STATION_ROSS' && $rossOverrideEnabled && $rossOverrideRemaini
         append_terminal_message('both', 'info', '[ACCESS] ' . $target['id'] . ' піднято до ' . $target['access_level'] . ' (Глен Росс)');
     }
 
+    $votes['_meta'] = $meta;
     save_json('access-votes.json', $votes);
     save_json('players.json', $players);
 
@@ -97,6 +103,37 @@ if ($actor === 'PL_STATION_ROSS' && $rossOverrideEnabled && $rossOverrideRemaini
         'remaining' => max(0, 3 - count($recentClicks)),
         'ross_override_used' => $rossOverrideUsed,
         'ross_retry_in' => $rossOverrideCooldown,
+        'who_override_used' => $whoOverrideUsed,
+        'who_retry_in' => $whoOverrideRemaining,
+    ]);
+}
+
+if ($actor === 'PL_WHO_PROGRAMMER' && $whoOverrideEnabled && $whoOverrideRemaining === 0) {
+    $target['access_level'] = min(3, $currentLevel + 1);
+    $leveledUp = $target['access_level'] !== $currentLevel;
+    $votes[$targetId]['approvals'] = [];
+    $whoOverrideUsed = $leveledUp;
+    $settings['who_programmer_single_promotion_last_used'] = $now;
+    $meta['settings'] = $settings;
+
+    if ($leveledUp) {
+        append_terminal_message('both', 'info', '[ACCESS] ' . $target['id'] . ' піднято до ' . $target['access_level'] . ' (програміст ВООЗ)');
+    }
+
+    $votes['_meta'] = $meta;
+    save_json('access-votes.json', $votes);
+    save_json('players.json', $players);
+
+    respond_json([
+        'ok' => true,
+        'approvals' => 0,
+        'leveled_up' => $leveledUp,
+        'new_level' => $target['access_level'],
+        'remaining' => max(0, 3 - count($recentClicks)),
+        'ross_override_used' => $rossOverrideUsed,
+        'ross_retry_in' => $rossOverrideRemaining,
+        'who_override_used' => $whoOverrideUsed,
+        'who_retry_in' => $whoOverrideCooldown,
     ]);
 }
 
@@ -140,4 +177,6 @@ respond_json([
     'remaining' => max(0, 3 - count($recentClicks)),
     'ross_override_used' => $rossOverrideUsed,
     'ross_retry_in' => $rossOverrideRemaining,
+    'who_override_used' => $whoOverrideUsed,
+    'who_retry_in' => $whoOverrideRemaining,
 ]);

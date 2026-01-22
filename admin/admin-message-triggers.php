@@ -115,4 +115,60 @@ include __DIR__ . '/../partials/header.php';
         </div>
     </div>
 </section>
+<section class="panel">
+    <h2>Додати фазу</h2>
+    <p class="muted">Заповніть ключові поля та одразу прив’яжіть квести, що спрацюють на старті або завершенні.</p>
+    <form class="phase-form" method="post" action="/api/add-phase.php">
+        <div class="grid two">
+            <label>Ідентифікатор
+                <input required name="id" placeholder="PH_NEW" aria-describedby="idHelp" />
+                <div id="idHelp" class="micro muted">Використовуйте префікс PH_ для швидкого пошуку.</div>
+            </label>
+            <label>Назва
+                <input required name="label" placeholder="Нова фаза" />
+            </label>
+        </div>
+        <label>Опис
+            <textarea required name="description" rows="3" placeholder="Коротке пояснення фази"></textarea>
+        </label>
+        <div class="grid three">
+            <label>Порядок
+                <input name="order" type="number" min="1" step="1" placeholder="<?php echo count($phase['phases'] ?? []) + 1; ?>" />
+            </label>
+            <label>Плановий старт (elapsed, сек)
+                <input name="planned_start_elapsed_sec" type="number" min="0" step="60" placeholder="0" />
+            </label>
+            <label>Планове завершення (elapsed, сек)
+                <input name="planned_end_elapsed_sec" type="number" min="0" step="60" placeholder="900" />
+                <div class="micro muted">Використовується для підказки зворотного відліку до наступної фази.</div>
+            </label>
+            <label>Інтенсивність UI
+                <select name="ui_intensity">
+                    <option value="">—</option>
+                    <option>low</option>
+                    <option>medium</option>
+                    <option>high</option>
+                    <option>critical</option>
+                </select>
+            </label>
+        </div>
+        <div class="grid two">
+            <label>Квести на старті фази
+                <input name="on_start_quests" placeholder="Q_INTRO, Q_START_OUTBREAK" />
+                <div class="micro muted">Через кому — ці квести запустяться одразу при активації фази.</div>
+            </label>
+            <label>Квести при завершенні
+                <input name="on_end_quests" placeholder="Q_WRAP_UP" />
+                <div class="micro muted">Через кому — ці квести спрацюють коли фаза завершується.</div>
+            </label>
+        </div>
+        <div class="phase-form__footer">
+            <div class="micro muted">Збереження одразу додає фазу до таймлайна та показує її в карті фаз/квестів.</div>
+            <div>
+                <input type="hidden" name="redirect" value="/admin/admin-message-triggers.php" />
+                <button class="button" type="submit">Зберегти фазу</button>
+            </div>
+        </div>
+    </form>
+</section>
 <?php include __DIR__ . '/../partials/footer.php'; ?>

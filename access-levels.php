@@ -10,7 +10,7 @@ if (!$player) {
 
 $players = load_json('players.json');
 $votes = load_json('access-votes.json');
-$approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO'];
+$approvers = ['PL_STATION_ROSS', 'PL_STATION_CROW_PSY', 'PL_STATION_SATO', 'PL_WHO_PROGRAMMER'];
 $isApprover = in_array($player['id'], $approvers, true);
 $accessMeta = $votes['_meta'] ?? [];
 $accessSettings = $accessMeta['settings'] ?? [];
@@ -18,6 +18,10 @@ $rossOverrideEnabled = !empty($accessSettings['ross_single_promotion_enabled']);
 $rossOverrideCooldown = (int) ($accessSettings['ross_single_promotion_cooldown_sec'] ?? 7200);
 $rossOverrideLastUsed = (int) ($accessSettings['ross_single_promotion_last_used'] ?? 0);
 $rossOverrideRemaining = $rossOverrideEnabled ? max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - time()) : null;
+$whoOverrideEnabled = !empty($accessSettings['who_programmer_single_promotion_enabled']);
+$whoOverrideCooldown = (int) ($accessSettings['who_programmer_single_promotion_cooldown_sec'] ?? 7200);
+$whoOverrideLastUsed = (int) ($accessSettings['who_programmer_single_promotion_last_used'] ?? 0);
+$whoOverrideRemaining = $whoOverrideEnabled ? max(0, ($whoOverrideLastUsed + $whoOverrideCooldown) - time()) : null;
 
 include __DIR__ . '/partials/header.php';
 ?>
@@ -30,7 +34,7 @@ include __DIR__ . '/partials/header.php';
         </div>
         <div class="badge level">Доступ обмежено</div>
     </div>
-    <p class="muted">Цей модуль доступний лише для: Глен Росс, Кроу (психолог), Кіра Сато. Зверніться до них або до адміна станції.</p>
+    <p class="muted">Цей модуль доступний лише для: Глен Росс, Кроу (психолог), Кіра Сато, Програміст ВООЗ. Зверніться до них або до адміна станції.</p>
 </section>
 <?php include __DIR__ . '/partials/footer.php'; return; endif; ?>
 
@@ -47,6 +51,16 @@ include __DIR__ . '/partials/header.php';
             Спец-доступ: одноосібне підвищення на 1 рівень раз на 2 години.
             <?php if ($rossOverrideRemaining !== null && $rossOverrideRemaining > 0): ?>
                 Доступно через <?php echo human_time((int) $rossOverrideRemaining); ?>.
+            <?php else: ?>
+                Доступно зараз.
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($player['id'] === 'PL_WHO_PROGRAMMER' && $whoOverrideEnabled): ?>
+        <div class="micro muted" style="margin-bottom: 10px;">
+            Спец-доступ: одноосібне підвищення на 1 рівень раз на 2 години (програміст ВООЗ).
+            <?php if ($whoOverrideRemaining !== null && $whoOverrideRemaining > 0): ?>
+                Доступно через <?php echo human_time((int) $whoOverrideRemaining); ?>.
             <?php else: ?>
                 Доступно зараз.
             <?php endif; ?>

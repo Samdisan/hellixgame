@@ -231,6 +231,8 @@ function setupAccessVotes() {
             if (payload.leveled_up) {
                 if (payload.ross_override_used) {
                     status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (Глен Росс).`;
+                } else if (payload.who_override_used) {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (програміст ВООЗ).`;
                 } else {
                     status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
                 }
@@ -400,8 +402,10 @@ function startLiveTimer() {
 
         if (uiMode === 'warning') {
             document.body.classList.add('intensity-warning');
+        } else if (uiMode === 'critical') {
+            document.body.classList.add('intensity-critical');
         } else {
-            document.body.classList.remove('intensity-warning');
+            document.body.classList.remove('intensity-warning', 'intensity-critical');
         }
     }
 

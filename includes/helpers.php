@@ -492,6 +492,11 @@ function current_phase(): array
     $timer = timer_status(false);
 
     $uiMode = $phases['ui_mode'] ?? 'normal';
+    $uiModeOverride = $phases['ui_mode_override'] ?? '';
+    $overrideAllowed = ['normal', 'warning', 'critical'];
+    if (is_string($uiModeOverride) && in_array($uiModeOverride, $overrideAllowed, true)) {
+        $uiMode = $uiModeOverride;
+    }
 
     $currentId = $phases['current_phase'] ?? null;
     $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
