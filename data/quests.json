@@ -384,6 +384,31 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_OPS_CLEAN_SLATE_OMEGA",
+    "label": "OPS-CLEAN-SLATE: критичний витік",
+    "description": "Розсилає всім гравцям критичний витік FILE #99-OMEGA на 90-й хвилині гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "OPS_CLEAN_SLATE_OMEGA"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] FILE #99-OMEGA: критичний витік OPS-CLEAN-SLATE доступний для всіх гравців."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "Новий протокол: FILE #99-OMEGA (OPS-CLEAN-SLATE)."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_60",
     "label": "Біореактор: попередження про розмноження культури (60 хв)",
     "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 60-й хвилині.",

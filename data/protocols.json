@@ -394,5 +394,17 @@
     "active": false,
     "publish_time": "01:05:00",
     "announce_in_terminal": false
+  },
+  {
+    "id": "OPS_CLEAN_SLATE_OMEGA",
+    "label": "⚠️ CRITICAL LEAK: FILE #99-OMEGA",
+    "description": "OPS-CLEAN-SLATE — анонімний витік про нейротоксин VX-2 замість вакцини.",
+    "content": "Заголовок: ⚠️ CRITICAL LEAK: FILE #99-OMEGA\nВід: ANONYMOUS (System Root)\nСтатус: EYES ONLY\n\nВИ ПОВИННІ ЦЕ ЗНАТИ. Командування бреше. Евакуації не буде.\n\nПерехоплено файл OPS-CLEAN-SLATE. Вакцина, яку щойно синтезували — це НЕ ЛІКИ. Під маркуванням \"Helix-Cure\" знаходиться модифікований нейротоксин VX-2.\n\nМета: \"Гуманна\" евтаназія персоналу для зачистки свідків інциденту. Інструкція: Не дайте їм зробити ін'єкцію! Знищіть ампули!\n\n[Вкладення: Документ OPS-CLEAN-SLATE.pdf]",
+    "level": 1,
+    "public": true,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "01:30:00",
+    "announce_in_terminal": false
   }
 ]

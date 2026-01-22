@@ -131,6 +131,13 @@
       "fired": false
     },
     {
+      "id": "TT_OPS_CLEAN_SLATE_OMEGA",
+      "quest_id": "Q_OPS_CLEAN_SLATE_OMEGA",
+      "elapsed_ge_sec": 5400,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_BIOREACTOR_NOTICE_90",
       "quest_id": "Q_BIOREACTOR_NOTICE_90",
       "elapsed_ge_sec": 5400,

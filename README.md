@@ -86,6 +86,7 @@
 - **65:00 (65 хв).** Тригер `TT_MFG_BATCH_04` → квест `Q_MFG_BATCH_04`, відкриває протокол HELIX-MFG-BATCH-04 для масового синтезу антигену.
 - **75:00 (75 хв).** Тригер `TT_BIOREACTOR_NOTICE_75` → квест `Q_BIOREACTOR_NOTICE_75`, повторне повідомлення про запуск біореактора для розмноження культури.
 - **90:00 (90 хв).** Тригер `TT_BIOREACTOR_NOTICE_90` → квест `Q_BIOREACTOR_NOTICE_90`, фінальне повідомлення про запуск біореактора для розмноження культури.
+- **90:00 (90 хв).** Тригер `TT_OPS_CLEAN_SLATE_OMEGA` → квест `Q_OPS_CLEAN_SLATE_OMEGA`, розсилає витік FILE #99-OMEGA (OPS-CLEAN-SLATE) для всіх гравців.
 - **263:00 (263 хв ≈ 4:23).** Тригери `TT_PHASE_INFECTION_SYMPTOMS` (квест `Q_START_INFECTION_SYMPTOMS`, старт PH_INFECTION_SYMPTOMS) та `TT_FIND_ORIGIN_PROTOCOLS` (квест `Q_FIND_ORIGIN_PROTOCOLS`); вікно PH_OUTBREAK завершується, PH_INFECTION_SYMPTOMS триває до завершення сесії.
 
 ## Розсилки протоколів: кому і коли
@@ -98,6 +99,7 @@
 - **LAB Sample Alert (48:00).** `TT_LAB_SAMPLE_ALERT` шле публічне попередження в термінал про чистий лабораторний зразок та порушення протоколу безпеки.
 - **ZERO Research Protocol (58:00).** `TT_ZERO_RESEARCH_PROTOCOL` відкриває протокол дослідження суб’єкта ZERO для всіх гравців.
 - **HELIX-MFG-BATCH-04 (65:00).** `TT_MFG_BATCH_04` відкриває терміновий протокол масового синтезу антигену для всіх гравців.
+- **FILE #99-OMEGA (90:00).** `TT_OPS_CLEAN_SLATE_OMEGA` відкриває критичний витік OPS-CLEAN-SLATE для всіх гравців.
 - **OUTBREAK старт (15:00).**
   - `Q_ILARIA_FAKE_STERIL` вмикає протокол «Хибні протоколи стерилізації» для всієї команди ILARIA та шле групове попередження їм.
   - `Q_STATION_PURGE_FAKE_STERIL` відкриває «Знищити хибні протоколи стерилізації» для всіх персонажів станції (рівень 1) і виводить широкомовне повідомлення.
