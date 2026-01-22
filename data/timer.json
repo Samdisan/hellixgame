@@ -103,6 +103,13 @@
       "fired": false
     },
     {
+      "id": "TT_HELIX_MFG_BATCH_04",
+      "quest_id": "Q_HELIX_MFG_BATCH_04",
+      "elapsed_ge_sec": 3900,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 15600,

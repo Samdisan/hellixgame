@@ -333,5 +333,24 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_HELIX_MFG_BATCH_04",
+    "label": "HELIX-MFG-BATCH-04: масовий синтез антигену",
+    "description": "Активує терміновий протокол HELIX-MFG-BATCH-04 для всіх гравців через 65 хвилин гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_MFG_BATCH_04"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] HELIX-MFG-BATCH-04: терміновий протокол масового синтезу антигену для лабораторії BSL-4."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]
