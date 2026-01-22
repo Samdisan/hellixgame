@@ -436,6 +436,19 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_HELIX_SEC_PEST_05",
+    "label": "HELIX-SEC-PEST-05: біологічна загроза (щуролов)",
+    "description": "Відкриває зламаний протокол HELIX-SEC-PEST-05 для всіх гравців на 115-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_SEC_PEST_05"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_VECTOR_FEEDING",
     "label": "HELIX: годування суб’єкта X-9",
     "description": "Надсилає протокол #FEED-X9 трьом обраним гравцям на 115-й хвилині.",

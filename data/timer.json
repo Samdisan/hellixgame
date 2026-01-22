@@ -152,6 +152,13 @@
       "fired": false
     },
     {
+      "id": "TT_HELIX_SEC_PEST_05",
+      "quest_id": "Q_HELIX_SEC_PEST_05",
+      "elapsed_ge_sec": 6900,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_VECTOR_FEEDING",
       "quest_id": "Q_VECTOR_FEEDING",
       "elapsed_ge_sec": 6900,
