@@ -154,7 +154,7 @@
     {
       "id": "TT_HELIX_SEC_PEST_05",
       "quest_id": "Q_HELIX_SEC_PEST_05",
-      "elapsed_ge_sec": 6900,
+      "elapsed_ge_sec": 7020,
       "remaining_le_sec": null,
       "fired": false
     },
