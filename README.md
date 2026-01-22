@@ -88,6 +88,7 @@
 - **100:00 (100 хв).** Тригер `TT_BIOREACTOR_NOTICE_90` → квест `Q_BIOREACTOR_NOTICE_90`, фінальне повідомлення про запуск біореактора для розмноження культури.
 - **100:00 (100 хв).** Тригер `TT_OPS_CLEAN_SLATE_OMEGA` → квест `Q_OPS_CLEAN_SLATE_OMEGA`, розсилає витік FILE #99-OMEGA (OPS-CLEAN-SLATE) для всіх гравців.
 - **105:00 (105 хв).** Тригер `TT_WHO_SECURITY_BREACH` → квест `Q_WHO_SECURITY_BREACH`, розсилає ВООЗ попередження про дезінформацію та захист вакцини.
+- **115:00 (115 хв).** Тригер `TT_VECTOR_FEEDING` → квест `Q_VECTOR_FEEDING`, надсилає наказ #FEED-X9 трьом обраним гравцям.
 - **273:00 (273 хв ≈ 4:33).** Тригери `TT_PHASE_INFECTION_SYMPTOMS` (квест `Q_START_INFECTION_SYMPTOMS`, старт PH_INFECTION_SYMPTOMS) та `TT_FIND_ORIGIN_PROTOCOLS` (квест `Q_FIND_ORIGIN_PROTOCOLS`); вікно PH_OUTBREAK завершується, PH_INFECTION_SYMPTOMS триває до завершення сесії.
 
 ## Розсилки протоколів: кому і коли
@@ -102,6 +103,7 @@
 - **HELIX-MFG-BATCH-04 (75:00).** `TT_MFG_BATCH_04` відкриває терміновий протокол масового синтезу антигену для всіх гравців.
 - **FILE #99-OMEGA (100:00).** `TT_OPS_CLEAN_SLATE_OMEGA` відкриває критичний витік OPS-CLEAN-SLATE для всіх гравців.
 - **SYSTEM ALERT: SECURITY BREACH (105:00).** `TT_WHO_SECURITY_BREACH` відкриває попередження HELIX AI DEFENSE для всієї команди ВООЗ.
+- **#FEED-X9 (115:00).** `TT_VECTOR_FEEDING` надсилає протокол «Годування звіра» трьом обраним гравцям.
 - **OUTBREAK старт (25:00).**
   - `Q_ILARIA_FAKE_STERIL` вмикає протокол «Хибні протоколи стерилізації» для всієї команди ILARIA та шле групове попередження їм.
   - `Q_STATION_PURGE_FAKE_STERIL` відкриває «Знищити хибні протоколи стерилізації» для всіх персонажів станції (рівень 1) і виводить широкомовне повідомлення.
