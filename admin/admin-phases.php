@@ -9,6 +9,9 @@ $phases = $phaseData['phases'];
 $nextPhase = $phaseData['next_phase'] ?? null;
 $ids = array_column($phases, 'id');
 $currentIndex = $ids ? array_search($current, $ids, true) : -1;
+$phaseConfig = load_json('phases.json');
+$uiMode = $phaseConfig['ui_mode'] ?? 'normal';
+$uiModeOverride = $phaseConfig['ui_mode_override'] ?? '';
 $timer = timer_status();
 $phaseRuntime = max(0, ($timer['elapsed'] ?? 0) - $phaseStarted);
 $activeProtocols = array_filter(load_json('protocols.json'), function ($protocol) {
@@ -36,6 +39,10 @@ $rossOverrideEnabled = !empty($accessSettings['ross_single_promotion_enabled']);
 $rossOverrideCooldown = (int) ($accessSettings['ross_single_promotion_cooldown_sec'] ?? 7200);
 $rossOverrideLastUsed = (int) ($accessSettings['ross_single_promotion_last_used'] ?? 0);
 $rossOverrideRemaining = $rossOverrideEnabled ? max(0, ($rossOverrideLastUsed + $rossOverrideCooldown) - $now) : null;
+$whoOverrideEnabled = !empty($accessSettings['who_programmer_single_promotion_enabled']);
+$whoOverrideCooldown = (int) ($accessSettings['who_programmer_single_promotion_cooldown_sec'] ?? 7200);
+$whoOverrideLastUsed = (int) ($accessSettings['who_programmer_single_promotion_last_used'] ?? 0);
+$whoOverrideRemaining = $whoOverrideEnabled ? max(0, ($whoOverrideLastUsed + $whoOverrideCooldown) - $now) : null;
 include __DIR__ . '/../partials/header.php';
 ?>
 <section class="panel" data-live-timer>
@@ -112,8 +119,30 @@ include __DIR__ . '/../partials/header.php';
 <section class="panel">
     <div class="flex between align-center" style="gap:12px; flex-wrap: wrap;">
         <div>
-            <h2 style="margin-bottom:4px;">Доступи — спец-право Глена Росса</h2>
-            <p class="micro muted">Можливість для PL_STATION_ROSS підняти доступ на 1 рівень одноосібно раз на 2 години.</p>
+            <h2 style="margin-bottom:4px;">Дизайн інтерфейсу</h2>
+            <p class="micro muted">Базово працює за логікою UI-режиму фази (<?php echo htmlspecialchars($uiMode, ENT_QUOTES); ?>). Перемикач нижче має пріоритет.</p>
+        </div>
+        <form method="post" action="/api/set-ui-mode.php" class="inline-form" style="gap:8px; align-items: center;">
+            <input type="hidden" name="redirect" value="/admin/admin-phases.php">
+            <label class="micro muted" style="display:flex; align-items:center; gap:6px;">
+                Режим UI
+                <select name="ui_mode">
+                    <option value="auto" <?php echo $uiModeOverride === '' ? 'selected' : ''; ?>>Auto</option>
+                    <option value="normal" <?php echo $uiModeOverride === 'normal' ? 'selected' : ''; ?>>Normal</option>
+                    <option value="warning" <?php echo $uiModeOverride === 'warning' ? 'selected' : ''; ?>>Warning</option>
+                    <option value="critical" <?php echo $uiModeOverride === 'critical' ? 'selected' : ''; ?>>Critical</option>
+                </select>
+            </label>
+            <button class="button" type="submit">Зберегти</button>
+        </form>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="flex between align-center" style="gap:12px; flex-wrap: wrap;">
+        <div>
+            <h2 style="margin-bottom:4px;">Доступи — спец-права</h2>
+            <p class="micro muted">Можливість для PL_STATION_ROSS та PL_WHO_PROGRAMMER підняти доступ на 1 рівень одноосібно раз на 2 години.</p>
             <?php if ($rossOverrideEnabled): ?>
                 <p class="micro muted">
                     <?php if ($rossOverrideLastUsed): ?>
@@ -126,12 +155,29 @@ include __DIR__ . '/../partials/header.php';
                     <?php endif; ?>
                 </p>
             <?php endif; ?>
+            <?php if ($whoOverrideEnabled): ?>
+                <p class="micro muted">
+                    Програміст ВООЗ:
+                    <?php if ($whoOverrideLastUsed): ?>
+                        Останнє використання: <?php echo gmdate('Y-m-d H:i:s', $whoOverrideLastUsed); ?> UTC.
+                    <?php else: ?>
+                        Ще не використовувалось.
+                    <?php endif; ?>
+                    <?php if ($whoOverrideRemaining !== null): ?>
+                        Залишилось до доступності: <?php echo human_time((int) $whoOverrideRemaining); ?>.
+                    <?php endif; ?>
+                </p>
+            <?php endif; ?>
         </div>
         <form method="post" action="/api/set-access-settings.php" class="inline-form" style="gap:8px; align-items: center;">
             <input type="hidden" name="redirect" value="/admin/admin-phases.php">
             <label class="micro muted" style="display:flex; align-items:center; gap:6px;">
                 <input type="checkbox" name="ross_single_promotion_enabled" value="1" <?php echo $rossOverrideEnabled ? 'checked' : ''; ?>>
-                Увімкнути спец-доступ
+                Спец-доступ Глена Росса
+            </label>
+            <label class="micro muted" style="display:flex; align-items:center; gap:6px;">
+                <input type="checkbox" name="who_programmer_single_promotion_enabled" value="1" <?php echo $whoOverrideEnabled ? 'checked' : ''; ?>>
+                Спец-доступ програміста ВООЗ
             </label>
             <button class="button" type="submit">Зберегти</button>
         </form>
@@ -251,63 +297,6 @@ include __DIR__ . '/../partials/header.php';
 <section class="panel">
     <h2>Активні протоколи</h2>
     <a class="button" href="/admin/admin-protocols.php">Активні протоколи</a>
-</section>
-
-<section class="panel">
-    <h2>Додати фазу</h2>
-    <p class="muted">Заповніть ключові поля та одразу прив’яжіть квести, що спрацюють на старті або завершенні.</p>
-    <form class="phase-form" method="post" action="/api/add-phase.php">
-        <div class="grid two">
-            <label>Ідентифікатор
-                <input required name="id" placeholder="PH_NEW" aria-describedby="idHelp" />
-                <div id="idHelp" class="micro muted">Використовуйте префікс PH_ для швидкого пошуку.</div>
-            </label>
-            <label>Назва
-                <input required name="label" placeholder="Нова фаза" />
-            </label>
-        </div>
-        <label>Опис
-            <textarea required name="description" rows="3" placeholder="Коротке пояснення фази"></textarea>
-        </label>
-        <div class="grid three">
-            <label>Порядок
-                <input name="order" type="number" min="1" step="1" placeholder="<?php echo count($phases) + 1; ?>" />
-            </label>
-            <label>Плановий старт (elapsed, сек)
-                <input name="planned_start_elapsed_sec" type="number" min="0" step="60" placeholder="0" />
-            </label>
-            <label>Планове завершення (elapsed, сек)
-                <input name="planned_end_elapsed_sec" type="number" min="0" step="60" placeholder="900" />
-                <div class="micro muted">Використовується для підказки зворотного відліку до наступної фази.</div>
-            </label>
-            <label>Інтенсивність UI
-                <select name="ui_intensity">
-                    <option value="">—</option>
-                    <option>low</option>
-                    <option>medium</option>
-                    <option>high</option>
-                    <option>critical</option>
-                </select>
-            </label>
-        </div>
-        <div class="grid two">
-            <label>Квести на старті фази
-                <input name="on_start_quests" placeholder="Q_INTRO, Q_START_OUTBREAK" />
-                <div class="micro muted">Через кому — ці квести запустяться одразу при активації фази.</div>
-            </label>
-            <label>Квести при завершенні
-                <input name="on_end_quests" placeholder="Q_WRAP_UP" />
-                <div class="micro muted">Через кому — ці квести спрацюють коли фаза завершується.</div>
-            </label>
-        </div>
-        <div class="phase-form__footer">
-            <div class="micro muted">Збереження одразу додає фазу до таймлайна та показує її в карті фаз/квестів.</div>
-            <div>
-                <input type="hidden" name="redirect" value="/admin/admin-phases.php" />
-                <button class="button" type="submit">Зберегти фазу</button>
-            </div>
-        </div>
-    </form>
 </section>
 
 <section class="panel">

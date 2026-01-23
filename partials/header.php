@@ -32,6 +32,9 @@ if ($currentPhaseId && !$lifeFailActive) {
 if ($uiMode === 'warning' && !$lifeFailActive) {
     $bodyClasses[] = 'intensity-warning';
 }
+if ($uiMode === 'critical' && !$lifeFailActive) {
+    $bodyClasses[] = 'intensity-critical';
+}
 if ($intensity && !$lifeFailActive) {
     $bodyClasses[] = 'intensity-' . strtolower($intensity);
 }

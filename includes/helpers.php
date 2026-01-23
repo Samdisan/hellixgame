@@ -492,6 +492,11 @@ function current_phase(): array
     $timer = timer_status(false);
 
     $uiMode = $phases['ui_mode'] ?? 'normal';
+    $uiModeOverride = $phases['ui_mode_override'] ?? '';
+    $overrideAllowed = ['normal', 'warning', 'critical'];
+    if (is_string($uiModeOverride) && in_array($uiModeOverride, $overrideAllowed, true)) {
+        $uiMode = $uiModeOverride;
+    }
 
     $currentId = $phases['current_phase'] ?? null;
     $startedElapsed = (int) ($phases['current_phase_started_elapsed'] ?? 0);
@@ -920,6 +925,22 @@ function run_quest_actions(array $quest): void
                     }
                 }
                 break;
+            case 'push_terminal_random':
+                $type = $action['level'] ?? 'info';
+                $text = $action['message'] ?? ($action['message_id'] ?? '');
+                $count = (int) ($action['count'] ?? 1);
+                $count = max(1, $count);
+
+                $pool = array_values(array_filter(array_map(function ($player) {
+                    return $player['id'] ?? null;
+                }, $players)));
+
+                if ($text !== '' && !empty($pool)) {
+                    shuffle($pool);
+                    $targets = array_slice($pool, 0, min($count, count($pool)));
+                    append_terminal_message_to_players($targets, $type, $text);
+                }
+                break;
         }
     }
 
@@ -941,6 +962,22 @@ function process_time_triggers(array $timer, int $elapsed, int $remaining): arra
     foreach ($timer['time_triggers'] ?? [] as &$trigger) {
         if (!empty($trigger['fired'])) {
             continue;
+        }
+
+        if (!isset($trigger['elapsed_ge_sec']) && isset($trigger['random_elapsed_range_sec']) && is_array($trigger['random_elapsed_range_sec'])) {
+            $min = (int) ($trigger['random_elapsed_range_sec']['min'] ?? 0);
+            $max = (int) ($trigger['random_elapsed_range_sec']['max'] ?? 0);
+            if ($max < $min) {
+                [$min, $max] = [$max, $min];
+            }
+            if ($max > 0) {
+                $min = max($min, $elapsed);
+                if ($min > $max) {
+                    $min = $max;
+                }
+                $trigger['elapsed_ge_sec'] = random_int($min, $max);
+                $changed = true;
+            }
         }
 
         $elapsedOk = !isset($trigger['elapsed_ge_sec']) || $elapsed >= (int) $trigger['elapsed_ge_sec'];

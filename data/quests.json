@@ -40,7 +40,7 @@
   {
     "id": "Q_OUTBREAK_ALERT",
     "label": "OUTBREAK: системні попередження після ремонту",
-    "description": "Глобальний автоквест OUTBREAK після 15-ї хвилини: перемикає у фазу перших симптомів, вмикає жовтий режим станції й шле попередження всім гравцям.",
+    "description": "Глобальний автоквест OUTBREAK після 30-ї хвилини: перемикає у фазу перших симптомів, вмикає жовтий режим станції й шле попередження всім гравцям.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -75,7 +75,7 @@
   {
     "id": "Q_START_ORIGIN",
     "label": "Запустити фазу відновлення коду Origin",
-    "description": "Паралельний запуск відновлення коду Origin через 20 хвилин гри як окремий квест, без нової фази.",
+    "description": "Паралельний запуск відновлення коду Origin через 37 хвилин гри як окремий квест, без нової фази.",
     "phase": "PH_OUTBREAK",
     "actions": [],
     "prevent_repeat": true
@@ -98,6 +98,25 @@
         "type": "push_terminal",
         "message": "[ILARIA] Знищити всі аномальні зразки. Координати відомі Іларії. Працюйте синхронно з відновленням коду Origin.",
         "player_group": "ilaria"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_LOG_VOICE_77",
+    "label": "LOG_VOICE_77: автоматична транскрипція",
+    "description": "Відкриває голосовий лог LOG_VOICE_77 для всіх гравців на 42-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "LOG_VOICE_77"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] LOG_VOICE_77: автоматична транскрипція доступна для всіх гравців."
       }
     ],
     "prevent_repeat": true
@@ -192,7 +211,7 @@
   {
     "id": "Q_ILARIA_GATE_ALERT",
     "label": "ILARIA-SEC-GAMMA: шлюз R-12",
-    "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після чотирнадцятої хвилини гри.",
+    "description": "Активує протокол ILARIA-SEC-GAMMA для начальника безпеки Іларії після шістнадцятої хвилини гри.",
     "phase": "PH_START",
     "actions": [
       {
@@ -205,7 +224,7 @@
   {
     "id": "Q_WHO_WHITE_ZONE",
     "label": "WHO-DATA-009: біла зона в логах",
-    "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 14 хвилин гри.",
+    "description": "Відкрити протокол WHO-DATA-009 для програміста ВООЗ після 22 хвилин гри.",
     "phase": "PH_START",
     "actions": [
       {
@@ -225,7 +244,7 @@
   {
     "id": "Q_WHO_OUTBREAK_ALERT",
     "label": "WHO-PROTOCOL-ALR-01: OUTBREAK ALERT RESPONSE",
-    "description": "Активує протокол WHO-PROTOCOL-ALR-01 для всіх представників ВООЗ на 16-й хвилині у фазі OUTBREAK.",
+    "description": "Активує протокол WHO-PROTOCOL-ALR-01 для всіх представників ВООЗ на 31-й хвилині у фазі OUTBREAK.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -307,7 +326,7 @@
   {
     "id": "Q_WHO_ORIGIN_UPLINK",
     "label": "WHO: протокол ручного обходу для завантаження ORIGIN",
-    "description": "Повідомлення для ВООЗ через 43 хвилини після старту гри щодо ручного обходу каналу зв'язку.",
+    "description": "Повідомлення для ВООЗ через 58 хвилину після старту гри щодо ручного обходу каналу зв'язку.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -322,7 +341,7 @@
   {
     "id": "Q_LAB_SAMPLE_ALERT",
     "label": "Попередження про чистий зразок у лабораторії",
-    "description": "Автоматичне попередження у терміналі через 48 хвилин після старту гри.",
+    "description": "Автоматичне попередження у терміналі через 63 хвилини після старту гри.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -337,7 +356,7 @@
   {
     "id": "Q_ZERO_RESEARCH_PROTOCOL",
     "label": "ZERO: протокол дослідження суб’єкта",
-    "description": "Розсилає всім гравцям протокол дослідження суб’єкта ZERO на 58-й хвилині гри.",
+    "description": "Розсилає всім гравцям протокол дослідження суб’єкта ZERO на 73-й хвилині гри.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -361,7 +380,7 @@
   {
     "id": "Q_MFG_BATCH_04",
     "label": "HELIX: масовий синтез антигену (Batch-04)",
-    "description": "Розсилає всім гравцям терміновий протокол HELIX-MFG-BATCH-04 на 65-й хвилині гри.",
+    "description": "Розсилає всім гравцям терміновий протокол HELIX-MFG-BATCH-04 на 80-й хвилині гри.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -386,7 +405,7 @@
   {
     "id": "Q_OPS_CLEAN_SLATE_OMEGA",
     "label": "OPS-CLEAN-SLATE: критичний витік",
-    "description": "Розсилає всім гравцям критичний витік FILE #99-OMEGA на 90-й хвилині гри.",
+    "description": "Розсилає всім гравцям критичний витік FILE #99-OMEGA на 105-й хвилині гри.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -411,7 +430,7 @@
   {
     "id": "Q_WHO_SECURITY_BREACH",
     "label": "WHO: попередження про дезінформацію",
-    "description": "Надсилає ВООЗ системне попередження про спробу дезінформації на 95-й хвилині.",
+    "description": "Надсилає ВООЗ системне попередження про спробу дезінформації на 110-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -436,9 +455,128 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_HELIX_SEC_PEST_05",
+    "label": "HELIX-SEC-PEST-05: біологічна загроза (щуролов)",
+    "description": "Відкриває зламаний протокол HELIX-SEC-PEST-05 для всіх гравців на 132-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_SEC_PEST_05"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_CHAMBER_4_MOISTURE_SPIKE",
+    "label": "КАМЕРА №4: стрибок вологості",
+    "description": "Відкриває протокол камери №4 для всіх гравців на 135-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "CHAMBER_4_MOISTURE_SPIKE"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] КАМЕРА №4: стрибок вологості — протокол доступний для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_SOX9_SUPPRESSOR_REPORT",
+    "label": "SOX-9: супресор симптомів",
+    "description": "Надсилає протокол про супресор SOX-9 випадковим гравцям на 137-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "SOX9_SUPPRESSOR_REPORT"
+      },
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 3,
+        "message": "[PROTO] SOX-9: супресор симптомів мутації доступний у протоколах."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ORANGEHOUSE_MEETING_NOTE",
+    "label": "ЗАПИСКА: зустріч в оранжереї",
+    "description": "Надсилає записку про зустріч в оранжереї випадковим гравцям на 145-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ORANGEHOUSE_MEETING_NOTE"
+      },
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 3,
+        "message": "[NOTE] ЗАПИСКА: зустріч в оранжереї о 02:00 доступна у протоколах."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ORANGEHOUSE_MEETING_NOTE_ALL",
+    "label": "ЗАПИСКА: зустріч в оранжереї (всім)",
+    "description": "Відкриває записку про зустріч в оранжереї для всіх гравців на 155-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ORANGEHOUSE_MEETING_NOTE"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[NOTE] ЗАПИСКА: зустріч в оранжереї о 02:00 доступна для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_SECURITY_HUB_ALPHA_ALERT",
+    "label": "SECURITY_HUB_ALPHA: помилка адресації",
+    "description": "Надсилає випадковим гравцям пошкоджений дамп із камери CAM-77-B на 54-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 3,
+        "message": "[ТЕРМІНАЛ: SECURITY_HUB_ALPHA]\n> ВХІДНИЙ ПОТІК ДАНИХ: ПОМИЛКА АДРЕСАЦІЇ\n> ДЖЕРЕЛО: CAM-77-B [ТЕХНІЧНИЙ КОЛЕКТОР / ЗОНА КОНСЕРВАЦІЇ]\n> СТАТУС ПРИСТРОЮ: OFFLINE (NO POWER)\n> ЧАС ЗАПИСУ: 00:44:59 (BUFFER DUMP)\n\n> АНАЛІЗ ЗОБРАЖЕННЯ (IMG_ERR_992.log):\nПАРАМЕТРЗНАЧЕННЯ\nКількість об'єктів1\nКласифікаціяHUMANOID / UNKNOWN\nБіометричний IDN/A (СИГНАТУРА НЕ ЗНАЙДЕНА)\nТемпература35.4°C (Норма)\nДіяСпостереження за камерою\n\nОтримайте файл 0934"
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_BIOMETRIC_DUPLICATE_ALERT",
+    "label": "ДОСТУП ЗАБОРОНЕНО: біометричний дублікат",
+    "description": "Надсилає випадковим 4 гравцям попередження про дублікат профілю на 75-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 4,
+        "message": "⚠️ ДОСТУП ЗАБОРОНЕНО\n\nВаша біометрична сигнатура визнана недійсною. Виявлено активний дублікат вашого профілю в системі.\n\nСтатус: ПОТЕНЦІЙНА ЗАГРОЗА РІВНЯ 1. Інструкція: Негайно лягти на підлогу, руки за голову. Очікуйте групу реагування. Спроба руху активує захисні турелі.\n\nСистема не може гарантувати, що ви є людиною."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_VECTOR_FEEDING",
     "label": "HELIX: годування суб’єкта X-9",
-    "description": "Надсилає протокол #FEED-X9 трьом обраним гравцям на 115-й хвилині.",
+    "description": "Надсилає протокол #FEED-X9 трьом обраним гравцям на 130-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -472,8 +610,8 @@
   },
   {
     "id": "Q_BIOREACTOR_NOTICE_60",
-    "label": "Біореактор: попередження про розмноження культури (60 хв)",
-    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 60-й хвилині.",
+    "label": "Біореактор: попередження про розмноження культури (85 хв)",
+    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 85-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -486,9 +624,28 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_INCIDENT_REPORT_42_XX",
+    "label": "ЗВІТ ІНЦИДЕНТУ #42-XX: Ghost_Shell",
+    "description": "Відкриває звіт про Ghost_Shell для всіх гравців на 90-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "INCIDENT_REPORT_42_XX"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] ЗВІТ ІНЦИДЕНТУ #42-XX (Ghost_Shell) доступний для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_75",
-    "label": "Біореактор: попередження про розмноження культури (75 хв)",
-    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 75-й хвилині.",
+    "label": "Біореактор: попередження про розмноження культури (100 хв)",
+    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 100-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -502,8 +659,8 @@
   },
   {
     "id": "Q_BIOREACTOR_NOTICE_90",
-    "label": "Біореактор: попередження про розмноження культури (90 хв)",
-    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 90-й хвилині.",
+    "label": "Біореактор: попередження про розмноження культури (115 хв)",
+    "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 115-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -511,6 +668,42 @@
         "target": "both",
         "level": "warning",
         "message": "Ви отримали код NVK-88 з мавпи. Але це лише одна пробірка. На станції 30 людей. Вам потрібно запустити Біореактор, щоб розмножити культуру і створити достатню кількість доз для всіх. Проблема: Біореактор старий, перегрівається і вимагає постійної ручної заміни охолоджувачів."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_WATER_TREATMENT_SOX9_ALERT",
+    "label": "WATER_TREATMENT_SYS: сліди SOX-9",
+    "description": "Надсилає випадкове термінальне попередження про домішки SOX-9 у воді житлового блоку.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "public_terminal",
+        "level": "warning",
+        "message": "[WATER_TREATMENT_SYS] УВАГА: У відфільтрованій воді (Блок Житловий-А) виявлено хімічні домішки. Тип речовини: Synthetic-Opioid-X (SOX-9). Концентрація: 0.04% (Сліди). Джерело: Каналізаційний стік з Каюти №4."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_CORTISOL_ALERT_160",
+    "label": "ALERT: кортизол критичний",
+    "description": "Надсилає попередження про критичний кортизол всім гравцям на 160-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "УВАГА: Стрибок вітальних показників у 90% персоналу. Рівень кортизолу: КРИТИЧНИЙ. Рекомендовано негайну седацію."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "УВАГА: Стрибок вітальних показників у 90% персоналу. Рівень кортизолу: КРИТИЧНИЙ. Рекомендовано негайну седацію."
       }
     ],
     "prevent_repeat": true

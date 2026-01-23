@@ -231,6 +231,8 @@ function setupAccessVotes() {
             if (payload.leveled_up) {
                 if (payload.ross_override_used) {
                     status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (Глен Росс).`;
+                } else if (payload.who_override_used) {
+                    status.textContent = `Рівень оновлено до ${payload.new_level}. Одноосібне підвищення (програміст ВООЗ).`;
                 } else {
                     status.textContent = `Рівень оновлено до ${payload.new_level}. Голоси очищено.`;
                 }
@@ -400,8 +402,10 @@ function startLiveTimer() {
 
         if (uiMode === 'warning') {
             document.body.classList.add('intensity-warning');
+        } else if (uiMode === 'critical') {
+            document.body.classList.add('intensity-critical');
         } else {
-            document.body.classList.remove('intensity-warning');
+            document.body.classList.remove('intensity-warning', 'intensity-critical');
         }
     }
 
@@ -675,11 +679,15 @@ function startPlayerPopups() {
             const res = await fetch('/api/get-terminal-messages.php?target=player_popup&ts=' + Date.now());
             const payload = await res.json();
             const messages = (payload.messages || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const queuedBodies = new Set(queue.map((msg) => (msg.message || '').trim()).filter(Boolean));
+            const queuedIds = new Set(queue.map((msg) => msg.id || '').filter(Boolean));
             messages.forEach((msg) => {
                 const id = msg.id || '';
                 const body = (msg.message || '').trim();
                 if (!id || seen.includes(id)) return;
                 if (body && seenBodies.includes(body)) return;
+                if (id && queuedIds.has(id)) return;
+                if (body && queuedBodies.has(body)) return;
                 queue.push(msg);
             });
             showNext();
