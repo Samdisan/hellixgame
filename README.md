@@ -84,6 +84,7 @@
 - **75:00 (75 хв).** Тригер `TT_BIOMETRIC_DUPLICATE_ALERT` → квест `Q_BIOMETRIC_DUPLICATE_ALERT`, надсилає попередження про біометричний дублікат 4 випадковим гравцям.
 - **80:00 (80 хв).** Тригер `TT_MFG_BATCH_04` → квест `Q_MFG_BATCH_04`, відкриває протокол HELIX-MFG-BATCH-04 для масового синтезу антигену.
 - **85:00 (85 хв).** Тригер `TT_BIOREACTOR_NOTICE_60` → квест `Q_BIOREACTOR_NOTICE_60`, перше повідомлення про запуск біореактора для розмноження культури.
+- **90:00 (90 хв).** Тригер `TT_INCIDENT_REPORT_42_XX` → квест `Q_INCIDENT_REPORT_42_XX`, відкриває звіт інциденту #42-XX (Ghost_Shell) для всіх гравців.
 - **100:00 (100 хв).** Тригер `TT_BIOREACTOR_NOTICE_75` → квест `Q_BIOREACTOR_NOTICE_75`, повторне повідомлення про запуск біореактора для розмноження культури.
 - **105:00 (105 хв).** Тригер `TT_OPS_CLEAN_SLATE_OMEGA` → квест `Q_OPS_CLEAN_SLATE_OMEGA`, розсилає витік FILE #99-OMEGA (OPS-CLEAN-SLATE) для всіх гравців.
 - **110:00 (110 хв).** Тригер `TT_WHO_SECURITY_BREACH` → квест `Q_WHO_SECURITY_BREACH`, розсилає ВООЗ попередження про дезінформацію та захист вакцини.
@@ -102,6 +103,7 @@
 - **ZERO Research Protocol (73:00).** `TT_ZERO_RESEARCH_PROTOCOL` відкриває протокол дослідження суб’єкта ZERO для всіх гравців.
 - **BIOMETRIC DUPLICATE (75:00).** `TT_BIOMETRIC_DUPLICATE_ALERT` надсилає попередження про дублікат профілю чотирьом випадковим гравцям.
 - **HELIX-MFG-BATCH-04 (80:00).** `TT_MFG_BATCH_04` відкриває терміновий протокол масового синтезу антигену для всіх гравців.
+- **INCIDENT REPORT #42-XX (90:00).** `TT_INCIDENT_REPORT_42_XX` відкриває звіт про Ghost_Shell для всіх гравців.
 - **FILE #99-OMEGA (105:00).** `TT_OPS_CLEAN_SLATE_OMEGA` відкриває критичний витік OPS-CLEAN-SLATE для всіх гравців.
 - **SYSTEM ALERT: SECURITY BREACH (110:00).** `TT_WHO_SECURITY_BREACH` відкриває попередження HELIX AI DEFENSE для всієї команди ВООЗ.
 - **#FEED-X9 (130:00).** `TT_VECTOR_FEEDING` надсилає протокол «Годування звіра» трьом обраним гравцям.

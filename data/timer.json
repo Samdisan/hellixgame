@@ -138,6 +138,13 @@
       "fired": false
     },
     {
+      "id": "TT_INCIDENT_REPORT_42_XX",
+      "quest_id": "Q_INCIDENT_REPORT_42_XX",
+      "elapsed_ge_sec": 5400,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_BIOREACTOR_NOTICE_75",
       "quest_id": "Q_BIOREACTOR_NOTICE_75",
       "elapsed_ge_sec": 6000,

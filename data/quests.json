@@ -529,6 +529,25 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_INCIDENT_REPORT_42_XX",
+    "label": "ЗВІТ ІНЦИДЕНТУ #42-XX: Ghost_Shell",
+    "description": "Відкриває звіт про Ghost_Shell для всіх гравців на 90-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "INCIDENT_REPORT_42_XX"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] ЗВІТ ІНЦИДЕНТУ #42-XX (Ghost_Shell) доступний для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_75",
     "label": "Біореактор: попередження про розмноження культури (100 хв)",
     "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 100-й хвилині.",
