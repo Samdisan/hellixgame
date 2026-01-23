@@ -506,6 +506,25 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_ORANGEHOUSE_MEETING_NOTE",
+    "label": "ЗАПИСКА: зустріч в оранжереї",
+    "description": "Надсилає записку про зустріч в оранжереї випадковим гравцям на 145-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ORANGEHOUSE_MEETING_NOTE"
+      },
+      {
+        "type": "push_terminal_random",
+        "level": "warning",
+        "count": 3,
+        "message": "[NOTE] ЗАПИСКА: зустріч в оранжереї о 02:00 доступна у протоколах."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_SECURITY_HUB_ALPHA_ALERT",
     "label": "SECURITY_HUB_ALPHA: помилка адресації",
     "description": "Надсилає випадковим гравцям пошкоджений дамп із камери CAM-77-B на 54-й хвилині.",

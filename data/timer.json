@@ -208,6 +208,13 @@
       "fired": false
     },
     {
+      "id": "TT_ORANGEHOUSE_MEETING_NOTE",
+      "quest_id": "Q_ORANGEHOUSE_MEETING_NOTE",
+      "elapsed_ge_sec": 8700,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 16680,

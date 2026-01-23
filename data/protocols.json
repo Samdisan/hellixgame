@@ -514,5 +514,18 @@
     "publish_time": "02:17:00",
     "announce_in_terminal": false,
     "allowed_players": []
+  },
+  {
+    "id": "ORANGEHOUSE_MEETING_NOTE",
+    "label": "ЗАПИСКА: зустріч в оранжереї",
+    "description": "Повідомлення про згасання дози та зустріч в оранжереї о 02:00.",
+    "content": "Доза перестає діяти. Мені потрібно більше. Якщо вони дізнаються про мої очі — мене спалять. Зустрінемось в оранжереї о 02:00.",
+    "level": 1,
+    "public": false,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "02:25:00",
+    "announce_in_terminal": false,
+    "allowed_players": []
   }
 ]
