@@ -92,6 +92,7 @@
 - **115:00 (115 хв).** Тригер `TT_BIOREACTOR_NOTICE_90` → квест `Q_BIOREACTOR_NOTICE_90`, фінальне повідомлення про запуск біореактора для розмноження культури.
 - **130:00 (130 хв).** Тригер `TT_VECTOR_FEEDING` → квест `Q_VECTOR_FEEDING`, надсилає наказ #FEED-X9 трьом обраним гравцям.
 - **132:00 (132 хв).** Тригер `TT_HELIX_SEC_PEST_05` → квест `Q_HELIX_SEC_PEST_05`, відкриває зламаний протокол HELIX-SEC-PEST-05 для всіх.
+- **135:00 (135 хв).** Тригер `TT_CHAMBER_4_MOISTURE_SPIKE` → квест `Q_CHAMBER_4_MOISTURE_SPIKE`, відкриває протокол про стрибок вологості в камері №4.
 - **278:00 (278 хв ≈ 4:38).** Тригери `TT_PHASE_INFECTION_SYMPTOMS` (квест `Q_START_INFECTION_SYMPTOMS`, старт PH_INFECTION_SYMPTOMS) та `TT_FIND_ORIGIN_PROTOCOLS` (квест `Q_FIND_ORIGIN_PROTOCOLS`); вікно PH_OUTBREAK завершується, PH_INFECTION_SYMPTOMS триває до завершення сесії.
 - **WHO-DATA-009 (22:00).** `TT_WHO_DATA_009` відкриває протокол лише програмісту ВООЗ і дає йому приватне повідомлення у терміналі про відновлення логів.
 - **WHO-SEC-004.Y (23:00).** `TT_WHO_SEC_004Y` активує протокол для агента безпеки ВООЗ і шле персональне термінальне нагадування тільки цьому персонажу.
@@ -110,6 +111,7 @@
 - **SYSTEM ALERT: SECURITY BREACH (110:00).** `TT_WHO_SECURITY_BREACH` відкриває попередження HELIX AI DEFENSE для всієї команди ВООЗ.
 - **#FEED-X9 (130:00).** `TT_VECTOR_FEEDING` надсилає протокол «Годування звіра» трьом обраним гравцям.
 - **HELIX-SEC-PEST-05 (132:00).** `TT_HELIX_SEC_PEST_05` відкриває пошкоджений протокол для всіх гравців.
+- **КАМЕРА №4: стрибок вологості (135:00).** `TT_CHAMBER_4_MOISTURE_SPIKE` відкриває протокол для всіх гравців.
 - **SECURITY HUB ALPHA (49:00).** `TT_SECURITY_HUB_ALPHA_ALERT` надсилає випадковим гравцям зламаний дамп із камери CAM-77-B.
 - **SYSTEM ALERT: SECURITY BREACH (107:00).** `TT_WHO_SECURITY_BREACH` відкриває попередження HELIX AI DEFENSE для всієї команди ВООЗ.
 - **#FEED-X9 (117:00).** `TT_VECTOR_FEEDING` надсилає протокол «Годування звіра» трьом обраним гравцям.

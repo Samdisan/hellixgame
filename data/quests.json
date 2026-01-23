@@ -468,6 +468,25 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_CHAMBER_4_MOISTURE_SPIKE",
+    "label": "КАМЕРА №4: стрибок вологості",
+    "description": "Відкриває протокол камери №4 для всіх гравців на 135-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "CHAMBER_4_MOISTURE_SPIKE"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] КАМЕРА №4: стрибок вологості — протокол доступний для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_SECURITY_HUB_ALPHA_ALERT",
     "label": "SECURITY_HUB_ALPHA: помилка адресації",
     "description": "Надсилає випадковим гравцям пошкоджений дамп із камери CAM-77-B на 54-й хвилині.",

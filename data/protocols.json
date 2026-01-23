@@ -488,5 +488,18 @@
     "publish_time": "00:40:00",
     "announce_in_terminal": false,
     "allowed_players": []
+  },
+  {
+    "id": "CHAMBER_4_MOISTURE_SPIKE",
+    "label": "КАМЕРА №4: стрибок вологості",
+    "description": "Протокол про тіло техніка в камері №4 та аномальний стрибок вологості.",
+    "content": "Згідно з документами, в камері №4 лежить тіло померлого вчора техніка (причина смерті: серцевий напад). Але датчики вологості всередині камери показують різкий стрибок.",
+    "level": 1,
+    "public": true,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "02:15:00",
+    "announce_in_terminal": false,
+    "allowed_players": []
   }
 ]

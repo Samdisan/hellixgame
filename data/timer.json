@@ -194,6 +194,13 @@
       "fired": false
     },
     {
+      "id": "TT_CHAMBER_4_MOISTURE_SPIKE",
+      "quest_id": "Q_CHAMBER_4_MOISTURE_SPIKE",
+      "elapsed_ge_sec": 8100,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 16680,
