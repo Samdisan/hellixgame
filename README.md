@@ -77,8 +77,8 @@
 - **25:00 (25 хв).** Тригер `TT_WHO_MEDICAL_SCREENING` → квест `Q_WHO_MEDICAL_SCREENING`, дає ВООЗ завдання виконати три команди `/run check_bio <ID>` для вибіркової біометрії (один з ID покаже аномалію).
 - **27:00 (27 хв).** Тригер `TT_ILARIA_DESTROY_SAMPLES` → квест `Q_ILARIA_DESTROY_SAMPLES`, активує ILR-BIOSEC-PHASE3.
 - **28:00 (28 хв).** Паралельні тригери `TT_PHASE_LIFEFAIL` (квест `Q_START_LIFEFAIL`, критичний режим життєзабезпечення) і `TT_PHASE_ORIGIN` (квест `Q_START_ORIGIN`, стартує відновлення коду Origin як квест події).
+- **47:00 (47 хв).** Тригер `TT_SECURITY_HUB_ALPHA_ALERT` → квест `Q_SECURITY_HUB_ALPHA_ALERT`, надсилає випадковим гравцям попередження з Security Hub Alpha.
 - **51:00 (51 хв).** Тригер `TT_WHO_ORIGIN_UPLINK` → квест `Q_WHO_ORIGIN_UPLINK`, надсилає ВООЗ інструкції щодо ручного обходу каналу зв’язку.
-- **55:00 (55 хв).** Тригер `TT_SECURITY_HUB_ALPHA_ALERT` → квест `Q_SECURITY_HUB_ALPHA_ALERT`, надсилає випадковим гравцям попередження з Security Hub Alpha.
 - **56:00 (56 хв).** Тригер `TT_LAB_SAMPLE_ALERT` → квест `Q_LAB_SAMPLE_ALERT`, публічне попередження про чистий лабораторний зразок.
 - **66:00 (66 хв).** Тригер `TT_ZERO_RESEARCH_PROTOCOL` → квест `Q_ZERO_RESEARCH_PROTOCOL`, розсилає всім гравцям протокол дослідження суб’єкта ZERO.
 - **68:00 (68 хв).** Тригер `TT_BIOMETRIC_DUPLICATE_ALERT` → квест `Q_BIOMETRIC_DUPLICATE_ALERT`, надсилає попередження про біометричний дублікат 4 випадковим гравцям.
@@ -96,8 +96,8 @@
 - **OUTBREAK старт (23:00).**
 - **WHO-PROTOCOL-ALR-01 (24:00).** `TT_WHO_PROTOCOL_ALR_01` відкриває протокол ALR-01 для всіх ролей ВООЗ (координатор, генетик, психоаналітик, безпека, програміст, PR, дипломат, охоронець) і дублює оголошення в обидва термінали.
 - **ILR-BIOSEC-PHASE3 (27:00).** `TT_ILARIA_DESTROY_SAMPLES` відкриває протокол лише командиру та медику ILARIA; решта Іларії бачать тільки службове повідомлення про наказ без самого протоколу.
+- **SECURITY HUB ALPHA (47:00).** `TT_SECURITY_HUB_ALPHA_ALERT` надсилає випадковим гравцям зламаний дамп із камери CAM-77-B.
 - **WHO ORIGIN Uplink (51:00).** `TT_WHO_ORIGIN_UPLINK` надсилає ВООЗ приватне повідомлення з інструкціями ручного обходу для каналу зв’язку.
-- **SECURITY HUB ALPHA (55:00).** `TT_SECURITY_HUB_ALPHA_ALERT` надсилає випадковим гравцям зламаний дамп із камери CAM-77-B.
 - **LAB Sample Alert (56:00).** `TT_LAB_SAMPLE_ALERT` шле публічне попередження в термінал про чистий лабораторний зразок та порушення протоколу безпеки.
 - **ZERO Research Protocol (66:00).** `TT_ZERO_RESEARCH_PROTOCOL` відкриває протокол дослідження суб’єкта ZERO для всіх гравців.
 - **BIOMETRIC DUPLICATE (68:00).** `TT_BIOMETRIC_DUPLICATE_ALERT` надсилає попередження про дублікат профілю чотирьом випадковим гравцям.

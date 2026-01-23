@@ -33,23 +33,16 @@
       "fired": false
     },
     {
-      "id": "TT_WHO_SEC_004Y",
-      "quest_id": "Q_WHO_CORRIDOR_ALERT",
-      "elapsed_ge_sec": 1380,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
-      "id": "TT_WHO_MEDICAL_SCREENING",
-      "quest_id": "Q_WHO_MEDICAL_SCREENING",
-      "elapsed_ge_sec": 1500,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
       "id": "TT_WHO_DATA_009",
       "quest_id": "Q_WHO_WHITE_ZONE",
       "elapsed_ge_sec": 1320,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_SEC_004Y",
+      "quest_id": "Q_WHO_CORRIDOR_ALERT",
+      "elapsed_ge_sec": 1380,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -61,13 +54,6 @@
       "fired": false
     },
     {
-      "id": "TT_PHASE_ORIGIN",
-      "quest_id": "Q_START_ORIGIN",
-      "elapsed_ge_sec": 1680,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
       "id": "TT_WHO_PROTOCOL_ALR_01",
       "quest_id": "Q_WHO_OUTBREAK_ALERT",
       "elapsed_ge_sec": 1440,
@@ -75,9 +61,9 @@
       "fired": false
     },
     {
-      "id": "TT_PHASE_LIFEFAIL",
-      "quest_id": "Q_START_LIFEFAIL",
-      "elapsed_ge_sec": 1680,
+      "id": "TT_WHO_MEDICAL_SCREENING",
+      "quest_id": "Q_WHO_MEDICAL_SCREENING",
+      "elapsed_ge_sec": 1500,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -89,16 +75,30 @@
       "fired": false
     },
     {
-      "id": "TT_WHO_ORIGIN_UPLINK",
-      "quest_id": "Q_WHO_ORIGIN_UPLINK",
-      "elapsed_ge_sec": 3060,
+      "id": "TT_PHASE_ORIGIN",
+      "quest_id": "Q_START_ORIGIN",
+      "elapsed_ge_sec": 1680,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_PHASE_LIFEFAIL",
+      "quest_id": "Q_START_LIFEFAIL",
+      "elapsed_ge_sec": 1680,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_SECURITY_HUB_ALPHA_ALERT",
       "quest_id": "Q_SECURITY_HUB_ALPHA_ALERT",
-      "elapsed_ge_sec": 3300,
+      "elapsed_ge_sec": 2820,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_WHO_ORIGIN_UPLINK",
+      "quest_id": "Q_WHO_ORIGIN_UPLINK",
+      "elapsed_ge_sec": 3060,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -124,16 +124,16 @@
       "fired": false
     },
     {
-      "id": "TT_BIOREACTOR_NOTICE_60",
-      "quest_id": "Q_BIOREACTOR_NOTICE_60",
-      "elapsed_ge_sec": 4680,
+      "id": "TT_MFG_BATCH_04",
+      "quest_id": "Q_MFG_BATCH_04",
+      "elapsed_ge_sec": 4380,
       "remaining_le_sec": null,
       "fired": false
     },
     {
-      "id": "TT_MFG_BATCH_04",
-      "quest_id": "Q_MFG_BATCH_04",
-      "elapsed_ge_sec": 4380,
+      "id": "TT_BIOREACTOR_NOTICE_60",
+      "quest_id": "Q_BIOREACTOR_NOTICE_60",
+      "elapsed_ge_sec": 4680,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -152,13 +152,6 @@
       "fired": false
     },
     {
-      "id": "TT_BIOREACTOR_NOTICE_90",
-      "quest_id": "Q_BIOREACTOR_NOTICE_90",
-      "elapsed_ge_sec": 6480,
-      "remaining_le_sec": null,
-      "fired": false
-    },
-    {
       "id": "TT_WHO_SECURITY_BREACH",
       "quest_id": "Q_WHO_SECURITY_BREACH",
       "elapsed_ge_sec": 6180,
@@ -166,9 +159,9 @@
       "fired": false
     },
     {
-      "id": "TT_HELIX_SEC_PEST_05",
-      "quest_id": "Q_HELIX_SEC_PEST_05",
-      "elapsed_ge_sec": 7500,
+      "id": "TT_BIOREACTOR_NOTICE_90",
+      "quest_id": "Q_BIOREACTOR_NOTICE_90",
+      "elapsed_ge_sec": 6480,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -176,6 +169,13 @@
       "id": "TT_VECTOR_FEEDING",
       "quest_id": "Q_VECTOR_FEEDING",
       "elapsed_ge_sec": 7380,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_HELIX_SEC_PEST_05",
+      "quest_id": "Q_HELIX_SEC_PEST_05",
+      "elapsed_ge_sec": 7500,
       "remaining_le_sec": null,
       "fired": false
     },
