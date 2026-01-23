@@ -201,6 +201,13 @@
       "fired": false
     },
     {
+      "id": "TT_SOX9_SUPPRESSOR_REPORT",
+      "quest_id": "Q_SOX9_SUPPRESSOR_REPORT",
+      "elapsed_ge_sec": 8220,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 16680,

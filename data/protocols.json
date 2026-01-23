@@ -501,5 +501,18 @@
     "publish_time": "02:15:00",
     "announce_in_terminal": false,
     "allowed_players": []
+  },
+  {
+    "id": "SOX9_SUPPRESSOR_REPORT",
+    "label": "SOX-9: супресор симптомів мутації",
+    "description": "Протокол про SOX-9 як супресор, що приховує симптоми мутації.",
+    "content": "Ця речовина (SOX-9) не використовується для лікування. Це потужний супресор, який пригнічує... або приховує симптоми мутації. Той, хто це приймає, намагається здаватися людиною, але його метаболізм вже змінено.",
+    "level": 1,
+    "public": false,
+    "phase": "PH_OUTBREAK",
+    "active": false,
+    "publish_time": "02:17:00",
+    "announce_in_terminal": false,
+    "allowed_players": []
   }
 ]
