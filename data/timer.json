@@ -49,147 +49,147 @@
     {
       "id": "TT_PHASE_OUTBREAK",
       "quest_id": "Q_OUTBREAK_ALERT",
-      "elapsed_ge_sec": 1380,
+      "elapsed_ge_sec": 1800,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_WHO_PROTOCOL_ALR_01",
       "quest_id": "Q_WHO_OUTBREAK_ALERT",
-      "elapsed_ge_sec": 1440,
+      "elapsed_ge_sec": 1860,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_WHO_MEDICAL_SCREENING",
       "quest_id": "Q_WHO_MEDICAL_SCREENING",
-      "elapsed_ge_sec": 1500,
+      "elapsed_ge_sec": 1920,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_ILARIA_DESTROY_SAMPLES",
       "quest_id": "Q_ILARIA_DESTROY_SAMPLES",
-      "elapsed_ge_sec": 1620,
+      "elapsed_ge_sec": 2040,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_PHASE_ORIGIN",
       "quest_id": "Q_START_ORIGIN",
-      "elapsed_ge_sec": 1680,
+      "elapsed_ge_sec": 2100,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_PHASE_LIFEFAIL",
       "quest_id": "Q_START_LIFEFAIL",
-      "elapsed_ge_sec": 1680,
+      "elapsed_ge_sec": 2100,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_SECURITY_HUB_ALPHA_ALERT",
       "quest_id": "Q_SECURITY_HUB_ALPHA_ALERT",
-      "elapsed_ge_sec": 2820,
+      "elapsed_ge_sec": 3240,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_WHO_ORIGIN_UPLINK",
       "quest_id": "Q_WHO_ORIGIN_UPLINK",
-      "elapsed_ge_sec": 3060,
+      "elapsed_ge_sec": 3480,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_LAB_SAMPLE_ALERT",
       "quest_id": "Q_LAB_SAMPLE_ALERT",
-      "elapsed_ge_sec": 3360,
+      "elapsed_ge_sec": 3780,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_ZERO_RESEARCH_PROTOCOL",
       "quest_id": "Q_ZERO_RESEARCH_PROTOCOL",
-      "elapsed_ge_sec": 3960,
+      "elapsed_ge_sec": 4380,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_BIOMETRIC_DUPLICATE_ALERT",
       "quest_id": "Q_BIOMETRIC_DUPLICATE_ALERT",
-      "elapsed_ge_sec": 4080,
+      "elapsed_ge_sec": 4500,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_MFG_BATCH_04",
       "quest_id": "Q_MFG_BATCH_04",
-      "elapsed_ge_sec": 4380,
+      "elapsed_ge_sec": 4800,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_BIOREACTOR_NOTICE_60",
       "quest_id": "Q_BIOREACTOR_NOTICE_60",
-      "elapsed_ge_sec": 4680,
+      "elapsed_ge_sec": 5100,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_BIOREACTOR_NOTICE_75",
       "quest_id": "Q_BIOREACTOR_NOTICE_75",
-      "elapsed_ge_sec": 5580,
+      "elapsed_ge_sec": 6000,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_OPS_CLEAN_SLATE_OMEGA",
       "quest_id": "Q_OPS_CLEAN_SLATE_OMEGA",
-      "elapsed_ge_sec": 5880,
+      "elapsed_ge_sec": 6300,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_WHO_SECURITY_BREACH",
       "quest_id": "Q_WHO_SECURITY_BREACH",
-      "elapsed_ge_sec": 6180,
+      "elapsed_ge_sec": 6600,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_BIOREACTOR_NOTICE_90",
       "quest_id": "Q_BIOREACTOR_NOTICE_90",
-      "elapsed_ge_sec": 6480,
+      "elapsed_ge_sec": 6900,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_VECTOR_FEEDING",
       "quest_id": "Q_VECTOR_FEEDING",
-      "elapsed_ge_sec": 7380,
+      "elapsed_ge_sec": 7800,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_HELIX_SEC_PEST_05",
       "quest_id": "Q_HELIX_SEC_PEST_05",
-      "elapsed_ge_sec": 7500,
+      "elapsed_ge_sec": 7920,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
-      "elapsed_ge_sec": 16260,
+      "elapsed_ge_sec": 16680,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_FIND_ORIGIN_PROTOCOLS",
       "quest_id": "Q_FIND_ORIGIN_PROTOCOLS",
-      "elapsed_ge_sec": 16260,
+      "elapsed_ge_sec": 16680,
       "remaining_le_sec": null,
       "fired": false
     }
