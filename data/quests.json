@@ -614,5 +614,20 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_WATER_TREATMENT_SOX9_ALERT",
+    "label": "WATER_TREATMENT_SYS: сліди SOX-9",
+    "description": "Надсилає випадкове термінальне попередження про домішки SOX-9 у воді житлового блоку.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "public_terminal",
+        "level": "warning",
+        "message": "[WATER_TREATMENT_SYS] УВАГА: У відфільтрованій воді (Блок Житловий-А) виявлено хімічні домішки. Тип речовини: Synthetic-Opioid-X (SOX-9). Концентрація: 0.04% (Сліди). Джерело: Каналізаційний стік з Каюти №4."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]

@@ -964,6 +964,22 @@ function process_time_triggers(array $timer, int $elapsed, int $remaining): arra
             continue;
         }
 
+        if (!isset($trigger['elapsed_ge_sec']) && isset($trigger['random_elapsed_range_sec']) && is_array($trigger['random_elapsed_range_sec'])) {
+            $min = (int) ($trigger['random_elapsed_range_sec']['min'] ?? 0);
+            $max = (int) ($trigger['random_elapsed_range_sec']['max'] ?? 0);
+            if ($max < $min) {
+                [$min, $max] = [$max, $min];
+            }
+            if ($max > 0) {
+                $min = max($min, $elapsed);
+                if ($min > $max) {
+                    $min = $max;
+                }
+                $trigger['elapsed_ge_sec'] = random_int($min, $max);
+                $changed = true;
+            }
+        }
+
         $elapsedOk = !isset($trigger['elapsed_ge_sec']) || $elapsed >= (int) $trigger['elapsed_ge_sec'];
         $remainingOk = !isset($trigger['remaining_le_sec']) || $remaining <= (int) $trigger['remaining_le_sec'];
 
