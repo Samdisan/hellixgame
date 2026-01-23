@@ -89,6 +89,13 @@
       "fired": false
     },
     {
+      "id": "TT_LOG_VOICE_77",
+      "quest_id": "Q_LOG_VOICE_77",
+      "elapsed_ge_sec": 2400,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_SECURITY_HUB_ALPHA_ALERT",
       "quest_id": "Q_SECURITY_HUB_ALPHA_ALERT",
       "elapsed_ge_sec": 3240,

@@ -103,6 +103,25 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_LOG_VOICE_77",
+    "label": "LOG_VOICE_77: автоматична транскрипція",
+    "description": "Відкриває голосовий лог LOG_VOICE_77 для всіх гравців на 40-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "LOG_VOICE_77"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] LOG_VOICE_77: автоматична транскрипція доступна для всіх гравців."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_START_LIFEFAIL",
     "label": "Запустити фазу збою життєзабезпечення",
     "description": "Квест переводить системи у критичний режим без окремої фази й обрізає глобальний таймер.",
