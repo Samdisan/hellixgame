@@ -17,6 +17,7 @@ include __DIR__ . '/partials/header.php';
 <section class="grid personal-grid">
     <?php foreach ($players as $person): ?>
         <?php $file = $filesById[$person['id']] ?? null; ?>
+        <?php $detailLink = ($person['id'] ?? '') === 'PL_STATION_GREN' ? 'personal-file.php?id=PL_STATION_GREN' : null; ?>
         <article class="personal-card">
             <div class="portrait portrait-<?php echo htmlspecialchars($person['faction'], ENT_QUOTES); ?>">
                 <?php if (!empty($file['photo'])): ?>
@@ -28,7 +29,15 @@ include __DIR__ . '/partials/header.php';
                 <?php endif; ?>
             </div>
             <div class="personal-meta">
-                <h3><?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?></h3>
+                <h3>
+                    <?php if ($detailLink): ?>
+                        <a href="<?php echo htmlspecialchars($detailLink, ENT_QUOTES); ?>">
+                            <?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo htmlspecialchars($person['name'], ENT_QUOTES); ?>
+                    <?php endif; ?>
+                </h3>
                 <div class="muted">Роль: <?php echo htmlspecialchars($person['role'], ENT_QUOTES); ?></div>
                 <div class="badge status-<?php echo htmlspecialchars($person['status'], ENT_QUOTES); ?>">Статус: <?php echo htmlspecialchars($person['status'], ENT_QUOTES); ?></div>
                 <div class="chip">ID: <?php echo htmlspecialchars($person['id'], ENT_QUOTES); ?></div>
@@ -36,6 +45,11 @@ include __DIR__ . '/partials/header.php';
                 <div class="chip">Фракція: <?php echo htmlspecialchars($person['faction'], ENT_QUOTES); ?></div>
             </div>
             <p class="personal-summary"><?php echo htmlspecialchars($file['summary'] ?? 'Досьє створено автоматично з даних реєстру.', ENT_QUOTES); ?></p>
+            <?php if ($detailLink): ?>
+                <div class="stack">
+                    <a class="button button-ghost" href="<?php echo htmlspecialchars($detailLink, ENT_QUOTES); ?>">Відкрити досьє</a>
+                </div>
+            <?php endif; ?>
         </article>
     <?php endforeach; ?>
 </section>
