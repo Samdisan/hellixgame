@@ -75,7 +75,7 @@
   {
     "id": "Q_START_ORIGIN",
     "label": "Запустити фазу відновлення коду Origin",
-    "description": "Паралельний запуск відновлення коду Origin через 35 хвилин гри як окремий квест, без нової фази.",
+    "description": "Паралельний запуск відновлення коду Origin через 37 хвилин гри як окремий квест, без нової фази.",
     "phase": "PH_OUTBREAK",
     "actions": [],
     "prevent_repeat": true
@@ -105,7 +105,7 @@
   {
     "id": "Q_LOG_VOICE_77",
     "label": "LOG_VOICE_77: автоматична транскрипція",
-    "description": "Відкриває голосовий лог LOG_VOICE_77 для всіх гравців на 40-й хвилині.",
+    "description": "Відкриває голосовий лог LOG_VOICE_77 для всіх гравців на 42-й хвилині.",
     "phase": "PH_OUTBREAK",
     "actions": [
       {
@@ -520,6 +520,25 @@
         "level": "warning",
         "count": 3,
         "message": "[NOTE] ЗАПИСКА: зустріч в оранжереї о 02:00 доступна у протоколах."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_ORANGEHOUSE_MEETING_NOTE_ALL",
+    "label": "ЗАПИСКА: зустріч в оранжереї (всім)",
+    "description": "Відкриває записку про зустріч в оранжереї для всіх гравців на 155-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "ORANGEHOUSE_MEETING_NOTE"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[NOTE] ЗАПИСКА: зустріч в оранжереї о 02:00 доступна для всіх гравців."
       }
     ],
     "prevent_repeat": true

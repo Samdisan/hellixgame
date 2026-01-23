@@ -77,21 +77,21 @@
     {
       "id": "TT_PHASE_ORIGIN",
       "quest_id": "Q_START_ORIGIN",
-      "elapsed_ge_sec": 2100,
+      "elapsed_ge_sec": 2220,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_PHASE_LIFEFAIL",
       "quest_id": "Q_START_LIFEFAIL",
-      "elapsed_ge_sec": 2100,
+      "elapsed_ge_sec": 2220,
       "remaining_le_sec": null,
       "fired": false
     },
     {
       "id": "TT_LOG_VOICE_77",
       "quest_id": "Q_LOG_VOICE_77",
-      "elapsed_ge_sec": 2400,
+      "elapsed_ge_sec": 2520,
       "remaining_le_sec": null,
       "fired": false
     },
@@ -211,6 +211,13 @@
       "id": "TT_ORANGEHOUSE_MEETING_NOTE",
       "quest_id": "Q_ORANGEHOUSE_MEETING_NOTE",
       "elapsed_ge_sec": 8700,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
+      "id": "TT_ORANGEHOUSE_MEETING_NOTE_ALL",
+      "quest_id": "Q_ORANGEHOUSE_MEETING_NOTE_ALL",
+      "elapsed_ge_sec": 9300,
       "remaining_le_sec": null,
       "fired": false
     },
