@@ -222,6 +222,13 @@
       "fired": false
     },
     {
+      "id": "TT_CORTISOL_ALERT_160",
+      "quest_id": "Q_CORTISOL_ALERT_160",
+      "elapsed_ge_sec": 9600,
+      "remaining_le_sec": null,
+      "fired": false
+    },
+    {
       "id": "TT_PHASE_INFECTION_SYMPTOMS",
       "quest_id": "Q_START_INFECTION_SYMPTOMS",
       "elapsed_ge_sec": 16680,

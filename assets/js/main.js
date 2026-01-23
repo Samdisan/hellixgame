@@ -679,11 +679,15 @@ function startPlayerPopups() {
             const res = await fetch('/api/get-terminal-messages.php?target=player_popup&ts=' + Date.now());
             const payload = await res.json();
             const messages = (payload.messages || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const queuedBodies = new Set(queue.map((msg) => (msg.message || '').trim()).filter(Boolean));
+            const queuedIds = new Set(queue.map((msg) => msg.id || '').filter(Boolean));
             messages.forEach((msg) => {
                 const id = msg.id || '';
                 const body = (msg.message || '').trim();
                 if (!id || seen.includes(id)) return;
                 if (body && seenBodies.includes(body)) return;
+                if (id && queuedIds.has(id)) return;
+                if (body && queuedBodies.has(body)) return;
                 queue.push(msg);
             });
             showNext();

@@ -686,5 +686,26 @@
       }
     ],
     "prevent_repeat": true
+  },
+  {
+    "id": "Q_CORTISOL_ALERT_160",
+    "label": "ALERT: кортизол критичний",
+    "description": "Надсилає попередження про критичний кортизол всім гравцям на 160-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "УВАГА: Стрибок вітальних показників у 90% персоналу. Рівень кортизолу: КРИТИЧНИЙ. Рекомендовано негайну седацію."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "УВАГА: Стрибок вітальних показників у 90% персоналу. Рівень кортизолу: КРИТИЧНИЙ. Рекомендовано негайну седацію."
+      }
+    ],
+    "prevent_repeat": true
   }
 ]
