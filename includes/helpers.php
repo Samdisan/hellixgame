@@ -622,34 +622,40 @@ function append_terminal_message(string $target, string $type, string $message):
     $fingerprints = load_message_fingerprints();
     $fingerprint = sha1($target . '|' . $type . '|' . $message);
 
-    // Prevent duplicate inserts of identical content so each message only appears once.
+    // Prevent duplicate inserts of identical content so each message only appears twice.
     $globalTargets = ['public_terminal', 'admin_terminal', 'both'];
     $isGlobal = in_array($target, $globalTargets, true);
+    $maxDuplicates = 2;
 
-    if (!empty($fingerprints[$fingerprint])) {
-        return;
-    }
-    if ($isGlobal) {
-        $globalFingerprint = sha1('global|' . $type . '|' . $message);
-        if (!empty($fingerprints[$globalFingerprint])) {
-            return;
-        }
-    }
-
+    $existingCount = 0;
+    $existingGlobalCount = 0;
     foreach ($messages as $existing) {
         $existingTarget = $existing['target'] ?? '';
         $existingType = $existing['type'] ?? '';
         $existingMessage = $existing['message'] ?? '';
 
         if ($existingTarget === $target && $existingType === $type && $existingMessage === $message) {
-            return;
+            $existingCount++;
         }
 
-        // Also avoid double-posting the same system alert across the shared feeds.
         if ($isGlobal
             && in_array($existingTarget, $globalTargets, true)
             && $existingType === $type
             && $existingMessage === $message) {
+            $existingGlobalCount++;
+        }
+    }
+
+    $storedCount = (int) ($fingerprints[$fingerprint] ?? 0);
+    $storedCount = max($storedCount, $existingCount);
+    if ($storedCount >= $maxDuplicates) {
+        return;
+    }
+    if ($isGlobal) {
+        $globalFingerprint = sha1('global|' . $type . '|' . $message);
+        $storedGlobalCount = (int) ($fingerprints[$globalFingerprint] ?? 0);
+        $storedGlobalCount = max($storedGlobalCount, $existingGlobalCount);
+        if ($storedGlobalCount >= $maxDuplicates) {
             return;
         }
     }
@@ -663,9 +669,9 @@ function append_terminal_message(string $target, string $type, string $message):
     ];
     save_json('terminal-messages.json', $messages);
 
-    $fingerprints[$fingerprint] = time();
+    $fingerprints[$fingerprint] = $storedCount + 1;
     if ($isGlobal) {
-        $fingerprints[sha1('global|' . $type . '|' . $message)] = time();
+        $fingerprints[sha1('global|' . $type . '|' . $message)] = $storedGlobalCount + 1;
     }
 
     if (count($fingerprints) > 500) {
