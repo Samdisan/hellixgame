@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($player['id'] === $id) {
             $player['access_level'] = (int) $_POST['access_level'];
             $player['status'] = $_POST['status'];
+            $player['infected'] = !empty($_POST['infected']);
             append_terminal_message('admin_terminal', 'info', "[PLAYER] Оновлено {$id}");
         }
     }
@@ -48,7 +49,7 @@ include __DIR__ . '/../partials/header.php';
     <h1>Персонал і гравці</h1>
     <p class="muted">Панель впливу на сюжет: хто активний, хто зник, хто в карантині. Піднімайте або знижуйте рівні доступу, змінюйте статуси й вказуйте де лежать досьє.</p>
     <table class="table">
-        <thead><tr><th>Ім'я</th><th>Фракція</th><th>Доступ</th><th>Статус</th><th>Фото досьє</th><th>Опис</th><th>Дії</th></tr></thead>
+        <thead><tr><th>Ім'я</th><th>Фракція</th><th>Доступ</th><th>Статус</th><th>Заражений</th><th>Фото досьє</th><th>Опис</th><th>Дії</th></tr></thead>
         <tbody>
             <?php foreach ($players as $player): ?>
                 <?php $file = $filesById[$player['id']] ?? ['photo' => '', 'summary' => '']; ?>
@@ -64,6 +65,12 @@ include __DIR__ . '/../partials/header.php';
                                 <option value="<?php echo $status; ?>" <?php if ($status === $player['status']) echo 'selected'; ?>><?php echo $status; ?></option>
                             <?php endforeach; ?>
                         </select>
+                    </td>
+                    <td>
+                        <label class="micro">
+                            <input form="<?php echo $formId; ?>" type="checkbox" name="infected" value="1" <?php if (!empty($player['infected'])) echo 'checked'; ?>>
+                            інфікований
+                        </label>
                     </td>
                     <td>
                         <input form="<?php echo $formId; ?>" class="form-control" type="text" name="photo" value="<?php echo htmlspecialchars($file['photo'], ENT_QUOTES); ?>" placeholder="/assets/img/dossiers/ID.jpg">

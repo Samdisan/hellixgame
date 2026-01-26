@@ -359,6 +359,118 @@
     "prevent_repeat": true
   },
   {
+    "id": "Q_MFG_BATCH_04",
+    "label": "HELIX: масовий синтез антигену (Batch-04)",
+    "description": "Розсилає всім гравцям терміновий протокол HELIX-MFG-BATCH-04 на 65-й хвилині гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "HELIX_MFG_BATCH_04"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] HELIX-MFG-BATCH-04: масовий синтез антигену доступний для всіх гравців."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "Новий протокол: HELIX-MFG-BATCH-04 (масовий синтез антигену)."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_OPS_CLEAN_SLATE_OMEGA",
+    "label": "OPS-CLEAN-SLATE: критичний витік",
+    "description": "Розсилає всім гравцям критичний витік FILE #99-OMEGA на 90-й хвилині гри.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "OPS_CLEAN_SLATE_OMEGA"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "message": "[PROTO] FILE #99-OMEGA: критичний витік OPS-CLEAN-SLATE доступний для всіх гравців."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "message": "Новий протокол: FILE #99-OMEGA (OPS-CLEAN-SLATE)."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_WHO_SECURITY_BREACH",
+    "label": "WHO: попередження про дезінформацію",
+    "description": "Надсилає ВООЗ системне попередження про спробу дезінформації на 95-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "WHO_SECURITY_BREACH"
+      },
+      {
+        "type": "push_terminal",
+        "target": "both",
+        "level": "warning",
+        "faction_target": "who",
+        "message": "[ALERT] SECURITY BREACH: зафіксовано спробу дезінформації. Захистіть вакцину."
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "faction_target": "who",
+        "message": "SYSTEM ALERT: SECURITY BREACH. Дії для ВООЗ у протоколі."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
+    "id": "Q_VECTOR_FEEDING",
+    "label": "HELIX: годування суб’єкта X-9",
+    "description": "Надсилає протокол #FEED-X9 трьом обраним гравцям на 115-й хвилині.",
+    "phase": "PH_OUTBREAK",
+    "actions": [
+      {
+        "type": "activate_protocol",
+        "protocol_id": "VECTOR_FEEDING_ORDER",
+        "allowed_players": [
+          "PL_STATION_ALEXI",
+          "PL_WHO_GENETICIST",
+          "PL_WHO_PR"
+        ]
+      },
+      {
+        "type": "push_terminal",
+        "target": "player_popup",
+        "level": "warning",
+        "player_targets": [
+          "PL_STATION_ALEXI",
+          "PL_WHO_GENETICIST",
+          "PL_WHO_PR"
+        ],
+        "message": "НАРЯД #FEED-X9: ознайомтесь із протоколом «Годування звіра»."
+      },
+      {
+        "type": "push_terminal",
+        "target": "admin_terminal",
+        "level": "warning",
+        "message": "[PROTO] Q_VECTOR_FEEDING надіслано: PL_STATION_ALEXI, PL_WHO_GENETICIST, PL_WHO_PR."
+      }
+    ],
+    "prevent_repeat": true
+  },
+  {
     "id": "Q_BIOREACTOR_NOTICE_60",
     "label": "Біореактор: попередження про розмноження культури (60 хв)",
     "description": "Надсилає всім гравцям повідомлення про запуск біореактора для розмноження культури на 60-й хвилині.",
